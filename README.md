@@ -84,4 +84,4 @@ $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set A
 
 - Level 1 accepts only the binary encoding of `Central Processing Unit`.
 - Level 5 proceeds without admin approval in the current implementation.
-- The public site is static; live game state still comes from Convex.
+- The public site is static; live game state  comes from Convex.
