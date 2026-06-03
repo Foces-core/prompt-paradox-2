@@ -1,0 +1,52 @@
+{
+  "name": "prompt-paradox2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "check": "eslint . && tsc --noEmit",
+    "convex:dev": "convex dev",
+    "dev": "next dev --turbo",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,md,mdx}\" --cache",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,md,mdx}\" --cache",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preview": "next build && next start",
+    "start": "next start",
+    "test:all": "pnpm run test:answers && pnpm run test:state && pnpm run test:ui",
+    "test:answers": "node scripts/test-answers.mjs",
+    "test:state": "node scripts/test-state.mjs",
+    "test:ui": "node scripts/test-ui-buse.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.12.0",
+    "clsx": "^2.1.1",
+    "convex": "^1.39.1",
+    "lucide-react": "^1.17.0",
+    "next": "^15.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.0.15",
+    "@types/node": "^20.14.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.23.0",
+    "eslint-config-next": "^15.2.3",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^4.0.15",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.27.0"
+  },
+  "ct3aMetadata": {
+    "initVersion": "7.40.0"
+  },
+  "packageManager": "pnpm@11.1.2"
+}
