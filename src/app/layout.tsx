@@ -9,7 +9,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const metadata: Metadata = {
   title: "Prompt Paradox 2.0",
   description: "Signal Trials event app",
-  icons: [{ rel: "icon", url: `${basePath}/favicon.ico` }],
+  icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
 };
 
 const geist = Geist({
