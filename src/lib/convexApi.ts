@@ -10,6 +10,7 @@ export type PublicParticipant = {
   hintsUsed: number[];
   startTime: number;
   finishTime?: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
 };
 
 export type LeaderboardRank = {
@@ -57,4 +58,36 @@ export const gameApi = {
     { adminKey: string; started: boolean },
     { ok: boolean }
   >("game:setEventStarted"),
+  getCardImage: makeFunctionReference<
+    "mutation",
+    { participantId: string; cardIndex: number },
+    { url: string; isReal: boolean }
+  >("game:getCardImage"),
+  generateUploadUrl: makeFunctionReference<
+    "mutation",
+    Record<string, never>,
+    string
+  >("game:generateUploadUrl"),
+  submitLevel5: makeFunctionReference<
+    "mutation",
+    { participantId: string; prompt: string; screenshotId?: string },
+    { ok: boolean; submissionId: string }
+  >("game:submitLevel5"),
+  getPendingSubmissions: makeFunctionReference<
+    "query",
+    { adminKey: string },
+    Array<{
+      id: string;
+      participantName: string;
+      participantCollege: string;
+      prompt: string;
+      screenshotUrl: string | null;
+      submittedAt: number;
+    }>
+  >("game:getPendingSubmissions"),
+  reviewLevel5: makeFunctionReference<
+    "mutation",
+    { adminKey: string; submissionId: string; status: "approved" | "rejected" },
+    { ok: boolean }
+  >("game:reviewLevel5"),
 };
