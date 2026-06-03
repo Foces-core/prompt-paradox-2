@@ -1,31 +1,88 @@
 # Prompt Paradox 2
 
-Local MVP for the Signal Trials puzzle event.
+Production static site for the Signal Trials puzzle event.
 
-## Run
+## What It Uses
+
+- Next.js static export.
+- Convex for live backend state and admin controls.
+- GitHub Pages for free public hosting.
+
+## Local Setup
+
+Prerequisites:
+
+- Node.js
+- pnpm
+
+Install:
+
+```bash
+sfw pnpm install
+```
+
+Run locally:
 
 ```bash
 sfw pnpm run dev
 ```
 
-Open `http://localhost:3000`.
-
-## Checks
+## Build And Verify
 
 ```bash
 sfw pnpm run check
 sfw pnpm run build
-sfw pnpm run test:all
 ```
 
-`test:all` runs:
+## Deploy
 
-- `test:answers`: accepted/rejected answer variants for every level.
-- `test:state`: paused-event behavior, level 5 auto-scoring, final-level bounds, hint idempotency, leaderboard sort.
-- `test:ui`: `C:\Users\sebin\buse.bat --pp2-test`, which clicks registration, nav/admin buttons, hint, and all eight level submissions in the browser.
+Backend:
 
-## Current Rules
+```bash
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex deploy --typecheck disable
+```
 
-- Level 1 accepts only the ASCII binary for `Central Processing Unit`; the phrase itself is rejected.
-- Level 5 is answer-checked and proceeds without admin approval.
-- Admin pause blocks answer submission and resumes without changing progress.
+Pause or resume the live event:
+
+```bash
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set MAINTENANCE_MODE 1
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set MAINTENANCE_MODE 0
+```
+
+GitHub Pages:
+
+- The repo is public and the workflow lives in `.github/workflows/pages.yml`.
+- Push to `main` to publish.
+- Public URL: `https://foces-core.github.io/prompt-paradox-2-/`
+
+## Deployment Note
+
+- The public site is a static export hosted on GitHub Pages.
+- The live event state, answer validation, hints, leaderboard, and admin actions still run through the Convex backend.
+- Set `MAINTENANCE_MODE=1` in Convex when you want to pause the event without taking the site down.
+
+## Admin Setup
+
+- Admin auth is controlled by `ADMIN_KEY` in Convex production env.
+- Set it in Convex production:
+
+```bash
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set ADMIN_KEY "<your-admin-key>"
+```
+
+- The app’s admin panel uses this key to pause/resume the event and select the winning team.
+- Do not put the actual key value in the repository.
+
+## Architecture
+
+- `src/components/GameShell.tsx` drives the UI and admin controls.
+- `src/lib/game.ts` contains public level metadata only.
+- `convex/answers.ts` stores canonical answers and normalization rules.
+- `convex/game.ts` handles registration, validation, hints, leaderboard sorting, pause/resume, and winner selection.
+- `MAINTENANCE_MODE=1` keeps the backend alive but blocks live event usage.
+
+## Important Rules
+
+- Level 1 accepts only the binary encoding of `Central Processing Unit`.
+- Level 5 proceeds without admin approval in the current implementation.
+- The public site is static; live game state still comes from Convex.

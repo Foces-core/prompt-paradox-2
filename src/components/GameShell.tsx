@@ -414,8 +414,8 @@ function AdminPanel(props: {
           <ShieldCheck size={18} /> Level 5 Auto-Scoring
         </div>
         <p className="text-sm text-white/55">
-          Constraint Layer now unlocks from the answer checker, so there is no
-          manual approval queue or stale approval race in the local MVP.
+          Constraint Layer unlocks from the answer checker, so there is no
+          manual approval queue or stale approval race.
         </p>
       </div>
     </section>
