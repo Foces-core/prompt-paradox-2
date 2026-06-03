@@ -7,9 +7,9 @@ import "./src/env.js";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** @type {import("next").NextConfig} */
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+/** @type {import("next").NextConfig} */
 const config = {
   output: "export",
   outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)),
