@@ -209,3 +209,131 @@ export const setEventStarted = mutation({
     return { ok: true };
   },
 });
+
+export const getCardImage = mutation({
+  args: { participantId: v.id("participants"), cardIndex: v.number() },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    const participant = await ctx.db.get(args.participantId);
+    if (!participant) throw new Error("Participant not found.");
+
+    await ctx.db.insert("qrRequests", {
+      participantId: args.participantId,
+      cardIndex: args.cardIndex,
+      requestedAt: Date.now(),
+    });
+
+    if (args.cardIndex === 4) {
+      return {
+        url: "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ENTRYPOINT",
+        isReal: true,
+      };
+    } else {
+      const noise = Math.random().toString(36).substring(2, 10).toUpperCase();
+      return {
+        url: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GLITCH_NOISE_${args.cardIndex}_${noise}`,
+        isReal: false,
+      };
+    }
+  },
+});
+
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const submitLevel5 = mutation({
+  args: {
+    participantId: v.id("participants"),
+    prompt: v.string(),
+    screenshotId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    const participant = await ctx.db.get(args.participantId);
+    if (!participant) throw new Error("Participant not found.");
+
+    const submissionId = await ctx.db.insert("level5Submissions", {
+      participantId: args.participantId,
+      prompt: args.prompt,
+      screenshotId: args.screenshotId as any,
+      submittedAt: Date.now(),
+      status: "pending",
+    });
+
+    await ctx.db.patch(args.participantId, {
+      level5Status: "pending",
+    });
+
+    return { ok: true, submissionId };
+  },
+});
+
+export const getPendingSubmissions = query({
+  args: { adminKey: v.string() },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+    const submissions = await ctx.db
+      .query("level5Submissions")
+      .withIndex("by_status", (q) => q.eq("status", "pending"))
+      .collect();
+
+    const result = [];
+    for (const sub of submissions) {
+      const part = await ctx.db.get(sub.participantId);
+      let screenshotUrl = null;
+      if (sub.screenshotId) {
+        screenshotUrl = await ctx.storage.getUrl(sub.screenshotId);
+      }
+      result.push({
+        id: sub._id,
+        participantName: part?.name ?? "Unknown",
+        participantCollege: part?.college ?? "Unknown",
+        prompt: sub.prompt,
+        screenshotUrl,
+        submittedAt: sub.submittedAt,
+      });
+    }
+    return result;
+  },
+});
+
+export const reviewLevel5 = mutation({
+  args: {
+    adminKey: v.string(),
+    submissionId: v.id("level5Submissions"),
+    status: v.union(v.literal("approved"), v.literal("rejected")),
+  },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+    const sub = await ctx.db.get(args.submissionId);
+    if (!sub) throw new Error("Submission not found.");
+
+    await ctx.db.patch(args.submissionId, {
+      status: args.status,
+      reviewedAt: Date.now(),
+    });
+
+    const participant = await ctx.db.get(sub.participantId);
+    if (participant) {
+      const patchData: any = {
+        level5Status: args.status,
+      };
+      if (args.status === "approved") {
+        patchData.currentLevel = 6;
+        if (!participant.completedLevels.includes(5)) {
+          patchData.completedLevels = [...participant.completedLevels, 5];
+        }
+      }
+      await ctx.db.patch(sub.participantId, patchData);
+    }
+    return { ok: true };
+  },
+});
