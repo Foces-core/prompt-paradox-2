@@ -18,20 +18,20 @@ Prerequisites:
 Install:
 
 ```bash
-sfw pnpm install
+ pnpm install
 ```
 
 Run locally:
 
 ```bash
-sfw pnpm run dev
+ pnpm run dev
 ```
 
 ## Build And Verify
 
 ```bash
-sfw pnpm run check
-sfw pnpm run build
+ pnpm run check
+ pnpm run build
 ```
 
 ## Deploy
@@ -39,14 +39,14 @@ sfw pnpm run build
 Backend:
 
 ```bash
-$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex deploy --typecheck disable
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex deploy --typecheck disable
 ```
 
 Pause or resume the live event:
 
 ```bash
-$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set MAINTENANCE_MODE 1
-$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set MAINTENANCE_MODE 0
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex env set MAINTENANCE_MODE 1
+$env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex env set MAINTENANCE_MODE 0
 ```
 
 GitHub Pages:
@@ -71,7 +71,6 @@ $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set A
 ```
 
 - The app’s admin panel uses this key to pause/resume the event and select the winning team.
-- Do not put the actual key value in the repository.
 
 ## Architecture
 
