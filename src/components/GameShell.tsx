@@ -243,11 +243,13 @@ export function GameShell() {
 
   // States
   const [participantId, setParticipantId] = useState<string | null>(null);
+
   const [hasSeenIntro, setHasSeenIntro] = useState<boolean>(false);
   const [introStep, setIntroStep] = useState<number>(0);
   const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
   const [viewedLevelId, setViewedLevelId] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
+
   const [view, setView] = useState<"game" | "board" | "admin">("game");
   const [wrongFlash, setWrongFlash] = useState(false);
   const [successFlash, setSuccessFlash] = useState(false);
@@ -364,6 +366,7 @@ export function GameShell() {
   async function registerPlayer(nextPlayer: Pick<PublicParticipant, "name" | "college" | "email">) {
     const registered = await register(nextPlayer);
     setParticipantId(registered.id);
+
     localStorage.setItem("pp_participant_id", registered.id);
     setMessage("Awaiting signal.");
   }
@@ -752,6 +755,7 @@ function Registration({
         }}
         className="w-full max-w-md border border-[#00ff66]/35 bg-[#070e08]/90 p-8 shadow-[0_0_30px_rgba(0,255,102,0.15)] backdrop-blur border-pulse"
       >
+
         <div className="text-center mb-6">
           <p className="text-xs tracking-[0.4em] text-[#00ff66] font-bold uppercase text-pulse">
             SECURE ACCESS PORTAL
@@ -1129,7 +1133,7 @@ function GamePanel({
           </div>
         )}
       </div>
-
+      
       {/* Input submission bar for levels other than custom level 5 or 6 (they use their own UI but can also fall back) */}
       {level.id !== 5 && level.id !== 6 && (
         <div className="mt-auto">
@@ -1871,6 +1875,7 @@ function AdminPanel({
             </p>
           )}
         </div>
+
       </div>
     </section>
   );
