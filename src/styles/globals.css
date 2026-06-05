@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: var(--font-space-mono), monospace;
+  --font-mono: var(--font-space-mono), monospace;
 }
 
 * {
@@ -11,28 +11,291 @@
 
 body {
   margin: 0;
-  background: #080910;
+  background: #020502;
+  font-family: var(--font-space-mono), monospace;
+  overflow-x: hidden;
 }
 
 button,
 input,
 textarea {
   border-radius: 0;
+  font-family: var(--font-space-mono), monospace;
 }
 
+/* CRT Screen Effects */
 .scanline {
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.04) 0,
-    rgba(255, 255, 255, 0.04) 1px,
+    rgba(0, 255, 102, 0.03) 0px,
+    rgba(0, 255, 102, 0.03) 1px,
     transparent 1px,
-    transparent 8px
+    transparent 6px
   );
+  background-size: 100% 6px;
+  animation: scanlineScroll 20s linear infinite;
 }
 
-.bg-static {
+@keyframes scanlineScroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 100%;
+  }
+}
+
+/* Glitch Animation */
+.glitch {
+  position: relative;
+  text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+    -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  animation: glitch 1s infinite;
+}
+
+.glitch::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #020502;
+  clip-path: polygon(0 0, 100% 0, 100% 43%, 0 43%);
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #020502;
+  clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.025em 0 rgba(0, 255, 0, 0.75), -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.025em 0 rgba(0, 255, 0, 0.75), -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75), -0.025em 0.05em 0 rgba(0, 255, 0, 0.75), 0 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75), -0.025em 0.05em 0 rgba(0, 255, 0, 0.75), 0 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75), -0.025em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+}
+
+@keyframes glitch-anim-1 {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+  }
+  20% {
+    clip-path: inset(92% 0 1% 0);
+  }
+  40% {
+    clip-path: inset(15% 0 80% 0);
+  }
+  60% {
+    clip-path: inset(80% 0 5% 0);
+  }
+  80% {
+    clip-path: inset(5% 0 92% 0);
+  }
+  100% {
+    clip-path: inset(67% 0 25% 0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip-path: inset(25% 0 58% 0);
+  }
+  20% {
+    clip-path: inset(14% 0 80% 0);
+  }
+  40% {
+    clip-path: inset(64% 0 22% 0);
+  }
+  60% {
+    clip-path: inset(3% 0 95% 0);
+  }
+  80% {
+    clip-path: inset(90% 0 2% 0);
+  }
+  100% {
+    clip-path: inset(42% 0 42% 0);
+  }
+}
+
+/* Transmission Flicker Animation */
+.transmission-flicker {
+  animation: flicker 4s infinite alternate;
+}
+
+@keyframes flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 0.99;
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.92;
+    filter: hue-rotate(15deg) saturate(1.2) contrast(1.1);
+  }
+}
+
+/* Card flip styling */
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Matrix Binary Background Scroller */
+.bg-binary-rain {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-binary-rain::before {
+  content: "01001111 01010110 01000101 01010010 01001101 01001001 01001110 01000100 00001010 01010011 01001001 01000111 01001110 01000001 01001100 00001010 01010100 01010010 01001001 01000001 01001100 01010011 00001010 01010000 01000001 01010010 01000001 01000100 01001111 01011000 00001010 01001111 01010110 01000101 01010010 01001101 01001001 01001110 01000100 00001010 01010011 01001001 01000111 01001110 01000001 01001100 00001010";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 14px;
+  color: rgba(16, 185, 129, 0.05);
+  white-space: pre-wrap;
+  word-break: break-all;
+  pointer-events: none;
+  animation: binaryScroll 30s linear infinite;
+}
+
+@keyframes binaryScroll {
+  from {
+    transform: translateY(-5%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+/* CRT glow & pulsing text */
+.text-pulse {
+  animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% {
+    text-shadow: 0 0 2px rgba(0, 255, 102, 0.3), 0 0 5px rgba(0, 255, 102, 0.1);
+  }
+  100% {
+    text-shadow: 0 0 8px rgba(0, 255, 102, 0.8), 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.border-pulse {
+  animation: borderPulseGlow 2s infinite alternate;
+}
+
+@keyframes borderPulseGlow {
+  0% {
+    box-shadow: 0 0 2px rgba(0, 255, 102, 0.1), inset 0 0 2px rgba(0, 255, 102, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2);
+    border-color: rgba(0, 255, 102, 0.6);
+  }
+}
+
+/* Terminal Cursor */
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background-color: #00ff66;
+  animation: cursorBlink 1s infinite step-end;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+@keyframes cursorBlink {
+  from, to {
+    background-color: transparent;
+  }
+  50% {
+    background-color: #00ff66;
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, -120px, 0) scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes flashPop {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Green Scan Grid for Flip Cards */
+.bg-static-green {
   background:
-    linear-gradient(135deg, rgba(0, 229, 255, 0.12), transparent 45%),
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.06) 0 2px, transparent 2px 5px),
-    #10131d;
+    linear-gradient(135deg, rgba(0, 255, 102, 0.08), transparent 45%),
+    repeating-linear-gradient(45deg, rgba(0, 255, 102, 0.05) 0 2px, transparent 2px 5px),
+    #050c05;
 }
