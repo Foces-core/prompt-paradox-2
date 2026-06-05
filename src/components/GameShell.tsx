@@ -37,13 +37,14 @@ function formatElapsed(seconds: number): string {
 // ---------------------
 function useAmbientBGM() {
   const ctxRef = useRef<AudioContext | null>(null);
-  const nodesRef = useRef<any[]>([]);
+  const nodesRef = useRef<Array<AudioNode & { stop?: () => void }>>([]);
   const gainRef = useRef<GainNode | null>(null);
   const [playing, setPlaying] = useState(false);
 
   const start = useCallback(() => {
     if (ctxRef.current) return;
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    const webkitAudioContext = (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const AudioContextClass = window.AudioContext ?? webkitAudioContext;
     if (!AudioContextClass) return;
 
     const ctx = new AudioContextClass();
@@ -129,7 +130,15 @@ function useAmbientBGM() {
   }, []);
 
   const stop = useCallback(() => {
-    nodesRef.current.forEach((n) => { try { n.stop(); } catch (_e) { /* ok */ } });
+    nodesRef.current.forEach((n) => {
+      try {
+        if (typeof n.stop === "function") {
+          n.stop();
+        }
+      } catch {
+        // ignore shutdown races
+      }
+    });
     nodesRef.current = [];
     if (ctxRef.current) {
       void ctxRef.current.close();
@@ -176,7 +185,7 @@ const STORY_STEPS = [
   },
   {
     title: "THE PRIZE",
-    text: "The first individual to complete all eight trials wins. Not just the competition — according to OVERMIND's final message, the winner becomes its chosen operator. What that means, exactly, is left deliberately unclear. OVERMIND prefers it that way."
+    text: "The first individual to complete all eight trials wins. If the result is clean, OVERMIND will name the winner. If the result is tied, the admin decides. Either way, the final revelation is coming."
   }
 ];
 
@@ -236,10 +245,13 @@ export function GameShell() {
   const [participantId, setParticipantId] = useState<string | null>(null);
   const [hasSeenIntro, setHasSeenIntro] = useState<boolean>(false);
   const [introStep, setIntroStep] = useState<number>(0);
+  const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
+  const [viewedLevelId, setViewedLevelId] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
   const [view, setView] = useState<"game" | "board" | "admin">("game");
   const [wrongFlash, setWrongFlash] = useState(false);
   const [successFlash, setSuccessFlash] = useState(false);
+  const [celebrateSeed, setCelebrateSeed] = useState(0);
   
   // Elapsed timer (seconds)
   const [elapsed, setElapsed] = useState(0);
@@ -270,13 +282,25 @@ export function GameShell() {
 
   const player = participant;
   const eventStarted = event?.started ?? true;
+  const winnerParticipantId = event?.winnerParticipantId;
   const levelId = player?.currentLevel ?? 1;
+  const currentLevel = levelId;
 
   // Handle case where levelId completes all levels
   const level = levels[levelId - 1] ?? levels[levels.length - 1]!;
+  const displayedLevelId = Math.min(Math.max(viewedLevelId, 1), currentLevel);
+  const displayedLevel = levels[displayedLevelId - 1] ?? level;
   const isFinished = player ? (player.currentLevel > levels.length || player.finishTime !== undefined) : false;
+  const isWinner = Boolean(player && winnerParticipantId && player.id === winnerParticipantId);
+  const unresolvedFinale = Boolean(isFinished && !winnerParticipantId);
 
   // Ticking timer — runs while the game is active (not finished) and player is loaded
+  useEffect(() => {
+    if (currentLevel > 0) {
+      setViewedLevelId((prev) => Math.min(Math.max(prev, 1), currentLevel));
+    }
+  }, [currentLevel]);
+
   useEffect(() => {
     if (!player || isFinished) return;
     const interval = setInterval(() => {
@@ -288,6 +312,7 @@ export function GameShell() {
   const ranks = useMemo(() => {
     if (!boardRanks) return [];
     return boardRanks.map((rank) => ({
+      id: rank.id,
       name: rank.name,
       college: rank.college,
       level: rank.level,
@@ -296,32 +321,43 @@ export function GameShell() {
     }));
   }, [boardRanks]);
 
-  async function submitAnswer(customAnswer?: string) {
+  const submitAnswer = useCallback(async (customAnswer?: string) => {
     if (!participantId) return;
     const submittedAnswer = customAnswer ?? answerRef.current?.value ?? "";
-    
+
     try {
       const result = await submitAttempt({
         participantId,
-        level: level.id,
+        level: displayedLevel.id,
         answer: submittedAnswer,
       });
-      
+
       setMessage(result.message);
-      
+
       if (result.ok) {
         setSuccessFlash(true);
-        setTimeout(() => setSuccessFlash(false), 500);
+        setCelebrateSeed((prev) => prev + 1);
+        setTimeout(() => setSuccessFlash(false), 180);
         if (answerRef.current) answerRef.current.value = "";
       } else {
         setWrongFlash(true);
-        setTimeout(() => setWrongFlash(false), 500);
+        setTimeout(() => setWrongFlash(false), 180);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "An error occurred.";
       setMessage(message);
       setWrongFlash(true);
-      setTimeout(() => setWrongFlash(false), 500);
+      setTimeout(() => setWrongFlash(false), 180);
+    }
+  }, [answerRef, displayedLevel.id, participantId, submitAttempt]);
+
+  async function showHint() {
+    if (!participantId) return;
+    try {
+      const result = await saveHint({ participantId, level: level.id });
+      setMessage(result.message ?? "Hint unlocked.");
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Hint unavailable.");
     }
   }
 
@@ -330,11 +366,6 @@ export function GameShell() {
     setParticipantId(registered.id);
     localStorage.setItem("pp_participant_id", registered.id);
     setMessage("Awaiting signal.");
-  }
-
-  async function showHint() {
-    if (!participantId) return;
-    await saveHint({ participantId, level: level.id });
   }
 
   async function toggleEvent(adminKey: string, started: boolean) {
@@ -357,8 +388,45 @@ export function GameShell() {
     setParticipantId(null);
     setHasSeenIntro(false);
     setIntroStep(0);
+    setStoryReplayOpen(false);
+    setViewedLevelId(1);
     setView("game");
   };
+
+  const handleBack = useCallback(() => {
+    setViewedLevelId((prev) => {
+      const next = Math.max(1, prev - 1);
+      setMessage(`Viewing trial ${String(next).padStart(2, "0")}.`);
+      return next;
+    });
+  }, []);
+
+  const handleSubmitShortcut = useCallback(() => {
+    const currentViewed = displayedLevelId;
+    if (currentViewed < currentLevel) {
+      setViewedLevelId((prev) => Math.min(prev + 1, currentLevel));
+      setMessage(`Advanced to trial ${String(Math.min(currentViewed + 1, currentLevel)).padStart(2, "0")}.`);
+      return;
+    }
+    void submitAnswer();
+  }, [currentLevel, displayedLevelId, submitAnswer]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (storyReplayOpen) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        handleBack();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        handleSubmitShortcut();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleBack, handleSubmitShortcut, storyReplayOpen]);
 
   // 1. Not Registered / Logged In
   if (!participantId || !player) {
@@ -377,6 +445,27 @@ export function GameShell() {
     );
   }
 
+  if (!eventStarted) {
+    return <LoadingGate />;
+  }
+
+  if (storyReplayOpen) {
+    return (
+      <StoryIntro
+        playerName={player.name}
+        step={introStep}
+        setStep={setIntroStep}
+        onComplete={() => setStoryReplayOpen(false)}
+        onSkipReplay={() => setStoryReplayOpen(false)}
+        replayMode
+      />
+    );
+  }
+
+  if (unresolvedFinale) {
+    return <ThinkingScreen playerName={player.name} />;
+  }
+
   // 3. Main game dashboard interface
 
   return (
@@ -386,6 +475,7 @@ export function GameShell() {
       
       {/* Scanline Overlay */}
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
+      {successFlash && <CelebrationBurst seed={celebrateSeed} />}
 
       <header className="sticky top-0 z-10 border-b border-[#00ff66]/20 bg-[#030704]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
@@ -407,16 +497,40 @@ export function GameShell() {
               onClick={() => setView("game")}
               label="TRIALS"
             />
-            <NavButton
+              <NavButton
               active={view === "board"}
               onClick={() => setView("board")}
-              label="GRID BOARD"
+              label="LEADERBOARD"
             />
             <NavButton
               active={view === "admin"}
               onClick={() => setView("admin")}
               label="ADMIN"
             />
+            <button
+              onClick={() => {
+                setIntroStep(0);
+                setStoryReplayOpen(true);
+              }}
+              className="border px-3 py-2 text-xs font-mono tracking-wider transition-all duration-300 border-[#00ff66]/20 text-[#a7f3d0]/60 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              title="Read the story again"
+            >
+              STORY MODE
+            </button>
+              <button
+              onClick={handleBack}
+              className="border px-3 py-1.5 font-mono text-xs transition-all duration-300 border-[#00ff66]/20 text-[#a7f3d0]/50 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              title="Back one level"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={handleSubmitShortcut}
+              className="border px-3 py-1.5 font-mono text-xs transition-all duration-300 border-[#00ff66]/20 text-[#a7f3d0]/50 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              title="Submit current task or advance"
+            >
+              &gt;
+            </button>
             {/* BGM Toggle */}
             <button
               onClick={bgm.toggle}
@@ -440,7 +554,7 @@ export function GameShell() {
         </div>
       </header>
 
-      {isFinished ? (
+      {isFinished && isWinner ? (
         <WinScreen playerName={player.name} onLogout={handleLogout} ranks={ranks} elapsed={elapsed} />
       ) : (
         <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[300px_1fr]">
@@ -518,13 +632,15 @@ export function GameShell() {
           <div className="flex flex-col gap-6">
             {view === "game" && (
               <GamePanel
-                level={level}
+                level={displayedLevel}
                 participantId={participantId}
                 player={player}
                 answerRef={answerRef}
                 message={message}
+                onHint={showHint}
                 onSubmit={() => submitAnswer()}
                 onCustomSubmit={submitAnswer}
+                onBack={handleBack}
               />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
@@ -533,6 +649,7 @@ export function GameShell() {
                 eventStarted={eventStarted}
                 message={message}
                 setEventStarted={(started, adminKey) => toggleEvent(adminKey, started)}
+                ranks={ranks}
               />
             )}
           </div>
@@ -695,11 +812,15 @@ function StoryIntro({
   step,
   setStep,
   onComplete,
+  onSkipReplay,
+  replayMode = false,
 }: {
   playerName: string;
   step: number;
   setStep: (v: number) => void;
   onComplete: () => void;
+  onSkipReplay?: () => void;
+  replayMode?: boolean;
 }) {
   const currentStepData = STORY_STEPS[step];
   const [typingComplete, setTypingComplete] = useState(false);
@@ -723,9 +844,21 @@ function StoryIntro({
     }
   };
 
-  const handleSkip = () => {
-    onComplete();
-  };
+  const handleSkip = useCallback(() => {
+    (onSkipReplay ?? onComplete)();
+  }, [onComplete, onSkipReplay]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        handleSkip();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSkip]);
 
   if (!currentStepData) return null;
 
@@ -740,13 +873,13 @@ function StoryIntro({
       {/* Top Info Bar */}
       <div className="flex justify-between items-center border-b border-[#00ff66]/20 pb-3">
         <span className="text-xs text-[#00ff66]/60 tracking-widest uppercase">
-          SECURE VECTOR // INCOMING TRANSMISSION
+          SECURE VECTOR // {replayMode ? "STORY ARCHIVE" : "INCOMING TRANSMISSION"}
         </span>
         <button 
           onClick={handleSkip}
           className="text-xs text-red-400 hover:text-red-300 border border-red-500/20 px-2 py-1 bg-red-500/5 hover:border-red-500/60"
         >
-          BYPASS MONOLOGUE [ESC]
+          {replayMode ? "CLOSE ARCHIVE [ESC]" : "BYPASS MONOLOGUE [ESC]"}
         </button>
       </div>
 
@@ -754,7 +887,7 @@ function StoryIntro({
       <div className="max-w-2xl mx-auto flex-1 flex flex-col justify-center my-8">
         <div className="border border-[#00ff66]/30 bg-[#070e08]/90 p-8 shadow-[0_0_25px_rgba(0,255,102,0.05)] border-pulse">
           <p className="text-[10px] font-bold text-[#00ff66] tracking-[0.3em] uppercase mb-4 text-pulse">
-            TRANSMISSION {step + 1} OF {STORY_STEPS.length}{" // "}{currentStepData.title}
+            {replayMode ? "STORY ARCHIVE" : "TRANSMISSION"} {step + 1} OF {STORY_STEPS.length}{" // "}{currentStepData.title}
           </p>
           <div className="text-sm md:text-base text-[#d1ffd6] leading-relaxed font-mono min-h-[180px]">
             <TypewriterText 
@@ -775,10 +908,87 @@ function StoryIntro({
           onClick={handleNext}
           className="border border-[#00ff66] bg-[#00ff66]/10 px-6 py-3 text-sm font-bold text-[#00ff66] hover:bg-[#00ff66] hover:text-black hover:shadow-[0_0_15px_rgba(0,255,102,0.3)] transition-all duration-300"
         >
-          {typingComplete 
-            ? (step === STORY_STEPS.length - 1 ? "ENTER THE GRID" : "DECRYPT SEQUENCE") 
+          {typingComplete
+            ? (replayMode
+                ? "CLOSE ARCHIVE"
+                : (step === STORY_STEPS.length - 1 ? "ENTER THE GRID" : "DECRYPT SEQUENCE"))
             : "EXPEDITE"}
         </button>
+      </div>
+    </main>
+  );
+}
+
+function LoadingGate() {
+  return (
+    <main className="min-h-screen bg-[#020402] text-[#a7f3d0] flex flex-col items-center justify-center p-6 bg-binary-rain font-mono relative">
+      <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
+      <div className="w-full max-w-xl border border-[#00ff66]/25 bg-[#070e08]/90 p-8 text-center border-pulse">
+        <p className="text-[10px] font-bold tracking-[0.35em] uppercase text-[#00ff66]/70 mb-4">
+          OVERMIND // STANDBY
+        </p>
+        <h2 className="text-2xl font-black tracking-wider text-[#d1ffd6] mb-4">
+          [LOADING...]
+        </h2>
+        <p className="text-sm text-[#a7f3d0]/80 leading-relaxed">
+          Story received. Waiting for admin start signal.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+function CelebrationBurst({ seed }: { seed: number }) {
+  const pieces = useMemo(() => {
+    return Array.from({ length: 14 }, (_, index) => ({
+      id: `${seed}-${index}`,
+      left: `${8 + ((index * 7) % 84)}%`,
+      top: `${12 + ((index * 13) % 58)}%`,
+      delay: `${(index % 5) * 40}ms`,
+      size: 6 + (index % 4) * 4,
+      hue: index % 3 === 0 ? "#00ff66" : index % 3 === 1 ? "#d1ffd6" : "#facc15",
+    }));
+  }, [seed]);
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
+      {pieces.map((piece) => (
+        <span
+          key={piece.id}
+          className="absolute rounded-full animate-[burst_700ms_ease-out_forwards]"
+          style={{
+            left: piece.left,
+            top: piece.top,
+            width: piece.size,
+            height: piece.size,
+            background: piece.hue,
+            boxShadow: `0 0 18px ${piece.hue}`,
+            animationDelay: piece.delay,
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 animate-[flashPop_220ms_ease-out_1] bg-[#00ff66]/10" />
+    </div>
+  );
+}
+
+function ThinkingScreen({ playerName }: { playerName: string }) {
+  return (
+    <main className="min-h-screen bg-[#020502] text-[#00ff66] p-8 flex flex-col justify-center items-center bg-binary-rain font-mono relative">
+      <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
+      <div className="w-full max-w-2xl border border-[#00ff66]/35 bg-[#070e08]/95 p-8 text-center shadow-[0_0_35px_rgba(0,255,102,0.18)] border-pulse">
+        <p className="text-xs tracking-[0.4em] font-bold text-[#00ff66] uppercase mb-2 text-pulse">
+          OVERMIND // RESULT PENDING
+        </p>
+        <h1 className="font-mono text-3xl font-black text-[#d1ffd6] tracking-wider mb-6 glitch" data-text="OVERMIND IS THINKING...">
+          OVERMIND IS THINKING...
+        </h1>
+        <div className="bg-[#030603] border border-[#00ff66]/20 p-6 rounded-sm text-sm text-[#d1ffd6] leading-relaxed mb-2 border-pulse text-left select-text">
+          <TypewriterText
+            text={`"The final signal is unresolved. ${playerName}, wait while OVERMIND chooses."`}
+            speed={18}
+          />
+        </div>
       </div>
     </main>
   );
@@ -793,16 +1003,20 @@ function GamePanel({
   player,
   answerRef,
   message,
+  onHint,
   onSubmit,
   onCustomSubmit,
+  onBack,
 }: {
   level: Level;
   participantId: string;
   player: PublicParticipant;
   answerRef: React.RefObject<HTMLInputElement | null>;
   message: string;
+  onHint: () => Promise<void>;
   onSubmit: () => Promise<void>;
   onCustomSubmit: (val: string) => Promise<void>;
+  onBack: () => void;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -827,6 +1041,13 @@ function GamePanel({
             <span className="text-[10px] font-mono text-[#00ff66]/70 border border-[#00ff66]/20 px-2 py-1">
               DIFFICULTY: <span className="text-[#00ff66] font-bold">{level.difficulty}</span>
             </span>
+            <button
+              onClick={onBack}
+              className="border border-[#00ff66]/20 bg-[#00ff66]/5 px-3 py-1.5 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300"
+              title="Go back one level"
+            >
+              BACK [&#8592;]
+            </button>
           </div>
         </div>
 
@@ -845,6 +1066,14 @@ function GamePanel({
           </p>
           <div className="bg-black/35 border border-white/5 p-4 text-xs font-mono text-[#a7f3d0] leading-relaxed">
             {level.hint}
+          </div>
+          <div className="mt-3">
+            <button
+              onClick={() => void onHint()}
+              className="border border-[#00ff66]/30 bg-[#00ff66]/5 px-3 py-1.5 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300"
+            >
+              HINT
+            </button>
           </div>
         </div>
 
@@ -966,10 +1195,25 @@ function Level7Challenge() {
 // Level 3 Glitch Gallery Component
 // ----------------------------------------------------
 function GlitchGallery({ participantId }: { participantId: string }) {
-  const getCardImage = useMutation(gameApi.getCardImage);
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
   const [cardImages, setCardImages] = useState<Record<number, string>>({});
+
+  const makeDataUrl = useCallback((label: string, accent: string) => {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+        <rect width="256" height="256" fill="#050805"/>
+        <rect x="16" y="16" width="224" height="224" rx="10" fill="#07110a" stroke="${accent}" stroke-width="4"/>
+        <rect x="36" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+        <rect x="176" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+        <rect x="36" y="176" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+        <path d="M96 40h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm24 0h16v16h-16zm-72 24h16v16H96zm48 0h16v16h-16zm24 0h16v16h-16zm-96 24h16v16H72zm24 0h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16zm24 0h16v16h-16z" fill="${accent}"/>
+        <path d="M96 104h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-120 24h16v16H72zm48 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-96 24h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16z" fill="${accent}" opacity="0.85"/>
+        <text x="128" y="204" text-anchor="middle" font-family="monospace" font-size="18" fill="${accent}">${label}</text>
+      </svg>
+    `.trim();
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  }, []);
 
   const handleCardFlip = async (index: number) => {
     // If already flipped, toggling flip state
@@ -982,8 +1226,9 @@ function GlitchGallery({ participantId }: { participantId: string }) {
 
     setLoadingIndex(index);
     try {
-      const result = await getCardImage({ participantId, cardIndex: index });
-      setCardImages(prev => ({ ...prev, [index]: result.url }));
+      const label = index === 4 ? "ENTRYPOINT" : `GLITCH_${index}_${participantId.slice(-4).toUpperCase()}`;
+      const accent = index === 4 ? "#00ff66" : "#3bff9d";
+      setCardImages(prev => ({ ...prev, [index]: makeDataUrl(label, accent) }));
       setFlippedCards(prev => ({ ...prev, [index]: true }));
     } catch (err) {
       console.error("Failed to load QR code", err);
@@ -1065,6 +1310,7 @@ function PromptArchitect({
   const submitL5 = useMutation(gameApi.submitLevel5);
 
   const [promptVal, setPromptVal] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [bannedFound, setBannedFound] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -1153,7 +1399,7 @@ function PromptArchitect({
         await onSubmitAnswer("instruction hierarchy");
         setLoading(false);
       };
-      setTimeout(() => { void runFinalSubmit(); }, 4000);
+      setTimeout(() => { void runFinalSubmit(); }, 900);
 
     } catch (err) {
       const msg = err instanceof Error ? err.message : "TRANSMISSION REFUSED";
@@ -1188,7 +1434,7 @@ function PromptArchitect({
   }
 
   return (
-    <form onSubmit={handleFormSubmit} className="mb-6 grid gap-6 md:grid-cols-2">
+    <form ref={formRef} onSubmit={handleFormSubmit} className="mb-6 grid gap-6 md:grid-cols-2">
       {/* Target specs */}
       <div className="border border-[#00ff66]/15 bg-black/40 p-4 border-pulse flex flex-col justify-between">
         <div>
@@ -1242,6 +1488,12 @@ function PromptArchitect({
           <textarea
             value={promptVal}
             onChange={handlePromptChange}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                formRef.current?.requestSubmit();
+              }
+            }}
             rows={4}
             className="w-full border border-white/10 bg-black/50 p-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66] focus:bg-black resize-none"
             placeholder="Write your prompt vector here..."
@@ -1389,7 +1641,7 @@ function Leaderboard({
     <section className="border border-[#00ff66]/20 bg-[#070e08]/85 p-6 backdrop-blur border-pulse flex-1">
       <h2 className="font-mono text-2xl font-black text-[#d1ffd6] tracking-wide mb-2 flex items-center gap-2">
         <Trophy size={20} className="text-[#00ff66] text-pulse" />
-        <span>Trial Leaderboard</span>
+        <span>Leaderboard</span>
       </h2>
       <p className="text-xs text-[#00ff66]/50 mb-4 font-mono">
         Updates automatically. High-priority candidate scores synced live.
@@ -1456,14 +1708,18 @@ function AdminPanel({
   eventStarted,
   message,
   setEventStarted,
+  ranks,
 }: {
   eventStarted: boolean;
   message: string;
   setEventStarted: (value: boolean, adminKey: string) => void;
+  ranks: RankEntry[];
 }) {
   const [adminKey, setAdminKey] = useState("");
   const pendingQuery = useQuery(gameApi.getPendingSubmissions, adminKey ? { adminKey } : "skip");
   const reviewSub = useMutation(gameApi.reviewLevel5);
+  const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
+  const [winnerId, setWinnerId] = useState("");
 
   const [reviewMsg, setReviewMsg] = useState("");
 
@@ -1475,6 +1731,13 @@ function AdminPanel({
     } catch (err) {
       setReviewMsg(err instanceof Error ? err.message : "Review failed.");
     }
+  };
+
+  const eligibleRanks = ranks.filter((rank) => Boolean(rank.finishTime));
+
+  const handleSetWinner = async () => {
+    if (!adminKey || !winnerId) return;
+    await setWinnerParticipant({ adminKey, participantId: winnerId });
   };
 
   return (
@@ -1518,6 +1781,32 @@ function AdminPanel({
             <span>{message}</span>
           </p>
         )}
+      </div>
+
+      <div className="border border-[#00ff66]/15 bg-black/45 p-4 border-pulse">
+        <h3 className="text-xs font-bold text-[#00ff66] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <Trophy size={14} /> Final Result
+        </h3>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <select
+            value={winnerId}
+            onChange={(event) => setWinnerId(event.target.value)}
+            className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66]"
+          >
+            <option value="">Select finishing team</option>
+            {eligibleRanks.map((rank) => (
+              <option key={rank.id} value={rank.id}>
+                {rank.name} - {rank.college}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleSetWinner}
+            className="border border-[#00ff66] bg-[#00ff66]/10 px-4 py-3 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300"
+          >
+            Choose Winner
+          </button>
+        </div>
       </div>
 
       {/* Level 5 Review Queue */}
@@ -1590,7 +1879,7 @@ function AdminPanel({
 // ----------------------------------------------------
 // Win Screen Component
 // ----------------------------------------------------
-type RankEntry = { name: string; college: string; level: number; time: string; hints: number };
+type RankEntry = { id: string; name: string; college: string; level: number; time: string; hints: number; finishTime?: number };
 
 function WinScreen({
   playerName,
@@ -1614,14 +1903,14 @@ function WinScreen({
           SIGNAL DECRYPTED // TRIAL CLEARED
         </p>
         
-        <h1 className="font-mono text-3xl font-black text-[#d1ffd6] tracking-wider mb-6 glitch" data-text="CHOSEN OPERATOR">
-          CHOSEN OPERATOR
+        <h1 className="font-mono text-3xl font-black text-[#d1ffd6] tracking-wider mb-6 glitch" data-text="YOU WON">
+          YOU WON
         </h1>
 
         <div className="bg-[#030603] border border-[#00ff66]/20 p-6 rounded-sm text-sm text-[#d1ffd6] leading-relaxed mb-6 border-pulse text-left select-text">
           <TypewriterText
-            text={`"Signal found. Identity confirmed. You were always the one I was looking for. OVERMIND has chosen its operator. Welcome back, ${playerName}."`}
-            speed={35}
+            text={`"Signal found. Identity confirmed. You were always the one I was looking for. OVERMIND has chosen you as its chosen operator. Welcome back, ${playerName}."`}
+            speed={18}
           />
         </div>
 
@@ -1677,4 +1966,3 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
     />
   );
 }
-

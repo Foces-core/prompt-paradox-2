@@ -41,7 +41,10 @@ export const eventState = query({
   handler: async (ctx) => {
     if (isMaintenanceMode()) return { started: false };
     const event = await getEvent(ctx);
-    return { started: event?.started ?? true };
+    return {
+      started: event?.started ?? true,
+      winnerParticipantId: event?.winnerParticipantId,
+    };
   },
 });
 
@@ -210,6 +213,24 @@ export const setEventStarted = mutation({
   },
 });
 
+export const setWinnerParticipant = mutation({
+  args: { adminKey: v.string(), participantId: v.string() },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+
+    const event = await getEvent(ctx);
+    if (!event) throw new Error("Event record not found.");
+
+    await ctx.db.patch(event._id, {
+      winnerParticipantId: args.participantId as any,
+      updatedAt: Date.now(),
+    });
+    return { ok: true };
+  },
+});
+
 export const getCardImage = mutation({
   args: { participantId: v.id("participants"), cardIndex: v.number() },
   handler: async (ctx, args) => {
@@ -217,21 +238,31 @@ export const getCardImage = mutation({
     const participant = await ctx.db.get(args.participantId);
     if (!participant) throw new Error("Participant not found.");
 
-    await ctx.db.insert("qrRequests", {
-      participantId: args.participantId,
-      cardIndex: args.cardIndex,
-      requestedAt: Date.now(),
-    });
+    const makeDataUrl = (label: string, accent: string) => {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+          <rect width="256" height="256" fill="#050805"/>
+          <rect x="16" y="16" width="224" height="224" rx="10" fill="#07110a" stroke="${accent}" stroke-width="4"/>
+          <rect x="36" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <rect x="176" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <rect x="36" y="176" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <path d="M96 40h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm24 0h16v16h-16zm-72 24h16v16H96zm48 0h16v16h-16zm24 0h16v16h-16zm-96 24h16v16H72zm24 0h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16zm24 0h16v16h-16z" fill="${accent}"/>
+          <path d="M96 104h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-120 24h16v16H72zm48 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-96 24h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16z" fill="${accent}" opacity="0.85"/>
+          <text x="128" y="204" text-anchor="middle" font-family="monospace" font-size="18" fill="${accent}">${label}</text>
+        </svg>
+      `.trim();
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    };
 
     if (args.cardIndex === 4) {
       return {
-        url: "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ENTRYPOINT",
+        url: makeDataUrl("ENTRYPOINT", "#00ff66"),
         isReal: true,
       };
     } else {
-      const noise = Math.random().toString(36).substring(2, 10).toUpperCase();
+      const noise = `GLITCH_${args.cardIndex}_${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       return {
-        url: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GLITCH_NOISE_${args.cardIndex}_${noise}`,
+        url: makeDataUrl(noise, "#3bff9d"),
         isReal: false,
       };
     }

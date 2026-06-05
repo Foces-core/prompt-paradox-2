@@ -14,6 +14,7 @@ export type PublicParticipant = {
 };
 
 export type LeaderboardRank = {
+  id: string;
   name: string;
   college: string;
   level: number;
@@ -26,7 +27,7 @@ export const gameApi = {
   eventState: makeFunctionReference<
     "query",
     Record<string, never>,
-    { started: boolean }
+    { started: boolean; winnerParticipantId?: string }
   >("game:eventState"),
   leaderboard: makeFunctionReference<
     "query",
@@ -90,4 +91,9 @@ export const gameApi = {
     { adminKey: string; submissionId: string; status: "approved" | "rejected" },
     { ok: boolean }
   >("game:reviewLevel5"),
+  setWinnerParticipant: makeFunctionReference<
+    "mutation",
+    { adminKey: string; participantId: string },
+    { ok: boolean }
+  >("game:setWinnerParticipant"),
 };
