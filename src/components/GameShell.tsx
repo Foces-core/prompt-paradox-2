@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useEffect } from "react";
 import { useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { Check, Clock, Eye, Lock, ShieldCheck, Trophy } from "lucide-react";
@@ -33,6 +34,10 @@ export function GameShell() {
   const answerRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("Ready.");
   const [view, setView] = useState<"game" | "board" | "admin">("game");
+  const [viewedLevelId, setViewedLevelId] = useState(1);
+  const [revealedHints, setRevealedHints] = useState<Set<number>>(
+    () => new Set(),
+  );
   const participant = useQuery(
     gameApi.participant,
     participantId ? { participantId } : "skip",
@@ -43,8 +48,12 @@ export function GameShell() {
   const player = participant;
   const eventStarted = event?.started ?? true;
   const levelId = player?.currentLevel ?? 1;
+  const viewedId = Math.min(Math.max(viewedLevelId, 1), levelId);
+  const level = levels[viewedId - 1] ?? levels[0]!;
 
-  const level = levels[levelId - 1] ?? levels[0]!;
+  useEffect(() => {
+    setViewedLevelId((current) => Math.min(current, levelId));
+  }, [levelId]);
 
   const ranks = useMemo(() => {
     if (!boardRanks) return sampleRanks;
@@ -78,10 +87,17 @@ export function GameShell() {
   async function showHint() {
     if (!participantId) return;
     await saveHint({ participantId, level: level.id });
+    setRevealedHints((current) => {
+      const next = new Set(current);
+      next.add(level.id);
+      return next;
+    });
+    setMessage(`Hint revealed for level ${level.id}.`);
   }
 
   async function toggleEvent(adminKey: string, started: boolean) {
     try {
+      setMessage("Checking admin key...");
       await setEventStarted({ adminKey, started });
       setMessage(
         started ? "Event resumed by admin." : "Event paused by admin.",
@@ -145,16 +161,17 @@ export function GameShell() {
                 key={item.id}
                 className={clsx(
                   "flex items-center gap-2 border px-3 py-2 text-sm",
-                  item.id === levelId
+                  item.id === viewedId
                     ? "border-cyan-300/60 bg-cyan-300/10"
                     : item.id < levelId
                       ? "border-emerald-300/30 text-emerald-200"
                       : "border-white/10 text-white/45",
                 )}
+                onClick={() => setViewedLevelId(item.id)}
               >
                 {item.id < levelId ? (
                   <Check size={15} />
-                ) : item.id === levelId ? (
+                ) : item.id === viewedId ? (
                   <Eye size={15} />
                 ) : (
                   <Lock size={15} />
@@ -172,9 +189,14 @@ export function GameShell() {
             level={level}
             answerRef={answerRef}
             message={message}
-            hintUsed={player.hintsUsed.includes(level.id)}
+            hintUsed={revealedHints.has(level.id)}
+            submitted={level.id < levelId}
             onHint={showHint}
             onSubmit={submitAnswer}
+            onBack={() => setViewedLevelId((current) => Math.max(1, current - 1))}
+            onForward={() =>
+              setViewedLevelId((current) => Math.min(levelId, current + 1))
+            }
           />
         )}
         {view === "board" && <Leaderboard ranks={ranks} />}
@@ -243,8 +265,11 @@ function GamePanel(props: {
   answerRef: React.RefObject<HTMLInputElement | null>;
   message: string;
   hintUsed: boolean;
+  submitted: boolean;
   onHint: () => Promise<void>;
   onSubmit: () => Promise<void>;
+  onBack: () => void;
+  onForward: () => void;
 }) {
   const { level } = props;
   return (
@@ -274,6 +299,9 @@ function GamePanel(props: {
       {props.hintUsed && (
         <p className="mt-3 text-sm text-amber-200">{level.hint}</p>
       )}
+      {!props.hintUsed && (
+        <p className="mt-3 text-sm text-white/45">Hint hidden until used.</p>
+      )}
       {level.id === 2 && (
         <div className="mt-5 border border-cyan-300/20 bg-[#05070c] p-4">
           <div className="grid aspect-video place-items-center border border-dashed border-cyan-300/25 text-sm text-cyan-200/70">
@@ -290,10 +318,22 @@ function GamePanel(props: {
       )}
       {level.id === 3 && <QrGrid />}
       <div className="mt-5 flex gap-2">
+        <button
+          onClick={props.onBack}
+          className="border border-white/15 px-4 font-semibold text-white/70 hover:border-cyan-300 hover:text-cyan-200"
+          aria-label="Previous level"
+        >
+          {"<"}
+        </button>
         <input
           ref={props.answerRef}
           onKeyDown={(event) => {
-            if (event.key === "Enter") void props.onSubmit();
+            if (event.key !== "Enter") return;
+            if (props.submitted) {
+              props.onForward();
+              return;
+            }
+            void props.onSubmit();
           }}
           className="min-w-0 flex-1 border border-white/15 bg-black/40 px-3 py-3 font-mono outline-none focus:border-cyan-300"
           placeholder="Submit answer"
@@ -303,6 +343,13 @@ function GamePanel(props: {
           className="border border-cyan-300 bg-cyan-300 px-5 font-semibold text-[#081016] hover:bg-cyan-200"
         >
           Verify
+        </button>
+        <button
+          onClick={props.onForward}
+          className="border border-white/15 px-4 font-semibold text-white/70 hover:border-cyan-300 hover:text-cyan-200"
+          aria-label="Next level"
+        >
+          {">"}
         </button>
       </div>
       <p className="mt-4 text-sm text-cyan-100/75">{props.message}</p>
@@ -383,6 +430,7 @@ function AdminPanel(props: {
   setEventStarted: (value: boolean, adminKey: string) => void;
 }) {
   const [adminKey, setAdminKey] = useState("");
+  const [pending, setPending] = useState(false);
 
   return (
     <section className="border border-white/10 bg-white/[0.03] p-5">
@@ -394,10 +442,18 @@ function AdminPanel(props: {
           </p>
         </div>
         <button
-          onClick={() => props.setEventStarted(!props.eventStarted, adminKey)}
+          onClick={() => {
+            setPending(true);
+            void Promise.resolve(
+              props.setEventStarted(!props.eventStarted, adminKey),
+            ).finally(() => setPending(false));
+          }}
+          disabled={pending}
           className="border border-cyan-300/40 px-3 py-2 text-sm text-cyan-100"
         >
-          Event {props.eventStarted ? "running" : "paused"}
+          {pending
+            ? "Updating..."
+            : `Event ${props.eventStarted ? "running" : "paused"}`}
         </button>
       </div>
       <input
@@ -407,6 +463,9 @@ function AdminPanel(props: {
         placeholder="Admin key"
         type="password"
       />
+      <p className="mt-2 text-xs text-white/45">
+        Enter the admin key, then use the button to pause or resume the event.
+      </p>
       <p className="mt-3 text-sm text-cyan-100/75">{props.message}</p>
       <div className="mt-5 border border-white/10 bg-black/25 p-4">
         <div className="mb-3 flex items-center gap-2 text-cyan-200">
