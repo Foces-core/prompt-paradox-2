@@ -31,7 +31,7 @@ export function GameShell() {
   const setEventStarted = useMutation(gameApi.setEventStarted);
   const [participantId, setParticipantId] = useState<string | null>(null);
   const answerRef = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState("Awaiting signal.");
+  const [message, setMessage] = useState("Ready.");
   const [view, setView] = useState<"game" | "board" | "admin">("game");
   const participant = useQuery(
     gameApi.participant,
@@ -72,7 +72,7 @@ export function GameShell() {
   async function registerPlayer(nextPlayer: RegistrationPlayer) {
     const registered = await register(nextPlayer);
     setParticipantId(registered.id);
-    setMessage("Awaiting signal.");
+    setMessage("Ready.");
   }
 
   async function showHint() {
@@ -222,8 +222,8 @@ function Registration({
           Prompt Paradox 2.0
         </h1>
         <p className="mt-3 text-sm leading-6 text-white/60">
-          Register, solve eight puzzles, and climb the live board. Dry system
-          voice. No lore dump.
+          Register, solve eight puzzles, and climb the live board. Clean event
+          flow.
         </p>
         <div className="mt-6 space-y-3">
           <Input name="name" placeholder="Full name" />
@@ -277,8 +277,7 @@ function GamePanel(props: {
       {level.id === 2 && (
         <div className="mt-5 border border-cyan-300/20 bg-[#05070c] p-4">
           <div className="grid aspect-video place-items-center border border-dashed border-cyan-300/25 text-sm text-cyan-200/70">
-            Raw PNG placeholder: place final steg file at
-            /public/puzzles/level2.png
+            Puzzle asset slot: place the steg file at /public/puzzles/level2.png
           </div>
           <a
             className="mt-3 inline-block text-sm text-cyan-200 underline"
@@ -391,7 +390,7 @@ function AdminPanel(props: {
         <div>
           <h2 className="font-mono text-2xl font-semibold">Admin</h2>
           <p className="text-sm text-white/55">
-            Event control is server-checked. Level 5 is auto-scored.
+            Event control is server-verified. Level 5 is auto-scored.
           </p>
         </div>
         <button
@@ -415,7 +414,7 @@ function AdminPanel(props: {
         </div>
         <p className="text-sm text-white/55">
           Constraint Layer unlocks from the answer checker, so there is no
-          manual approval queue or stale approval race.
+          manual approval queue or approval lag.
         </p>
       </div>
     </section>
