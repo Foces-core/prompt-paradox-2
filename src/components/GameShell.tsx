@@ -373,6 +373,7 @@ export function GameShell() {
 
   async function toggleEvent(adminKey: string, started: boolean) {
     try {
+      setMessage("Checking admin key...");
       await setEventStarted({ adminKey, started });
       setMessage(started ? "Event resumed by admin." : "Event paused by admin.");
     } catch {
@@ -1720,7 +1721,11 @@ function AdminPanel({
   ranks: RankEntry[];
 }) {
   const [adminKey, setAdminKey] = useState("");
-  const pendingQuery = useQuery(gameApi.getPendingSubmissions, adminKey ? { adminKey } : "skip");
+  const [loadQueue, setLoadQueue] = useState(false);
+  const pendingQuery = useQuery(
+    gameApi.getPendingSubmissions,
+    loadQueue && adminKey ? { adminKey } : "skip",
+  );
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
   const [winnerId, setWinnerId] = useState("");
@@ -1745,20 +1750,30 @@ function AdminPanel({
   };
 
   return (
-    <section className="border border-[#00ff66]/20 bg-[#070e08]/85 p-6 backdrop-blur border-pulse flex-1 space-y-6">
+    <section className="flex-1 space-y-6 border border-[#00ff66]/35 bg-[#050b06]/95 p-6 shadow-[0_0_30px_rgba(0,255,102,0.12)] backdrop-blur">
       <div className="flex flex-wrap items-center justify-between border-b border-[#00ff66]/15 pb-4 gap-4">
         <div>
-          <h2 className="font-mono text-2xl font-black text-[#d1ffd6] tracking-wide">
-            Console Core {"// Admin"}
-          </h2>
-          <p className="text-xs text-[#00ff66]/50 font-mono">
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="font-mono text-2xl font-black text-[#d1ffd6] tracking-wide">
+              Console Core {"// Admin"}
+            </h2>
+            <span className={clsx(
+              "border px-2 py-1 text-[10px] font-mono font-bold tracking-[0.35em]",
+              eventStarted
+                ? "border-[#00ff66]/50 bg-[#00ff66]/10 text-[#00ff66]"
+                : "border-[#ef4444]/50 bg-[#ef4444]/10 text-[#ef4444]",
+            )}>
+              {eventStarted ? "LIVE" : "PAUSED"}
+            </span>
+          </div>
+          <p className="text-xs text-[#00ff66]/60 font-mono mt-2">
             Execute global mutations. Input system key to establish privilege.
           </p>
         </div>
         <button
           onClick={() => setEventStarted(!eventStarted, adminKey)}
           className={clsx(
-            "border px-4 py-2 text-xs font-mono font-bold tracking-wider transition-all duration-300 uppercase cursor-pointer",
+            "border px-4 py-2 text-xs font-mono font-bold tracking-wider transition-all duration-300 uppercase cursor-pointer shadow-[0_0_16px_rgba(0,255,102,0.15)]",
             eventStarted
               ? "border-[#ef4444] bg-[#ef4444]/15 text-[#ef4444] hover:bg-[#ef4444]"
               : "border-[#00ff66] bg-[#00ff66]/15 text-[#00ff66] hover:bg-[#00ff66] hover:text-black"
@@ -1785,6 +1800,12 @@ function AdminPanel({
             <span>{message}</span>
           </p>
         )}
+        <button
+          onClick={() => setLoadQueue(true)}
+          className="mt-2 border border-white/15 px-3 py-2 text-xs font-mono uppercase text-white/70 hover:border-[#00ff66] hover:text-[#00ff66]"
+        >
+          Load review queue
+        </button>
       </div>
 
       <div className="border border-[#00ff66]/15 bg-black/45 p-4 border-pulse">
@@ -1826,7 +1847,11 @@ function AdminPanel({
         )}
 
         <div className="space-y-4 max-h-[300px] overflow-y-auto">
-          {pendingQuery && pendingQuery.length > 0 ? (
+          {!loadQueue ? (
+            <p className="text-center py-6 text-[#00ff66]/30 uppercase tracking-wider text-[11px] font-mono">
+              Queue hidden until loaded.
+            </p>
+          ) : pendingQuery && pendingQuery.length > 0 ? (
             pendingQuery.map(sub => (
               <div key={sub.id} className="border border-[#00ff66]/20 bg-[#030603] p-4 text-xs font-mono space-y-3">
                 <div className="flex justify-between items-start border-b border-[#00ff66]/10 pb-2">
