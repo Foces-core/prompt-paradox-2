@@ -305,8 +305,12 @@ export function GameShell() {
   }, [currentLevel]);
 
   useEffect(() => {
-    setHintRevealedLevels((prev) => prev.filter((id) => id <= currentLevel));
-  }, [currentLevel]);
+    if (!participant) {
+      setHintRevealedLevels([]);
+      return;
+    }
+    setHintRevealedLevels(participant.hintsUsed.filter((id) => id <= currentLevel));
+  }, [participant, currentLevel]);
 
   useEffect(() => {
     if (!player || isFinished) return;
@@ -361,9 +365,9 @@ export function GameShell() {
   async function showHint() {
     if (!participantId) return;
     try {
-      const result = await saveHint({ participantId, level: level.id });
+      const result = await saveHint({ participantId, level: displayedLevel.id });
       setHintRevealedLevels((prev) =>
-        prev.includes(level.id) ? prev : [...prev, level.id],
+        prev.includes(displayedLevel.id) ? prev : [...prev, displayedLevel.id],
       );
       setMessage(result.message ?? "Hint unlocked.");
     } catch (err) {
@@ -382,7 +386,7 @@ export function GameShell() {
   async function toggleEvent(adminKey: string, started: boolean) {
     try {
       setMessage("Checking admin key...");
-      await setEventStarted({ adminKey, started });
+      await setEventStarted({ adminKey: adminKey.trim(), started });
       setMessage(started ? "Event resumed by admin." : "Event paused by admin.");
     } catch {
       setMessage("Admin key rejected.");
@@ -1735,7 +1739,7 @@ function AdminPanel({
   const [loadQueue, setLoadQueue] = useState(false);
   const pendingQuery = useQuery(
     gameApi.getPendingSubmissions,
-    loadQueue && adminKey ? { adminKey } : "skip",
+    loadQueue && adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
   );
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
@@ -1746,7 +1750,7 @@ function AdminPanel({
   const handleReview = async (subId: string, status: "approved" | "rejected") => {
     setReviewMsg("");
     try {
-      await reviewSub({ adminKey, submissionId: subId, status });
+      await reviewSub({ adminKey: adminKey.trim(), submissionId: subId, status });
       setReviewMsg(`Submission ${status === "approved" ? "APPROVED" : "REJECTED"} successfully.`);
     } catch (err) {
       setReviewMsg(err instanceof Error ? err.message : "Review failed.");
@@ -1757,7 +1761,7 @@ function AdminPanel({
 
   const handleSetWinner = async () => {
     if (!adminKey || !winnerId) return;
-    await setWinnerParticipant({ adminKey, participantId: winnerId });
+    await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: winnerId });
   };
 
   return (
