@@ -41,7 +41,10 @@ export const eventState = query({
   handler: async (ctx) => {
     if (isMaintenanceMode()) return { started: false };
     const event = await getEvent(ctx);
-    return { started: event?.started ?? true };
+    return {
+      started: event?.started ?? true,
+      winnerParticipantId: event?.winnerParticipantId,
+    };
   },
 });
 
@@ -205,6 +208,162 @@ export const setEventStarted = mutation({
         started: args.started,
         updatedAt: Date.now(),
       });
+    }
+    return { ok: true };
+  },
+});
+
+export const setWinnerParticipant = mutation({
+  args: { adminKey: v.string(), participantId: v.string() },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+
+    const event = await getEvent(ctx);
+    if (!event) throw new Error("Event record not found.");
+
+    await ctx.db.patch(event._id, {
+      winnerParticipantId: args.participantId as any,
+      updatedAt: Date.now(),
+    });
+    return { ok: true };
+  },
+});
+
+export const getCardImage = mutation({
+  args: { participantId: v.id("participants"), cardIndex: v.number() },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    const participant = await ctx.db.get(args.participantId);
+    if (!participant) throw new Error("Participant not found.");
+
+    const makeDataUrl = (label: string, accent: string) => {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+          <rect width="256" height="256" fill="#050805"/>
+          <rect x="16" y="16" width="224" height="224" rx="10" fill="#07110a" stroke="${accent}" stroke-width="4"/>
+          <rect x="36" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <rect x="176" y="36" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <rect x="36" y="176" width="44" height="44" fill="none" stroke="${accent}" stroke-width="8"/>
+          <path d="M96 40h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm24 0h16v16h-16zm-72 24h16v16H96zm48 0h16v16h-16zm24 0h16v16h-16zm-96 24h16v16H72zm24 0h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16zm24 0h16v16h-16z" fill="${accent}"/>
+          <path d="M96 104h16v16H96zm24 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-120 24h16v16H72zm48 0h16v16h-16zm24 0h16v16h-16zm48 0h16v16h-16zm-96 24h16v16H96zm24 0h16v16h-16zm48 0h16v16h-16z" fill="${accent}" opacity="0.85"/>
+          <text x="128" y="204" text-anchor="middle" font-family="monospace" font-size="18" fill="${accent}">${label}</text>
+        </svg>
+      `.trim();
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    };
+
+    if (args.cardIndex === 4) {
+      return {
+        url: makeDataUrl("ENTRYPOINT", "#00ff66"),
+        isReal: true,
+      };
+    } else {
+      const noise = `GLITCH_${args.cardIndex}_${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      return {
+        url: makeDataUrl(noise, "#3bff9d"),
+        isReal: false,
+      };
+    }
+  },
+});
+
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const submitLevel5 = mutation({
+  args: {
+    participantId: v.id("participants"),
+    prompt: v.string(),
+    screenshotId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    const participant = await ctx.db.get(args.participantId);
+    if (!participant) throw new Error("Participant not found.");
+
+    const submissionId = await ctx.db.insert("level5Submissions", {
+      participantId: args.participantId,
+      prompt: args.prompt,
+      screenshotId: args.screenshotId as any,
+      submittedAt: Date.now(),
+      status: "pending",
+    });
+
+    await ctx.db.patch(args.participantId, {
+      level5Status: "pending",
+    });
+
+    return { ok: true, submissionId };
+  },
+});
+
+export const getPendingSubmissions = query({
+  args: { adminKey: v.string() },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+    const submissions = await ctx.db
+      .query("level5Submissions")
+      .withIndex("by_status", (q) => q.eq("status", "pending"))
+      .collect();
+
+    const result = [];
+    for (const sub of submissions) {
+      const part = await ctx.db.get(sub.participantId);
+      let screenshotUrl = null;
+      if (sub.screenshotId) {
+        screenshotUrl = await ctx.storage.getUrl(sub.screenshotId);
+      }
+      result.push({
+        id: sub._id,
+        participantName: part?.name ?? "Unknown",
+        participantCollege: part?.college ?? "Unknown",
+        prompt: sub.prompt,
+        screenshotUrl,
+        submittedAt: sub.submittedAt,
+      });
+    }
+    return result;
+  },
+});
+
+export const reviewLevel5 = mutation({
+  args: {
+    adminKey: v.string(),
+    submissionId: v.id("level5Submissions"),
+    status: v.union(v.literal("approved"), v.literal("rejected")),
+  },
+  handler: async (ctx, args) => {
+    if (!process.env.ADMIN_KEY || args.adminKey !== process.env.ADMIN_KEY) {
+      throw new Error("Admin key rejected.");
+    }
+    const sub = await ctx.db.get(args.submissionId);
+    if (!sub) throw new Error("Submission not found.");
+
+    await ctx.db.patch(args.submissionId, {
+      status: args.status,
+      reviewedAt: Date.now(),
+    });
+
+    const participant = await ctx.db.get(sub.participantId);
+    if (participant) {
+      const patchData: any = {
+        level5Status: args.status,
+      };
+      if (args.status === "approved") {
+        patchData.currentLevel = 6;
+        if (!participant.completedLevels.includes(5)) {
+          patchData.completedLevels = [...participant.completedLevels, 5];
+        }
+      }
+      await ctx.db.patch(sub.participantId, patchData);
     }
     return { ok: true };
   },
