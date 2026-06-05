@@ -249,6 +249,7 @@ export function GameShell() {
   const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
   const [viewedLevelId, setViewedLevelId] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
+  const [hintRevealedLevels, setHintRevealedLevels] = useState<number[]>([]);
 
   const [view, setView] = useState<"game" | "board" | "admin">("game");
   const [wrongFlash, setWrongFlash] = useState(false);
@@ -301,6 +302,10 @@ export function GameShell() {
     if (currentLevel > 0) {
       setViewedLevelId((prev) => Math.min(Math.max(prev, 1), currentLevel));
     }
+  }, [currentLevel]);
+
+  useEffect(() => {
+    setHintRevealedLevels((prev) => prev.filter((id) => id <= currentLevel));
   }, [currentLevel]);
 
   useEffect(() => {
@@ -357,6 +362,9 @@ export function GameShell() {
     if (!participantId) return;
     try {
       const result = await saveHint({ participantId, level: level.id });
+      setHintRevealedLevels((prev) =>
+        prev.includes(level.id) ? prev : [...prev, level.id],
+      );
       setMessage(result.message ?? "Hint unlocked.");
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Hint unavailable.");
@@ -635,17 +643,18 @@ export function GameShell() {
           {/* Right panel: dynamic views */}
           <div className="flex flex-col gap-6">
             {view === "game" && (
-              <GamePanel
-                level={displayedLevel}
-                participantId={participantId}
-                player={player}
-                answerRef={answerRef}
-                message={message}
-                onHint={showHint}
-                onSubmit={() => submitAnswer()}
-                onCustomSubmit={submitAnswer}
-                onBack={handleBack}
-              />
+            <GamePanel
+              level={displayedLevel}
+              participantId={participantId}
+              player={player}
+              answerRef={answerRef}
+              message={message}
+              onHint={showHint}
+              onSubmit={() => submitAnswer()}
+              onCustomSubmit={submitAnswer}
+              onBack={handleBack}
+              hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
+            />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
             {view === "admin" && (
@@ -1012,6 +1021,7 @@ function GamePanel({
   onSubmit,
   onCustomSubmit,
   onBack,
+  hintRevealed,
 }: {
   level: Level;
   participantId: string;
@@ -1022,6 +1032,7 @@ function GamePanel({
   onSubmit: () => Promise<void>;
   onCustomSubmit: (val: string) => Promise<void>;
   onBack: () => void;
+  hintRevealed: boolean;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -1070,7 +1081,7 @@ function GamePanel({
             <BookOpen size={10} /> Directive Objective
           </p>
           <div className="bg-black/35 border border-white/5 p-4 text-xs font-mono text-[#a7f3d0] leading-relaxed">
-            {level.hint}
+            {hintRevealed ? level.hint : "Hint locked. Press HINT to reveal."}
           </div>
           <div className="mt-3">
             <button
