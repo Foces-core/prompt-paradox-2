@@ -1922,7 +1922,7 @@ function AdminPanel({
           </select>
           <button
             onClick={handleSetWinner}
-            disabled={!adminKey || !finalWinnerId}
+            disabled={!finalWinnerId}
             className="border border-[#00ff66] bg-[#00ff66]/10 px-4 py-3 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Choose Winner
