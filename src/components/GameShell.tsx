@@ -51,7 +51,8 @@ function useAmbientBGM() {
     ctxRef.current = ctx;
 
     const master = ctx.createGain();
-    master.gain.value = 0.12;
+    // The ambient bed was too quiet on laptop speakers; give it more headroom.
+    master.gain.value = 0.22;
     master.connect(ctx.destination);
     gainRef.current = master;
 
@@ -60,7 +61,7 @@ function useAmbientBGM() {
     drone.type = "sawtooth";
     drone.frequency.value = 55; // A1
     const droneGain = ctx.createGain();
-    droneGain.gain.value = 0.3;
+    droneGain.gain.value = 0.42;
     const droneFilter = ctx.createBiquadFilter();
     droneFilter.type = "lowpass";
     droneFilter.frequency.value = 200;
@@ -72,7 +73,7 @@ function useAmbientBGM() {
     sub.type = "sine";
     sub.frequency.value = 36.7; // D1
     const subGain = ctx.createGain();
-    subGain.gain.value = 0.25;
+    subGain.gain.value = 0.34;
     // LFO for pulsing
     const lfo = ctx.createOscillator();
     lfo.type = "sine";
@@ -89,7 +90,7 @@ function useAmbientBGM() {
     high.type = "sine";
     high.frequency.value = 660;
     const highGain = ctx.createGain();
-    highGain.gain.value = 0.02;
+    highGain.gain.value = 0.03;
     // Slow detuning sweep
     high.detune.setValueAtTime(-20, ctx.currentTime);
     high.detune.linearRampToValueAtTime(20, ctx.currentTime + 8);
@@ -112,7 +113,7 @@ function useAmbientBGM() {
     noise.buffer = noiseBuffer;
     noise.loop = true;
     const noiseGain = ctx.createGain();
-    noiseGain.gain.value = 0.015;
+    noiseGain.gain.value = 0.02;
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = "bandpass";
     noiseFilter.frequency.value = 400;
