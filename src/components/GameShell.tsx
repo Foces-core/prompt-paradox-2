@@ -339,6 +339,19 @@ export function GameShell() {
   }, [participantId]);
 
   // Global click feedback: briefly mark clicked buttons so CSS can animate them
+
+  // Haptic helper for supported devices (small vibration on submit/click)
+  const triggerHaptic = (strong = false) => {
+    if (typeof window === "undefined") return;
+    try {
+      const nav = navigator as unknown as {
+        vibrate?: (pattern: number | number[]) => boolean | void;
+      };
+      nav.vibrate?.(strong ? 20 : 10);
+    } catch {
+      // ignore
+    }
+  };
   useEffect(() => {
     const markClick = (e: Event) => {
       try {
@@ -383,6 +396,8 @@ export function GameShell() {
   const submitAnswer = useCallback(
     async (customAnswer?: string) => {
       if (!participantId) return;
+      // immediate light haptic to acknowledge the tap on mobile
+      triggerHaptic(false);
       const submittedAnswer = customAnswer ?? answerRef.current?.value ?? "";
 
       try {
@@ -402,6 +417,8 @@ export function GameShell() {
           // Optimistically advance the viewed trial so the UI forwards to the next level.
           // Server-side state will update `currentLevel` shortly and clamp this view if necessary.
           setViewedLevelId((prev) => Math.min(prev + 1, levels.length));
+          // stronger haptic on success
+          triggerHaptic(true);
         } else {
           setWrongFlash(true);
           setTimeout(() => setWrongFlash(false), 180);
@@ -1652,7 +1669,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                 <div className="flip-card-back relative flex items-center justify-center bg-white p-1">
                   {item?.url ? (
                     <>
-                      { }
+                      {}
                       {isFlipped && (
                         <img
                           src={item.url}
