@@ -1716,6 +1716,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                     <>
                       {}
                       {isFlipped && (
+                        // eslint-disable-next-line @next/next/no-img-element -- level 3 renders raw puzzle image/data URLs; Next Image adds no value here.
                         <img
                           src={item.url}
                           alt={`Matrix node ${index}`}

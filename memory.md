@@ -1,128 +1,104 @@
 # Prompt Paradox 2 Memory
 
-## Current architecture
+## Current Shape
+- Public app: Next.js frontend with Convex as live backend.
+- Main repo: `C:\Users\sebin\pp2-publish`
+- Main branch is the deployment branch.
+- Package manager: `pnpm`
+- Command wrapper: `sfw`
 
-- Public app is a Next.js frontend with Convex as the live backend.
-- Stack chosen: Next.js 15, React 19, TypeScript, Tailwind CSS v4, Convex, `lucide-react`, `clsx`.
-- Package manager: `pnpm`.
-- Public work lives in `C:\Users\sebin\pp2-publish`.
-- Main branch is the public branch.
-
-## Deployment model
-
-- Public site is served as a static / hosted frontend.
-- Convex holds event state, registration, answers, hints, leaderboard, admin actions, and winner state.
-- Current Convex prod deployment:
+## Live Deployment
+- Convex production deployment:
   - `prod:proper-goshawk-251`
-- If backend code changes, deploy Convex before trusting browser results.
-- Offline demo copy stays separate from the public repo unless the user asks to merge it back.
+- If backend code changes, deploy Convex and recheck the live flow.
+- Public frontend is hosted separately from Convex.
 
-## Admin decision
-
-- Admin auth uses `ADMIN_KEY` in Convex when present.
-- If env key is missing, demo fallback key is `overmind`.
-- Admin input is trimmed before compare.
-- Wrong admin key must not crash the UI.
-- `getPendingSubmissions` now returns an empty list on bad auth instead of throwing.
-- Admin review queue is lazy loaded by button, so the panel stays mounted even before queue fetch.
-
-## Game state decisions
-
+## Core Decisions
 - Story gate comes first.
-- Loading gate stays up until admin starts the event.
-- Final victory copy is:
+- Loading stays visible until admin starts the game.
+- Final victory line is:
   - `OVERMIND has chosen you as its chosen operator`
-- Winner reveal stays celebratory around that line.
-- If final winner is unresolved, show `You Won` / `OVERMIND is thinking...` style pending state.
+- Winner reveal should stay celebratory.
+- Pending final result should use a thinking / unresolved state.
 
-## Navigation and controls
+## Admin Decisions
+- Admin auth uses `ADMIN_KEY` when present.
+- If `ADMIN_KEY` is missing, demo fallback is `overmind`.
+- Trim admin input before comparing.
+- Do not let a bad key crash the page.
+- `getPendingSubmissions` returns an empty list on bad auth.
+- Queue loads only when the admin clicks the button.
 
+## Game State Decisions
+- Convex is the source of truth for:
+  - registration
+  - answers
+  - hints
+  - leaderboard
+  - pause / resume
+  - winner selection
+- Client-side state is for display, navigation, and immediate feedback only.
+- Client code must not be trusted for anti-cheat.
+
+## Puzzle / Asset Decisions
+- Level 2 uses local PNG to preserve steganography.
+- Level 3 uses local SVG/data-url generation.
+- No Cloudinary for puzzle-critical assets.
+- No external QR/image API for core gameplay images.
+- CDN/cache tricks are fine for generic assets, not for puzzle correctness.
+
+## Hint Decisions
+- Hint reveal belongs to the displayed level.
+- Hints stay hidden until clicked.
+- Hints should not appear automatically on page load.
+
+## Navigation Decisions
 - Left arrow maps to back.
 - Right arrow maps to submit and advance.
-- Enter on already-submitted pages should act like right arrow.
-- Story replay has its own button after the game starts.
-- Esc bypasses monologue.
-- Back button should stop at level 1.
+- Enter on already-submitted screens should behave like right arrow.
+- Story replay gets its own button after the game starts.
+- Esc bypasses the monologue.
+- Back stops at level 1.
 
-## Level-specific decisions
+## UX Decisions
+- Overmind / terminal styling stays.
+- Audio toggle starts off.
+- Correct answers should celebrate quickly.
+- Wrong answers should fail fast.
+- Keep the UI readable and compact.
 
-- Level 1: strict input handling preserved where format matters.
-- Level 2: use local PNG asset so steganography data is not destroyed.
-- Level 3: QR / card images are generated locally as SVG/data URLs, not fetched from an external image service.
-- Level 5: manual review exists in admin panel.
-- Level 6: custom puzzle input path exists.
-- Level 8: final payload and winner flow live here.
+## Performance Decisions
+- Use deterministic local generation for puzzle visuals when exact bytes matter.
+- Keep dependencies light.
+- Keep the public deploy cheap to run.
+- Avoid paid image/CDN dependencies in the gameplay path.
 
-## Asset and CDN decisions
+## Documentation Decisions
+- `CLAUDE.md`, `agent.md`, and `memory.md` should stay aligned.
+- `agent.md` is the live handoff guide.
+- `memory.md` is the architecture and decision log.
+- `CLAUDE.md` should point to the same rules and commands as the other docs.
 
-- Do not rely on Cloudinary for puzzle-critical assets.
-- Do not rely on external QR or image APIs for gameplay images.
-- Use local assets or deterministic client/server generation instead.
-- Use CDN/cache tricks only for generic site speed, not for core puzzle correctness.
+## Verification Rules
+- Run `sfw pnpm run check`.
+- Run `sfw pnpm run build`.
+- Browser-smoke after runtime/backend changes.
+- Recheck admin queue, hint clicks, and final winner flow.
 
-## Hint and feedback decisions
+## Handoff Snapshot
+- If the shell bridge fails in the main thread, use a worker thread to keep moving.
+- Do not treat the docs as the source of truth for code; verify against the repo.
+- Keep the live deployment and the local repo in sync after every backend change.
 
-- Hint reveal state must track the displayed level.
-- Hint should stay hidden until the user clicks the button.
-- Correct answers should trigger fast, stronger celebration.
-- Wrong answers should fail fast but not stall the app.
-
-## Admin / leaderboard / winner decisions
-
-- Leaderboard label is the public-facing name, not grid board.
-- Leaderboard must sort live results and show clear rank state.
-- Admin can pause / resume the event.
-- Admin can select the winning team when ties or final judgment require it.
-- Final selection should flow into the winner reveal screen.
-
-## Reliability decisions
-
-- Never let an auth mismatch hard-crash the page.
-- Never blank the admin screen just because the queue query failed.
-- Trim and sanitize user-facing admin input before compare.
-- Keep backend responses deterministic where possible.
-- Server / Convex is the source of truth; client code is presentation and interaction only.
-
-## UX decisions
-
-- Terminal theme stays.
-- No card-over-card clutter.
-- Keep text readable and compact.
-- Audio toggle stays off by default.
-- Add stronger success feedback and faster state changes, but do not let animation block play.
-
-## Performance decisions
-
-- Local SVG/data-url generation is preferred over remote fetch for puzzle visuals.
-- Keep the UI snappy.
-- Avoid expensive dependencies on the critical path.
-- Use static assets where the puzzle depends on exact bytes.
-- Keep no-cost deployment in mind: static frontend where possible, no paid image CDN for puzzle flow.
-
-## Testing decisions
-
-- Validate with:
-  - `sfw pnpm run check`
-  - `sfw pnpm run build`
-  - browser smoke test through the local app
-- Verify:
-  - registration
-  - intro bypass
-  - admin panel
-  - hint click
-  - level navigation
-  - final winner reveal
-
-## Known stable strings
-
-- Loading gate: `[LOADING...]`
-- Final line:
-  - `OVERMIND has chosen you as its chosen operator`
-- Demo admin fallback key:
+## Stable Strings
+- Loading gate:
+  - `[LOADING...]`
+- Demo fallback admin key:
   - `overmind`
+- Final reveal:
+  - `OVERMIND has chosen you as its chosen operator`
 
-## Notes for future edits
-
-- If a change touches Convex, test the live deployment path too.
-- If a change touches puzzles, verify the exact asset behavior again.
-- If a change touches admin flow, confirm the queue stays non-fatal on bad input.
+## Follow-Up Rule
+- If a change touches Convex, verify the deployed backend.
+- If a change touches puzzle assets, verify exact bytes / rendering.
+- If a change touches admin flow, verify bad auth stays non-fatal.
