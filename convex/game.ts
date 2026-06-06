@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { isCorrectAnswer } from "./answers";
 
 const MAX_LEVEL = 8;
+const MAX_PENDING_SUBMISSIONS = 50;
 const DEMO_ADMIN_KEY = "overmind";
 
 function isMaintenanceMode() {
@@ -318,28 +319,37 @@ export const getPendingSubmissions = query({
     if (!isValidAdminKey(args.adminKey)) {
       return [];
     }
-    const submissions = await ctx.db
-      .query("level5Submissions")
-      .withIndex("by_status", (q) => q.eq("status", "pending"))
-      .collect();
+    try {
+      const submissions = await ctx.db
+        .query("level5Submissions")
+        .withIndex("by_status", (q) => q.eq("status", "pending"))
+        .take(MAX_PENDING_SUBMISSIONS);
 
-    const result = [];
-    for (const sub of submissions) {
-      const part = await ctx.db.get(sub.participantId);
-      let screenshotUrl = null;
-      if (sub.screenshotId) {
-        screenshotUrl = await ctx.storage.getUrl(sub.screenshotId);
+      const result = [];
+      for (const sub of submissions) {
+        try {
+          const part = await ctx.db.get(sub.participantId);
+          const screenshotUrl = sub.screenshotId
+            ? await ctx.storage.getUrl(sub.screenshotId)
+            : null;
+
+          result.push({
+            id: sub._id,
+            participantName: part?.name ?? "Unknown",
+            participantCollege: part?.college ?? "Unknown",
+            prompt: sub.prompt,
+            screenshotUrl,
+            submittedAt: sub.submittedAt,
+          });
+        } catch {
+          // Skip a corrupted row rather than taking down the admin screen.
+        }
       }
-      result.push({
-        id: sub._id,
-        participantName: part?.name ?? "Unknown",
-        participantCollege: part?.college ?? "Unknown",
-        prompt: sub.prompt,
-        screenshotUrl,
-        submittedAt: sub.submittedAt,
-      });
+
+      return result.sort((a, b) => b.submittedAt - a.submittedAt);
+    } catch {
+      return [];
     }
-    return result;
   },
 });
 
