@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Prompt Paradox 2.0",
   description: "Signal Trials event app",
   icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
+  viewport: "width=device-width, initial-scale=1",
 };
 
 const spaceMono = Space_Mono({

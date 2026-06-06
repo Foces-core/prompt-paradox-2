@@ -300,6 +300,38 @@ textarea {
     #050c05;
 }
 
+/* Mobile optimizations */
+html, body {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+button, input, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 640px) {
+  :root { --tap-target-size: 48px; }
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+  }
+  input, textarea {
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+  .flip-card {
+    min-width: 72px;
+    min-height: 72px;
+  }
+  .flip-card-front, .flip-card-back {
+    padding: 0.25rem;
+  }
+}
+
 /* Click / Active feedback for buttons */
 button[data-clicked="true"] {
   transform: translateY(1px) scale(0.992);
