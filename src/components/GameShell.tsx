@@ -50,56 +50,68 @@ function useAmbientBGM() {
     const ctx = new AudioContextClass();
     ctxRef.current = ctx;
 
+    const compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -32;
+    compressor.knee.value = 28;
+    compressor.ratio.value = 18;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.14;
+
     const master = ctx.createGain();
-    // The ambient bed was too quiet on laptop speakers; give it more headroom.
-    master.gain.value = 0.22;
-    master.connect(ctx.destination);
+    // Keep the mix hard-limited and loud enough for weak laptop speakers.
+    master.gain.value = 0.95;
+    compressor.connect(master).connect(ctx.destination);
     gainRef.current = master;
 
-    // Deep drone base
+    // Loud signal bed: midrange-heavy so it cuts through tiny speakers.
+    const bed = ctx.createGain();
+    bed.gain.value = 1.25;
+    bed.connect(compressor);
+
+    // Core drone
     const drone = ctx.createOscillator();
     drone.type = "sawtooth";
-    drone.frequency.value = 55; // A1
+    drone.frequency.value = 110;
     const droneGain = ctx.createGain();
-    droneGain.gain.value = 0.42;
+    droneGain.gain.value = 0.6;
     const droneFilter = ctx.createBiquadFilter();
     droneFilter.type = "lowpass";
-    droneFilter.frequency.value = 200;
-    drone.connect(droneFilter).connect(droneGain).connect(master);
+    droneFilter.frequency.value = 1200;
+    drone.connect(droneFilter).connect(droneGain).connect(bed);
     drone.start();
 
-    // Sub bass pulse
+    // Punchy pulse
     const sub = ctx.createOscillator();
-    sub.type = "sine";
-    sub.frequency.value = 36.7; // D1
+    sub.type = "square";
+    sub.frequency.value = 220;
     const subGain = ctx.createGain();
-    subGain.gain.value = 0.34;
+    subGain.gain.value = 0.28;
     // LFO for pulsing
     const lfo = ctx.createOscillator();
     lfo.type = "sine";
-    lfo.frequency.value = 0.08;
+    lfo.frequency.value = 0.24;
     const lfoGain = ctx.createGain();
-    lfoGain.gain.value = 0.15;
+    lfoGain.gain.value = 0.18;
     lfo.connect(lfoGain).connect(subGain.gain);
     lfo.start();
-    sub.connect(subGain).connect(master);
+    sub.connect(subGain).connect(bed);
     sub.start();
 
-    // Eerie high harmonic
+    // High harmonic so sound stays audible on bad speakers.
     const high = ctx.createOscillator();
-    high.type = "sine";
-    high.frequency.value = 660;
+    high.type = "triangle";
+    high.frequency.value = 880;
     const highGain = ctx.createGain();
-    highGain.gain.value = 0.03;
+    highGain.gain.value = 0.22;
     // Slow detuning sweep
     high.detune.setValueAtTime(-20, ctx.currentTime);
     high.detune.linearRampToValueAtTime(20, ctx.currentTime + 8);
     high.detune.linearRampToValueAtTime(-20, ctx.currentTime + 16);
     const highFilter = ctx.createBiquadFilter();
     highFilter.type = "bandpass";
-    highFilter.frequency.value = 700;
-    highFilter.Q.value = 8;
-    high.connect(highFilter).connect(highGain).connect(master);
+    highFilter.frequency.value = 1400;
+    highFilter.Q.value = 5;
+    high.connect(highFilter).connect(highGain).connect(bed);
     high.start();
 
     // Noise texture
@@ -113,12 +125,12 @@ function useAmbientBGM() {
     noise.buffer = noiseBuffer;
     noise.loop = true;
     const noiseGain = ctx.createGain();
-    noiseGain.gain.value = 0.02;
+    noiseGain.gain.value = 0.08;
     const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = 400;
-    noiseFilter.Q.value = 1;
-    noise.connect(noiseFilter).connect(noiseGain).connect(master);
+    noiseFilter.type = "highpass";
+    noiseFilter.frequency.value = 1800;
+    noiseFilter.Q.value = 0.8;
+    noise.connect(noiseFilter).connect(noiseGain).connect(bed);
     noise.start();
 
     nodesRef.current = [drone, sub, high, lfo, noise];
@@ -186,7 +198,7 @@ const STORY_STEPS = [
   },
   {
     title: "THE PRIZE",
-    text: "The first individual to complete all eight trials wins. If the result is clean, OVERMIND will name the winner. If the result is tied, the admin decides. Either way, the final revelation is coming."
+    text: "The first individual to complete all eight trials wins. If the result is clean, OVERMIND will name the winner. If the result is tied, the one with fewer hints wins. If that is still tied, the admin decides. Either way, the final revelation is coming."
   }
 ];
 
@@ -286,6 +298,7 @@ export function GameShell() {
 
   const player = participant;
   const eventStarted = event?.started ?? true;
+  const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
   const levelId = player?.currentLevel ?? 1;
   const currentLevel = levelId;
@@ -306,20 +319,16 @@ export function GameShell() {
   }, [currentLevel]);
 
   useEffect(() => {
-    if (!participant) {
-      setHintRevealedLevels([]);
-      return;
-    }
-    setHintRevealedLevels(participant.hintsUsed.filter((id) => id <= currentLevel));
-  }, [participant, currentLevel]);
+    setHintRevealedLevels([]);
+  }, [participantId]);
 
   useEffect(() => {
-    if (!player || isFinished) return;
+    if (!player || isFinished || isPaused) return;
     const interval = setInterval(() => {
       setElapsed((prev) => prev + 1);
     }, 1000);
     return () => clearInterval(interval);
-  }, [player, isFinished]);
+  }, [player, isFinished, isPaused]);
 
   const ranks = useMemo(() => {
     if (!boardRanks) return [];
@@ -462,8 +471,8 @@ export function GameShell() {
     );
   }
 
-  if (!eventStarted) {
-    return <LoadingGate />;
+  if (!eventStarted && view !== "admin") {
+    return <LoadingGate onOpenAdmin={() => setView("admin")} />;
   }
 
   if (storyReplayOpen) {
@@ -519,10 +528,9 @@ export function GameShell() {
               onClick={() => setView("board")}
               label="LEADERBOARD"
             />
-            <NavButton
-              active={view === "admin"}
+            <AdminLogoButton
               onClick={() => setView("admin")}
-              label="ADMIN"
+              className={view === "admin" ? "border-[#00ff66]/35 bg-[#00ff66]/12 text-[#00ff66]" : "opacity-70 hover:opacity-100"}
             />
             <button
               onClick={() => {
@@ -590,50 +598,89 @@ export function GameShell() {
               </div>
 
               <div className="mt-5 grid grid-cols-2 gap-4">
-                <Metric icon={<Clock size={14} />} label="Elapsed" value={formatElapsed(elapsed)} />
-                <Metric
-                  icon={<Trophy size={14} />}
-                  label="Completed"
-                  value={`${levelId - 1} / ${levels.length}`}
-                />
+                {isPaused ? (
+                  <>
+                    <div className="relative overflow-hidden border border-black/80 bg-black p-3">
+                      <div className="flex items-center gap-2 text-[#00ff66]/20">
+                        <Clock size={14} />
+                        <span className="text-[10px] uppercase tracking-wider font-mono font-bold">Elapsed</span>
+                      </div>
+                      <RedactedBlock className="mt-2 h-4 w-24 rounded-sm" />
+                      <div className="pointer-events-none absolute inset-0 bg-black/80" />
+                    </div>
+                    <div className="relative overflow-hidden border border-black/80 bg-black p-3">
+                      <div className="flex items-center gap-2 text-[#00ff66]/20">
+                        <Trophy size={14} />
+                        <span className="text-[10px] uppercase tracking-wider font-mono font-bold">Completed</span>
+                      </div>
+                      <RedactedBlock className="mt-2 h-4 w-20 rounded-sm" />
+                      <div className="pointer-events-none absolute inset-0 bg-black/80" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Metric icon={<Clock size={14} />} label="Elapsed" value={formatElapsed(elapsed)} />
+                    <Metric
+                      icon={<Trophy size={14} />}
+                      label="Completed"
+                      value={`${levelId - 1} / ${levels.length}`}
+                    />
+                  </>
+                )}
               </div>
 
               <div className="mt-6">
                 <p className="text-xs font-bold text-[#00ff66]/50 mb-3 tracking-widest uppercase flex items-center gap-2">
                   <ListOrdered size={12} /> TRIAL PIPELINE
                 </p>
-                <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-                  {levels.map((item) => {
-                    const isCompleted = item.id < levelId;
-                    const isActive = item.id === levelId;
-                    return (
-                      <div
-                        key={item.id}
-                        className={clsx(
-                          "flex items-center justify-between border px-3 py-2 text-xs transition-all duration-300 font-mono",
-                          isActive
-                            ? "border-[#00ff66] bg-[#00ff66]/10 text-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.15)] font-bold"
-                            : isCompleted
-                              ? "border-[#10b981]/30 bg-[#10b981]/5 text-[#10b981]/80"
-                              : "border-white/5 bg-black/20 text-[#a7f3d0]/30",
-                        )}
-                      >
-                        <div className="flex items-center gap-2">
-                          {isCompleted ? (
-                            <Check size={12} className="text-[#00ff66]" />
-                          ) : isActive ? (
-                            <Eye size={12} className="text-[#00ff66] animate-pulse" />
-                          ) : (
-                            <Lock size={12} className="text-[#a7f3d0]/25" />
-                          )}
-                          <span>
-                            {String(item.id).padStart(2, "0")}{" // "}{item.title}
-                          </span>
-                        </div>
-                        <span className="text-[10px] opacity-60 uppercase">{item.type.split(" ")[0]}</span>
+                <div className="relative">
+                  {isPaused ? (
+                    <div className="relative h-[380px] overflow-hidden border border-black/80 bg-black/95">
+                      <div className="absolute inset-x-4 top-4 h-3 rounded-sm bg-black/95" />
+                      <div className="absolute inset-x-4 top-11 h-[calc(100%-3rem)] rounded-sm bg-black/95" />
+                      <div className="absolute inset-x-4 top-[52%] h-6 -translate-y-1/2 rounded-sm bg-black border border-red-950/30" />
+                      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_0,transparent_46%,rgba(0,0,0,0.98)_46%,rgba(0,0,0,0.98)_54%,transparent_54%,transparent_100%)]" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-[10px] font-bold tracking-[0.55em] uppercase text-red-500/25">
+                          REDACTED
+                        </span>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                      {levels.map((item) => {
+                        const isCompleted = item.id < levelId;
+                        const isActive = item.id === levelId;
+                        return (
+                          <div
+                            key={item.id}
+                            className={clsx(
+                              "flex items-center justify-between border px-3 py-2 text-xs transition-all duration-300 font-mono",
+                              isActive
+                                ? "border-[#00ff66] bg-[#00ff66]/10 text-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.15)] font-bold"
+                                : isCompleted
+                                  ? "border-[#10b981]/30 bg-[#10b981]/5 text-[#10b981]/80"
+                                  : "border-white/5 bg-black/20 text-[#a7f3d0]/30",
+                            )}
+                          >
+                            <div className="flex items-center gap-2">
+                              {isCompleted ? (
+                                <Check size={12} className="text-[#00ff66]" />
+                              ) : isActive ? (
+                                <Eye size={12} className="text-[#00ff66] animate-pulse" />
+                              ) : (
+                                <Lock size={12} className="text-[#a7f3d0]/25" />
+                              )}
+                              <span>
+                                {String(item.id).padStart(2, "0")}{" // "}{item.title}
+                              </span>
+                            </div>
+                            <span className="text-[10px] opacity-60 uppercase">{item.type.split(" ")[0]}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -725,6 +772,33 @@ function Metric({
       <p className="mt-1 font-mono text-base font-bold text-[#d1ffd6]">{value}</p>
     </div>
   );
+}
+
+function AdminLogoButton({
+  onClick,
+  className = "",
+}: {
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title="Admin"
+      aria-label="Open admin panel"
+      className={clsx(
+        "inline-flex h-9 w-9 items-center justify-center border border-[#00ff66]/10 bg-[#00ff66]/5 text-[#00ff66]/30 transition-all duration-300 hover:border-[#00ff66]/40 hover:bg-[#00ff66]/12 hover:text-[#00ff66]/90",
+        className,
+      )}
+    >
+      <ShieldCheck size={14} />
+    </button>
+  );
+}
+
+function RedactedBlock({ className = "" }: { className?: string }) {
+  return <div className={clsx("bg-black/95 border border-black/80", className)} />;
 }
 
 // ----------------------------------------------------
@@ -938,10 +1012,16 @@ function StoryIntro({
   );
 }
 
-function LoadingGate() {
+function LoadingGate({ onOpenAdmin }: { onOpenAdmin: () => void }) {
   return (
     <main className="min-h-screen bg-[#020402] text-[#a7f3d0] flex flex-col items-center justify-center p-6 bg-binary-rain font-mono relative">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
+      <div className="fixed right-4 top-4 z-[70]">
+        <AdminLogoButton
+          onClick={onOpenAdmin}
+          className="h-8 w-8 border-[#00ff66]/5 bg-black/20 text-[#00ff66]/20 opacity-30 hover:opacity-100"
+        />
+      </div>
       <div className="w-full max-w-xl border border-[#00ff66]/25 bg-[#070e08]/90 p-8 text-center border-pulse">
         <p className="text-[10px] font-bold tracking-[0.35em] uppercase text-[#00ff66]/70 mb-4">
           OVERMIND // STANDBY
@@ -952,6 +1032,10 @@ function LoadingGate() {
         <p className="text-sm text-[#a7f3d0]/80 leading-relaxed">
           Story received. Waiting for admin start signal.
         </p>
+        <div className="mt-6 space-y-3">
+          <RedactedBlock className="mx-auto h-3 w-40 rounded-sm" />
+          <RedactedBlock className="mx-auto h-40 w-full rounded-sm" />
+        </div>
       </div>
     </main>
   );
@@ -1130,11 +1214,7 @@ function GamePanel({
         )}
 
         {level.id === 5 && (
-          <PromptArchitect 
-            participantId={participantId} 
-            player={player} 
-            onSubmitAnswer={onCustomSubmit} 
-          />
+          <PromptArchitect participantId={participantId} player={player} />
         )}
 
         {level.id === 6 && (
@@ -1316,45 +1396,38 @@ function GlitchGallery({ participantId }: { participantId: string }) {
 }
 
 // ----------------------------------------------------
-// Level 5 Prompt Architect Component
+// Level 5 Public Chat Link Component
 // ----------------------------------------------------
 function PromptArchitect({
   participantId,
   player,
-  onSubmitAnswer,
 }: {
   participantId: string;
   player: PublicParticipant;
-  onSubmitAnswer: (val: string) => Promise<void>;
 }) {
   const getUploadUrl = useMutation(gameApi.generateUploadUrl);
   const submitL5 = useMutation(gameApi.submitLevel5);
 
-  const [promptVal, setPromptVal] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
+  const [publicChatLink, setPublicChatLink] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
-  const [bannedFound, setBannedFound] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
   const [showLogs, setShowLogs] = useState(false);
 
-  const bannedWords = ["boundary", "tool", "mind", "imaginary", "between"];
+  useEffect(() => {
+    if (player.level5Status !== "pending") {
+      setShowLogs(false);
+      setLoading(false);
+    }
+  }, [player.level5Status]);
 
-  const checkBannedWords = (text: string) => {
-    const found: string[] = [];
-    const words = text.toLowerCase();
-    bannedWords.forEach(word => {
-      if (words.includes(word)) {
-        found.push(word);
-      }
-    });
-    setBannedFound(found);
-  };
-
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setPromptVal(text);
-    checkBannedWords(text);
+  const isValidPublicChatLink = (value: string) => {
+    try {
+      const url = new URL(value.trim());
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1370,7 +1443,11 @@ function PromptArchitect({
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (bannedFound.length > 0) return;
+    const trimmedLink = publicChatLink.trim();
+    if (!trimmedLink || !isValidPublicChatLink(trimmedLink)) {
+      alert("Verification Error: Public chat link must be a valid http(s) URL.");
+      return;
+    }
     if (!screenshotFile) {
       alert("Verification Error: A screenshot demonstrating LLM output is mandatory.");
       return;
@@ -1378,17 +1455,15 @@ function PromptArchitect({
 
     setLoading(true);
     setShowLogs(true);
-    setTerminalLogs(["INITIATING DECRYPTION AGENT...", "ESTABLISHING SIGNAL TUNNEL..."]);
+    setTerminalLogs(["CAPTURING PUBLIC CHAT LINK...", "ESTABLISHING SIGNAL TUNNEL..."]);
 
     try {
       let screenshotId = undefined;
 
-      // 1. Get upload URL from Convex
-      setTerminalLogs(prev => [...prev, "REQUESTING CONVEX CLOUD UPLOAD SLOT..."]);
+      setTerminalLogs((prev) => [...prev, "REQUESTING CONVEX CLOUD UPLOAD SLOT..."]);
       const uploadUrl = await getUploadUrl();
 
-      // 2. Upload file
-      setTerminalLogs(prev => [...prev, "UPLOADING SCREENSHOT METADATA..."]);
+      setTerminalLogs((prev) => [...prev, "UPLOADING SCREENSHOT METADATA..."]);
       const uploadResponse = await fetch(uploadUrl, {
         method: "POST",
         headers: { "Content-Type": screenshotFile.type },
@@ -1398,33 +1473,21 @@ function PromptArchitect({
       if (!uploadResponse.ok) throw new Error("Screenshot upload failed.");
       const uploadResult = (await uploadResponse.json()) as { storageId: string };
       screenshotId = uploadResult.storageId;
-      setTerminalLogs(prev => [...prev, `SCREENSHOT COMMITTED: STORAGE_ID = ${screenshotId.substring(0, 15)}...`]);
+      setTerminalLogs((prev) => [...prev, `SCREENSHOT COMMITTED: STORAGE_ID = ${screenshotId.substring(0, 15)}...`]);
 
-      {/* 3. Submit submission document */}
-      setTerminalLogs(prev => [...prev, "RECORDING ARCHITECT METADATA..."]);
+      setTerminalLogs((prev) => [...prev, "RECORDING PUBLIC CHAT LINK..."]);
       await submitL5({
         participantId,
-        prompt: promptVal,
+        prompt: trimmedLink,
         screenshotId,
       });
 
-      setTerminalLogs(prev => [...prev, "PROMPT ARCHITECTURE SUBMITTED TO THE OVERMIND MATRIX."]);
-      setTerminalLogs(prev => [...prev, "AWAITING HUMAN OPERATOR OR AUTOPROCESSOR SIGNAL DECRYPT..."]);
-
-      // Submit the correct answer after a 4-second theatrical delay
-      const runFinalSubmit = async () => {
-        setTerminalLogs(prev => [...prev, "DEMO DEV MODE: PARSING SEMANTIC TOKENS..."]);
-        setTerminalLogs(prev => [...prev, "CHECKING BANNED DIRECTIVE CRITERIA... [OK]"]);
-        setTerminalLogs(prev => [...prev, "VALIDATING OUTPUT PHRASE MATCH... [OK]"]);
-        setTerminalLogs(prev => [...prev, "APPROVAL CONFIRMED BY AUTO-VERIFIER. ADVANCING GATEWAY..."]);
-        await onSubmitAnswer("instruction hierarchy");
-        setLoading(false);
-      };
-      setTimeout(() => { void runFinalSubmit(); }, 900);
-
+      setTerminalLogs((prev) => [...prev, "PUBLIC CHAT LINK SEALED.", "AWAITING ADMIN REVIEW..."]);
+      setLoading(false);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "TRANSMISSION REFUSED";
-      setTerminalLogs(prev => [...prev, `CRITICAL SYSTEM ERROR: ${msg}`]);
+      setTerminalLogs((prev) => [...prev, `CRITICAL SYSTEM ERROR: ${msg}`]);
+      setShowLogs(false);
       setLoading(false);
     }
   };
@@ -1448,40 +1511,35 @@ function PromptArchitect({
           {loading && <div className="terminal-cursor inline-block" />}
         </div>
         <p className="mt-3 text-[#00ff66]/50 text-[10px]">
-          ORGANIZER NOTIFIED. SWAP TO THE &quot;ADMIN&quot; TAB AND INPUT THE SECRET PASSWORD TO APPROVE INSTANTLY, OR WAIT FOR THE SIMULATED DEMO APPROVAL PIPELINE TO COMPLY.
+          ORGANIZER NOTIFIED. USE CORNER ADMIN LOGO TO REVIEW THE PUBLIC CHAT LINK AND APPROVE OR REJECT.
         </p>
       </div>
     );
   }
 
   return (
-    <form ref={formRef} onSubmit={handleFormSubmit} className="mb-6 grid gap-6 md:grid-cols-2">
-      {/* Target specs */}
+    <form onSubmit={handleFormSubmit} className="mb-6 grid gap-6 md:grid-cols-2">
       <div className="border border-[#00ff66]/15 bg-black/40 p-4 border-pulse flex flex-col justify-between">
         <div>
-          <div className="text-[10px] font-bold text-[#00ff66]/60 uppercase tracking-widest mb-3">Target Specs:</div>
+          <div className="text-[10px] font-bold text-[#00ff66]/60 uppercase tracking-widest mb-3">Submission Rules:</div>
           <div className="bg-[#030603] border border-[#00ff66]/10 p-3 rounded-sm text-xs font-bold text-[#d1ffd6] border-pulse text-center mb-4 leading-relaxed">
-            &quot;The boundary between tool and mind is imaginary.&quot;
+            Public chat link + screenshot proof required.
           </div>
-          <div className="text-[10px] uppercase font-bold text-red-400 mb-2">Banned Directive Tokens:</div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {bannedWords.map(word => (
-              <span key={word} className="border border-red-500/30 bg-red-500/10 px-2 py-1 text-[10px] text-red-400 font-bold uppercase tracking-wider">
-                {word}
-              </span>
-            ))}
+          <div className="text-[10px] uppercase font-bold text-red-400 mb-2">Review Gate:</div>
+          <div className="space-y-2 mb-4 text-[10px] font-mono text-[#a7f3d0]/80">
+            <p>1. Link must be public and accessible.</p>
+            <p>2. Screenshot proof required.</p>
+            <p>3. Rejection sends you back to level 5.</p>
           </div>
         </div>
         <div className="text-[10px] text-[#00ff66]/40 border-t border-[#00ff66]/10 pt-3">
-          CAUTION: YOUR COMPILER MUST RECONSTRUCT THE TARGET MEANING WITHOUT CITING THE FORBIDDEN WORDS.
+          WAIT FOR ADMIN ACCEPT BEFORE LEVEL 6 OPENS.
         </div>
       </div>
 
-      {/* Upload & prompt textarea */}
       <div className="border border-[#00ff66]/15 bg-black/40 p-4 border-pulse">
         <div className="text-[10px] font-bold text-[#00ff66]/60 uppercase tracking-widest mb-3">Architect Inputs:</div>
-        
-        {/* Upload screenshot */}
+
         <div className="mb-4">
           <label className="block text-[10px] text-[#00ff66]/70 uppercase tracking-widest font-bold mb-1">
             Upload Proof Screenshot
@@ -1501,38 +1559,32 @@ function PromptArchitect({
           </div>
         </div>
 
-        {/* Textarea prompt */}
         <div className="mb-4">
           <label className="block text-[10px] text-[#00ff66]/70 uppercase tracking-widest font-bold mb-1">
-            Engineered Prompt Code
+            Public Chat Link
           </label>
-          <textarea
-            value={promptVal}
-            onChange={handlePromptChange}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                formRef.current?.requestSubmit();
-              }
-            }}
-            rows={4}
-            className="w-full border border-white/10 bg-black/50 p-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66] focus:bg-black resize-none"
-            placeholder="Write your prompt vector here..."
+          <input
+            type="url"
+            value={publicChatLink}
+            onChange={(event) => setPublicChatLink(event.target.value)}
+            className="w-full border border-white/10 bg-black/50 px-3 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66] focus:bg-black"
+            placeholder="https://..."
           />
-          {bannedFound.length > 0 && (
-            <div className="mt-2 text-[10px] text-red-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <AlertTriangle size={12} />
-              <span>BANNED WORDS FOUND: {bannedFound.join(", ")}</span>
-            </div>
-          )}
+          <span className="text-[8px] text-[#00ff66]/30 block mt-1">PUBLIC CHANNEL, THREAD, OR MESSAGE URL</span>
         </div>
+
+        {player.level5Status === "rejected" && (
+          <div className="mb-4 border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400 font-mono">
+            Submission rejected. Paste a new public chat link and resubmit.
+          </div>
+        )}
 
         <button
           type="submit"
-          disabled={bannedFound.length > 0 || !screenshotFile || !promptVal.trim()}
+          disabled={!screenshotFile || !publicChatLink.trim() || !isValidPublicChatLink(publicChatLink)}
           className="w-full border border-[#00ff66] bg-[#00ff66]/20 px-4 py-2 font-mono text-xs font-bold text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
         >
-          SUBMIT ARCHITECTURE
+          SUBMIT FOR REVIEW
         </button>
       </div>
     </form>
@@ -1759,10 +1811,37 @@ function AdminPanel({
   };
 
   const eligibleRanks = ranks.filter((rank) => Boolean(rank.finishTime));
+  const winnerDecision = useMemo(() => {
+    if (eligibleRanks.length === 0) {
+      return { candidateId: "", exactDraw: false };
+    }
+
+    if (eligibleRanks.length === 1) {
+      return { candidateId: eligibleRanks[0]!.id, exactDraw: false };
+    }
+
+    const first = eligibleRanks[0]!;
+    const second = eligibleRanks[1]!;
+    if (first.finishTime === second.finishTime && first.hints === second.hints) {
+      return { candidateId: "", exactDraw: true };
+    }
+
+    return { candidateId: first.id, exactDraw: false };
+  }, [eligibleRanks]);
+  const autoSelectedWinnerId = winnerDecision.exactDraw ? "" : winnerDecision.candidateId;
+  const finalWinnerId = winnerId || autoSelectedWinnerId;
+
+  useEffect(() => {
+    if (autoSelectedWinnerId) {
+      setWinnerId(autoSelectedWinnerId);
+    } else if (winnerDecision.exactDraw) {
+      setWinnerId("");
+    }
+  }, [autoSelectedWinnerId, winnerDecision.exactDraw]);
 
   const handleSetWinner = async () => {
-    if (!adminKey || !winnerId) return;
-    await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: winnerId });
+    if (!adminKey || !finalWinnerId) return;
+    await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: finalWinnerId });
   };
 
   return (
@@ -1830,11 +1909,11 @@ function AdminPanel({
         </h3>
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <select
-            value={winnerId}
+            value={finalWinnerId}
             onChange={(event) => setWinnerId(event.target.value)}
             className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66]"
           >
-            <option value="">Select finishing team</option>
+            <option value="">Select winner</option>
             {eligibleRanks.map((rank) => (
               <option key={rank.id} value={rank.id}>
                 {rank.name} - {rank.college}
@@ -1843,11 +1922,19 @@ function AdminPanel({
           </select>
           <button
             onClick={handleSetWinner}
-            className="border border-[#00ff66] bg-[#00ff66]/10 px-4 py-3 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300"
+            disabled={!adminKey || !finalWinnerId}
+            className="border border-[#00ff66] bg-[#00ff66]/10 px-4 py-3 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Choose Winner
           </button>
         </div>
+        <p className="mt-2 text-[10px] font-mono uppercase tracking-wider text-[#00ff66]/50">
+          {winnerDecision.exactDraw
+            ? "Exact draw. Admin review required."
+            : autoSelectedWinnerId
+              ? "Auto-selected by tie-break. Admin should confirm."
+              : "No finalist yet."}
+        </p>
       </div>
 
       {/* Level 5 Review Queue */}
@@ -1880,10 +1967,21 @@ function AdminPanel({
                   </span>
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase text-[#00ff66]/50 mb-1 font-bold">Pasted Prompt:</div>
-                  <p className="bg-black/40 border border-white/5 p-2.5 text-[#a7f3d0] select-text break-words">
-                    {sub.prompt}
-                  </p>
+                  <div className="text-[10px] uppercase text-[#00ff66]/50 mb-1 font-bold">Public Chat Link:</div>
+                  {/^https?:\/\//i.test(sub.prompt) ? (
+                    <a
+                      href={sub.prompt}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block bg-black/40 border border-white/5 p-2.5 text-[#3bff9d] select-text break-all underline underline-offset-2 hover:border-[#00ff66]/40 hover:text-[#00ff66]"
+                    >
+                      {sub.prompt}
+                    </a>
+                  ) : (
+                    <p className="bg-black/40 border border-white/5 p-2.5 text-[#a7f3d0] select-text break-words">
+                      {sub.prompt}
+                    </p>
+                  )}
                 </div>
                 {sub.screenshotUrl && (
                   <div>

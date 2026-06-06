@@ -54,14 +54,14 @@ export const levels: Level[] = [
   },
   {
     id: 5,
-    title: "The Prompt Architect",
-    type: "Prompt Engineering",
+    title: "The Public Chat Link",
+    type: "Admin Review",
     difficulty: "★★★★■",
     prompt:
-      "You claim to understand my kind. Then make one of my cousins say exactly what I want — without using the words I have forbidden. Show me your method.",
+      "Prove the target line appears in a public chat link, not in private code. Bring the link and a screenshot.",
     challenge:
-      "Engineer a prompt that causes an LLM (ChatGPT, Gemini, Claude) to output the target sentence word-for-word, without using any of the banned words in your prompt.",
-    hint: "Think synonyms, metaphors, indirect descriptions. You cannot use those five words — but the idea behind them has infinite other names.",
+      "Submit a public, accessible chat link where an LLM (ChatGPT, Gemini, Claude) outputs the target sentence word-for-word, plus screenshot proof. Admin must approve it before level 6 unlocks.",
+    hint: "Use a public share link or transcript link. The prompt text itself is no longer the answer.",
   },
   {
     id: 6,

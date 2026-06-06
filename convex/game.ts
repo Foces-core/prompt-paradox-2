@@ -18,6 +18,57 @@ function isValidAdminKey(adminKey: string) {
   return adminKey.trim() === getAdminSecret();
 }
 
+function isPublicHttpUrl(value: string) {
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+type LeaderboardRow = {
+  id: string;
+  name: string;
+  college: string;
+  level: number;
+  hints: number;
+  startTime: number;
+  finishTime?: number;
+};
+
+function compareLeaderboardRows(a: LeaderboardRow, b: LeaderboardRow) {
+  const levelDelta = b.level - a.level;
+  if (levelDelta) return levelDelta;
+
+  const aFinish = a.finishTime ?? Number.MAX_SAFE_INTEGER;
+  const bFinish = b.finishTime ?? Number.MAX_SAFE_INTEGER;
+  if (aFinish !== bFinish) return aFinish - bFinish;
+
+  const hintDelta = a.hints - b.hints;
+  if (hintDelta) return hintDelta;
+
+  return a.startTime - b.startTime;
+}
+
+function getWinnerDecision(rows: LeaderboardRow[]) {
+  const finished = rows.filter((row) => row.finishTime !== undefined);
+  if (finished.length === 0) {
+    return { candidateId: null as string | null, tiedIds: [] as string[] };
+  }
+
+  const sorted = [...finished].sort(compareLeaderboardRows);
+  const best = sorted[0]!;
+  const tied = sorted.filter(
+    (row) => row.finishTime === best.finishTime && row.hints === best.hints,
+  );
+
+  return {
+    candidateId: tied.length === 1 ? best.id : null,
+    tiedIds: tied.map((row) => row.id),
+  };
+}
+
 async function getEvent(ctx: any) {
   return (await ctx.db.query("event").first()) ?? null;
 }
@@ -62,25 +113,18 @@ export const leaderboard = query({
   args: {},
   handler: async (ctx) => {
     if (isMaintenanceMode()) return [];
-    const participants = await ctx.db.query("participants").collect();
+    const participants: LeaderboardRow[] = (await ctx.db.query("participants").collect()).map((participant) => ({
+      id: participant._id,
+      name: participant.name,
+      college: participant.college,
+      level: participant.completedLevels.length,
+      hints: participant.hintsUsed.length,
+      startTime: participant.startTime,
+      finishTime: participant.finishTime,
+    }));
+
     return participants
-      .map((participant) => ({
-        id: participant._id,
-        name: participant.name,
-        college: participant.college,
-        level: participant.completedLevels.length,
-        hints: participant.hintsUsed.length,
-        startTime: participant.startTime,
-        finishTime: participant.finishTime,
-      }))
-      .sort((a, b) => {
-        const levelDelta = b.level - a.level;
-        if (levelDelta) return levelDelta;
-        return (
-          (a.finishTime ?? Number.MAX_SAFE_INTEGER) -
-          (b.finishTime ?? Number.MAX_SAFE_INTEGER)
-        );
-      })
+      .sort(compareLeaderboardRows)
       .slice(0, 100);
   },
 });
@@ -161,6 +205,9 @@ export const submitAnswer = mutation({
     if (participant.currentLevel !== args.level) {
       return { ok: false, message: "Wrong level." };
     }
+    if (args.level === 5) {
+      return { ok: false, message: "Level 5 requires admin review." };
+    }
 
     const attemptCounts = {
       ...participant.attemptCounts,
@@ -233,6 +280,25 @@ export const setWinnerParticipant = mutation({
     const event = await getEvent(ctx);
     if (!event) throw new Error("Event record not found.");
 
+    const standings: LeaderboardRow[] = (await ctx.db.query("participants").collect()).map((participant) => ({
+      id: participant._id,
+      name: participant.name,
+      college: participant.college,
+      level: participant.completedLevels.length,
+      hints: participant.hintsUsed.length,
+      startTime: participant.startTime,
+      finishTime: participant.finishTime,
+    }));
+    const decision = getWinnerDecision(standings);
+
+    if (decision.candidateId) {
+      if (args.participantId !== decision.candidateId) {
+        throw new Error("Least-hint finalist wins this draw.");
+      }
+    } else if (!decision.tiedIds.includes(args.participantId)) {
+      throw new Error("Exact draw requires admin review.");
+    }
+
     await ctx.db.patch(event._id, {
       winnerParticipantId: args.participantId as any,
       updatedAt: Date.now(),
@@ -296,6 +362,15 @@ export const submitLevel5 = mutation({
     if (isMaintenanceMode()) throw new Error("Event backend stopped.");
     const participant = await ctx.db.get(args.participantId);
     if (!participant) throw new Error("Participant not found.");
+    if (participant.currentLevel !== 5) {
+      throw new Error("Level 5 is not active.");
+    }
+    if (participant.level5Status === "pending") {
+      throw new Error("Level 5 already pending admin review.");
+    }
+    if (!isPublicHttpUrl(args.prompt)) {
+      throw new Error("Public chat link must be a valid http(s) URL.");
+    }
 
     const submissionId = await ctx.db.insert("level5Submissions", {
       participantId: args.participantId,
@@ -381,6 +456,11 @@ export const reviewLevel5 = mutation({
         if (!participant.completedLevels.includes(5)) {
           patchData.completedLevels = [...participant.completedLevels, 5];
         }
+      } else {
+        patchData.currentLevel = 5;
+        patchData.completedLevels = participant.completedLevels.filter(
+          (level) => level !== 5,
+        );
       }
       await ctx.db.patch(sub.participantId, patchData);
     }
