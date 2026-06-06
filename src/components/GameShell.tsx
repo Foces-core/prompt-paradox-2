@@ -1797,6 +1797,8 @@ function AdminPanel({
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
   const [winnerId, setWinnerId] = useState("");
+  const [winnerActionMsg, setWinnerActionMsg] = useState("");
+  const [winnerSaving, setWinnerSaving] = useState(false);
 
   const [reviewMsg, setReviewMsg] = useState("");
 
@@ -1841,7 +1843,16 @@ function AdminPanel({
 
   const handleSetWinner = async () => {
     if (!adminKey || !finalWinnerId) return;
-    await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: finalWinnerId });
+    setWinnerSaving(true);
+    setWinnerActionMsg("");
+    try {
+      await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: finalWinnerId });
+      setWinnerActionMsg("Winner selected.");
+    } catch (err) {
+      setWinnerActionMsg(err instanceof Error ? err.message : "Winner select failed.");
+    } finally {
+      setWinnerSaving(false);
+    }
   };
 
   return (
@@ -1922,12 +1933,22 @@ function AdminPanel({
           </select>
           <button
             onClick={handleSetWinner}
-            disabled={!finalWinnerId}
-            className="border border-[#00ff66] bg-[#00ff66]/10 px-4 py-3 text-xs font-mono font-bold uppercase text-[#00ff66] hover:bg-[#00ff66] hover:text-black transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled={!finalWinnerId || winnerSaving}
+            className={clsx(
+              "border px-4 py-3 text-xs font-mono font-bold uppercase transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed",
+              winnerActionMsg
+                ? "border-[#00ff66] bg-[#00ff66] text-black shadow-[0_0_18px_rgba(0,255,102,0.35)]"
+                : "border-[#00ff66] bg-[#00ff66]/10 text-[#00ff66] hover:bg-[#00ff66] hover:text-black",
+            )}
           >
-            Choose Winner
+            {winnerSaving ? "Selecting..." : winnerActionMsg || "Choose Winner"}
           </button>
         </div>
+        {winnerActionMsg && (
+          <p className="mt-2 text-[10px] font-mono uppercase tracking-wider text-[#00ff66]">
+            {winnerActionMsg}
+          </p>
+        )}
         <p className="mt-2 text-[10px] font-mono uppercase tracking-wider text-[#00ff66]/50">
           {winnerDecision.exactDraw
             ? "Exact draw. Admin review required."
