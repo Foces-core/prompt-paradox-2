@@ -83,6 +83,7 @@ function publicParticipant(participant: {
   hintsUsed: number[];
   startTime: number;
   finishTime?: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
 }) {
   return {
     id: participant._id,
@@ -94,6 +95,7 @@ function publicParticipant(participant: {
     hintsUsed: participant.hintsUsed,
     startTime: participant.startTime,
     finishTime: participant.finishTime,
+    level5Status: participant.level5Status,
   };
 }
 
