@@ -16,7 +16,8 @@ export const levels: Level[] = [
     difficulty: "★■■■■",
     prompt:
       "Before we begin, prove you speak my language. Say the most fundamental thing every computer scientist knows — but say it the way machines do.",
-    challenge: 'What does CPU stand for? Convert the answer into binary (ASCII encoding) and submit it.',
+    challenge:
+      "What does CPU stand for? Convert the answer into binary (ASCII encoding) and submit it.",
     hint: "The three letters that every computer has at its heart. Now say them in ones and zeroes.",
   },
   {

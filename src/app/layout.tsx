@@ -23,7 +23,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${spaceMono.variable}`}>
-      <body className="antialiased bg-[#020502] text-[#d1ffd6] selection:bg-[#00ff66]/25 selection:text-[#00ff66]">
+      <body className="bg-[#020502] text-[#d1ffd6] antialiased selection:bg-[#00ff66]/25 selection:text-[#00ff66]">
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>

@@ -299,3 +299,22 @@ textarea {
     repeating-linear-gradient(45deg, rgba(0, 255, 102, 0.05) 0 2px, transparent 2px 5px),
     #050c05;
 }
+
+/* Click / Active feedback for buttons */
+button[data-clicked="true"] {
+  transform: translateY(1px) scale(0.992);
+  filter: brightness(1.08);
+  transition: transform 120ms ease, filter 120ms ease;
+  box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.06);
+}
+
+button:active {
+  transform: translateY(1px) scale(0.99);
+  filter: brightness(1.06);
+  transition: transform 80ms ease, filter 80ms ease;
+}
+
+button:focus-visible {
+  outline: 2px solid rgba(0, 255, 102, 0.08);
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.08);
+}
