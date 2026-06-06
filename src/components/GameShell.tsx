@@ -58,14 +58,13 @@ function useAmbientBGM() {
     compressor.release.value = 0.14;
 
     const master = ctx.createGain();
-    // Keep the mix hard-limited and loud enough for weak laptop speakers.
-    master.gain.value = 0.95;
+    // Keep the mix controlled and tolerable.
+    master.gain.value = 0.35;
     compressor.connect(master).connect(ctx.destination);
     gainRef.current = master;
 
-    // Loud signal bed: midrange-heavy so it cuts through tiny speakers.
     const bed = ctx.createGain();
-    bed.gain.value = 1.25;
+    bed.gain.value = 0.5;
     bed.connect(compressor);
 
     // Core drone
@@ -73,7 +72,7 @@ function useAmbientBGM() {
     drone.type = "sawtooth";
     drone.frequency.value = 110;
     const droneGain = ctx.createGain();
-    droneGain.gain.value = 0.6;
+    droneGain.gain.value = 0.3;
     const droneFilter = ctx.createBiquadFilter();
     droneFilter.type = "lowpass";
     droneFilter.frequency.value = 1200;
@@ -85,13 +84,13 @@ function useAmbientBGM() {
     sub.type = "square";
     sub.frequency.value = 220;
     const subGain = ctx.createGain();
-    subGain.gain.value = 0.28;
+    subGain.gain.value = 0.12;
     // LFO for pulsing
     const lfo = ctx.createOscillator();
     lfo.type = "sine";
     lfo.frequency.value = 0.24;
     const lfoGain = ctx.createGain();
-    lfoGain.gain.value = 0.18;
+    lfoGain.gain.value = 0.08;
     lfo.connect(lfoGain).connect(subGain.gain);
     lfo.start();
     sub.connect(subGain).connect(bed);
@@ -102,7 +101,7 @@ function useAmbientBGM() {
     high.type = "triangle";
     high.frequency.value = 880;
     const highGain = ctx.createGain();
-    highGain.gain.value = 0.22;
+    highGain.gain.value = 0.1;
     // Slow detuning sweep
     high.detune.setValueAtTime(-20, ctx.currentTime);
     high.detune.linearRampToValueAtTime(20, ctx.currentTime + 8);
@@ -125,7 +124,7 @@ function useAmbientBGM() {
     noise.buffer = noiseBuffer;
     noise.loop = true;
     const noiseGain = ctx.createGain();
-    noiseGain.gain.value = 0.08;
+    noiseGain.gain.value = 0.03;
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = "highpass";
     noiseFilter.frequency.value = 1800;
@@ -339,6 +338,7 @@ export function GameShell() {
       level: rank.level,
       time: rank.finishTime ? "done" : "live",
       hints: rank.hints,
+      finishTime: rank.finishTime,
     }));
   }, [boardRanks]);
 
