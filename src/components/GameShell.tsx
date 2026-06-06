@@ -211,6 +211,87 @@ function formString(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+type Level3GalleryItem = {
+  file?: string;
+  url: string;
+  real: boolean;
+  answer?: string;
+};
+
+function seededShuffle<T>(arr: readonly T[], seed: string): T[] {
+  const out = [...arr];
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  let rand = h || 1;
+  const rnd = () => {
+    rand = Math.imul(48271, rand) % 2147483647;
+    return (rand & 0x7fffffff) / 2147483647;
+  };
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    const left = out[i]!;
+    const right = out[j]!;
+    out[i] = right;
+    out[j] = left;
+  }
+  return out;
+}
+
+function isUnknownArray(value: unknown): value is unknown[] {
+  return Array.isArray(value);
+}
+
+function buildLevel3GalleryItem(
+  entry: unknown,
+  index: number,
+  participantId: string,
+  makeDataUrl: (label: string, accent: string) => string,
+): Level3GalleryItem {
+  const fallbackLabel = `GLITCH_${index}_${participantId.slice(-4).toUpperCase()}`;
+
+  if (typeof entry === "string") {
+    return {
+      file: entry,
+      url: `${basePath}/puzzles/level3/${entry}`,
+      real: /real|correct|entry|answer/i.test(entry),
+      answer: undefined,
+    };
+  }
+
+  if (typeof entry === "object" && entry !== null && !Array.isArray(entry)) {
+    const record = entry as Record<string, unknown>;
+    const file = typeof record.file === "string" ? record.file : "";
+    const real = Boolean(record.real);
+    const answer = typeof record.answer === "string" ? record.answer : undefined;
+
+    if (file) {
+      return {
+        file,
+        url: `${basePath}/puzzles/level3/${file}`,
+        real,
+        answer,
+      };
+    }
+
+    return {
+      file: undefined,
+      url: makeDataUrl(answer ?? fallbackLabel, real ? "#00ff66" : "#3bff9d"),
+      real,
+      answer,
+    };
+  }
+
+  return {
+    file: undefined,
+    url: makeDataUrl(fallbackLabel, "#3bff9d"),
+    real: false,
+    answer: undefined,
+  };
+}
+
 // Typewriter Text Component with immediate completion on click
 function TypewriterText({
   text,
@@ -1450,9 +1531,9 @@ function Level7Challenge() {
 function GlitchGallery({ participantId }: { participantId: string }) {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
-  const [arrangedImages, setArrangedImages] = useState<
-    Array<{ url: string; real?: boolean; file?: string; answer?: string }>
-  >([]);
+  const [arrangedImages, setArrangedImages] = useState<Level3GalleryItem[]>(
+    [],
+  );
   const [loadedFlags, setLoadedFlags] = useState<Record<number, boolean>>({});
 
   const makeDataUrl = useCallback((label: string, accent: string) => {
@@ -1471,28 +1552,6 @@ function GlitchGallery({ participantId }: { participantId: string }) {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }, []);
 
-  // Simple seeded shuffle so each participant sees a different layout deterministically
-  const seededShuffle = useCallback((arr: any[], seed: string) => {
-    const out = arr.slice();
-    let h = 2166136261 >>> 0;
-    for (let i = 0; i < seed.length; i++) {
-      h ^= seed.charCodeAt(i);
-      h = Math.imul(h, 16777619) >>> 0;
-    }
-    let rand = h || 1;
-    const rnd = () => {
-      rand = Math.imul(48271, rand) % 2147483647;
-      return (rand & 0x7fffffff) / 2147483647;
-    };
-    for (let i = out.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      const tmp = out[i];
-      out[i] = out[j];
-      out[j] = tmp;
-    }
-    return out;
-  }, []);
-
   useEffect(() => {
     let cancelled = false;
 
@@ -1500,35 +1559,21 @@ function GlitchGallery({ participantId }: { participantId: string }) {
       try {
         const res = await fetch(`${basePath}/puzzles/level3/manifest.json`);
         if (!res.ok) throw new Error("no manifest");
-        const json = await res.json();
-        const list = Array.isArray(json) ? json : [];
+        const json: unknown = await res.json();
+        const list = isUnknownArray(json) ? json.slice(0, 9) : [];
 
-        let normalized = list.slice(0, 9).map((entry: any, i: number) => {
-          if (typeof entry === "string") {
-            const file = entry;
-            return {
-              file,
-              url: `${basePath}/puzzles/level3/${file}`,
-              real: /real|correct|entry|answer/i.test(file),
-              answer: undefined,
-            };
-          }
-          return {
-            file: entry.file,
-            url: `${basePath}/puzzles/level3/${entry.file}`,
-            real: !!entry.real,
-            answer: entry.answer,
-          };
-        });
+        let normalized = list.map((entry, i) =>
+          buildLevel3GalleryItem(entry, i, participantId, makeDataUrl),
+        );
 
         // Verify each manifest URL exists; if a file is missing replace with generated placeholder
         const verified = await Promise.all(
-          normalized.map(async (entry: any, i: number) => {
+          normalized.map(async (entry, i) => {
             if (entry.file) {
               try {
                 const head = await fetch(entry.url, { method: "HEAD" });
                 if (head.ok) return entry;
-              } catch (e) {
+              } catch {
                 // fall through to placeholder
               }
             }
@@ -1567,7 +1612,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
 
         const shuffled = seededShuffle(normalized, participantId);
         if (!cancelled) setArrangedImages(shuffled);
-      } catch (err) {
+      } catch {
         // fallback: generate 9 synthetic items with a single real entry
         const generated = Array.from({ length: 9 }).map((_, i) => {
           const label =
@@ -1586,11 +1631,11 @@ function GlitchGallery({ participantId }: { participantId: string }) {
       }
     }
 
-    init();
+    void init();
     return () => {
       cancelled = true;
     };
-  }, [participantId, makeDataUrl, seededShuffle]);
+  }, [participantId, makeDataUrl]);
 
   const handleCardFlip = (index: number) => {
     if (loadingIndex !== null) return; // one request at a time
