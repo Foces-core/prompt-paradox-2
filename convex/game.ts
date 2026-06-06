@@ -115,7 +115,9 @@ export const leaderboard = query({
   args: {},
   handler: async (ctx) => {
     if (isMaintenanceMode()) return [];
-    const participants: LeaderboardRow[] = (await ctx.db.query("participants").collect()).map((participant) => ({
+    const participants: LeaderboardRow[] = (
+      await ctx.db.query("participants").collect()
+    ).map((participant) => ({
       id: participant._id,
       name: participant.name,
       college: participant.college,
@@ -125,9 +127,7 @@ export const leaderboard = query({
       finishTime: participant.finishTime,
     }));
 
-    return participants
-      .sort(compareLeaderboardRows)
-      .slice(0, 100);
+    return participants.sort(compareLeaderboardRows).slice(0, 100);
   },
 });
 
@@ -282,7 +282,9 @@ export const setWinnerParticipant = mutation({
     const event = await getEvent(ctx);
     if (!event) throw new Error("Event record not found.");
 
-    const standings: LeaderboardRow[] = (await ctx.db.query("participants").collect()).map((participant) => ({
+    const standings: LeaderboardRow[] = (
+      await ctx.db.query("participants").collect()
+    ).map((participant) => ({
       id: participant._id,
       name: participant.name,
       college: participant.college,

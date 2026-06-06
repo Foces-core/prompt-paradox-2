@@ -84,4 +84,41 @@ $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set A
 
 - Level 1 accepts only the binary encoding of `Central Processing Unit`.
 - Level 5 proceeds without admin approval in the current implementation.
-- The public site is static; live game state  comes from Convex.
+- The public site is static; live game state comes from Convex.
+
+## Consolidated Notes
+
+### Agents & Convex
+
+- This repo uses Convex as its backend. When working on Convex code, always read `convex/_generated/ai/guidelines.md` before making changes — it contains project-specific rules for Convex functions and AI agent usage.
+- Convex agent skills for common tasks can be installed with `npx convex ai-files install`.
+
+### Package manager & environment
+
+- Use `pnpm` by default for JavaScript/TypeScript package management: prefer `pnpm install`, `pnpm add`, `pnpm run <script>`, and `pnpm dlx`.
+- When available, wrap networked package/tool commands with the `sfw` wrapper (example: `sfw pnpm install`) to respect local firewall policies.
+
+### Level 3 Assets (Glitch Gallery)
+
+- Place nine images (PNG recommended) into `public/puzzles/level3/`. One image should be the real scannable QR encoding the passphrase (default behaviour expects `real.png` or mark the entry in `manifest.json` with `"real": true`).
+- A sample `manifest.json` is included at `public/puzzles/level3/manifest.json`. Each manifest entry may be a string filename or an object with `{ file, real?, answer? }`.
+- Gallery behaviour:
+  - Images are shuffled deterministically per participant ID (so layout changes per participant but is stable for that participant).
+  - Only one card may be flipped/open at a time.
+  - Participants scan the flipped image using their phone camera; there is no in-app scan button.
+  - If no manifest or assets exist, the UI falls back to generated placeholder visuals so the grid remains functional.
+
+PowerShell quick copy example (from Downloads\img into the workspace):
+
+```powershell
+# from within your user Downloads folder
+Copy-Item -Path "$env:USERPROFILE\Downloads\img\*" -Destination "$PWD\public\puzzles\level3\" -Recurse
+```
+
+### Documentation consolidation
+
+- Per-folder READMEs (for example `public/puzzles/level3/README.md`) have been consolidated into this top-level README to centralize project notes.
+
+### Architecture notes
+
+- Recent undocumented architectural changes have been recorded to `/memories/repo/architecture.md`. See that file for a precise change log (gloss: GlitchGallery refactor, seeded shuffle, manifest handling, placeholder fallback, removal of in-app scan button, and README consolidation).

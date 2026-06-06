@@ -1,0 +1,11 @@
+[
+  { "file": "01_bankai.png" },
+  { "file": "a_titan.png" },
+  { "file": "glitch.png" },
+  { "file": "hi.png" },
+  { "file": "ENTRYPOINT.png", "real": true, "answer": "ENTRYPOINT" },
+  { "file": "kurama_9.png" },
+  { "file": "mha.png" },
+  { "file": "pika.png" },
+  { "file": "roll.png" }
+]
