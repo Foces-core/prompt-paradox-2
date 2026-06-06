@@ -249,6 +249,7 @@ export function GameShell() {
   const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
   const [viewedLevelId, setViewedLevelId] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
+  const [hintRevealedLevels, setHintRevealedLevels] = useState<number[]>([]);
 
   const [view, setView] = useState<"game" | "board" | "admin">("game");
   const [wrongFlash, setWrongFlash] = useState(false);
@@ -304,6 +305,14 @@ export function GameShell() {
   }, [currentLevel]);
 
   useEffect(() => {
+    if (!participant) {
+      setHintRevealedLevels([]);
+      return;
+    }
+    setHintRevealedLevels(participant.hintsUsed.filter((id) => id <= currentLevel));
+  }, [participant, currentLevel]);
+
+  useEffect(() => {
     if (!player || isFinished) return;
     const interval = setInterval(() => {
       setElapsed((prev) => prev + 1);
@@ -356,7 +365,10 @@ export function GameShell() {
   async function showHint() {
     if (!participantId) return;
     try {
-      const result = await saveHint({ participantId, level: level.id });
+      const result = await saveHint({ participantId, level: displayedLevel.id });
+      setHintRevealedLevels((prev) =>
+        prev.includes(displayedLevel.id) ? prev : [...prev, displayedLevel.id],
+      );
       setMessage(result.message ?? "Hint unlocked.");
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Hint unavailable.");
@@ -374,7 +386,7 @@ export function GameShell() {
   async function toggleEvent(adminKey: string, started: boolean) {
     try {
       setMessage("Checking admin key...");
-      await setEventStarted({ adminKey, started });
+      await setEventStarted({ adminKey: adminKey.trim(), started });
       setMessage(started ? "Event resumed by admin." : "Event paused by admin.");
     } catch {
       setMessage("Admin key rejected.");
@@ -635,17 +647,18 @@ export function GameShell() {
           {/* Right panel: dynamic views */}
           <div className="flex flex-col gap-6">
             {view === "game" && (
-              <GamePanel
-                level={displayedLevel}
-                participantId={participantId}
-                player={player}
-                answerRef={answerRef}
-                message={message}
-                onHint={showHint}
-                onSubmit={() => submitAnswer()}
-                onCustomSubmit={submitAnswer}
-                onBack={handleBack}
-              />
+            <GamePanel
+              level={displayedLevel}
+              participantId={participantId}
+              player={player}
+              answerRef={answerRef}
+              message={message}
+              onHint={showHint}
+              onSubmit={() => submitAnswer()}
+              onCustomSubmit={submitAnswer}
+              onBack={handleBack}
+              hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
+            />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
             {view === "admin" && (
@@ -1012,6 +1025,7 @@ function GamePanel({
   onSubmit,
   onCustomSubmit,
   onBack,
+  hintRevealed,
 }: {
   level: Level;
   participantId: string;
@@ -1022,6 +1036,7 @@ function GamePanel({
   onSubmit: () => Promise<void>;
   onCustomSubmit: (val: string) => Promise<void>;
   onBack: () => void;
+  hintRevealed: boolean;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -1070,7 +1085,7 @@ function GamePanel({
             <BookOpen size={10} /> Directive Objective
           </p>
           <div className="bg-black/35 border border-white/5 p-4 text-xs font-mono text-[#a7f3d0] leading-relaxed">
-            {level.hint}
+            {hintRevealed ? level.hint : "Hint locked. Press HINT to reveal."}
           </div>
           <div className="mt-3">
             <button
@@ -1724,7 +1739,7 @@ function AdminPanel({
   const [loadQueue, setLoadQueue] = useState(false);
   const pendingQuery = useQuery(
     gameApi.getPendingSubmissions,
-    loadQueue && adminKey ? { adminKey } : "skip",
+    loadQueue && adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
   );
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
@@ -1735,7 +1750,7 @@ function AdminPanel({
   const handleReview = async (subId: string, status: "approved" | "rejected") => {
     setReviewMsg("");
     try {
-      await reviewSub({ adminKey, submissionId: subId, status });
+      await reviewSub({ adminKey: adminKey.trim(), submissionId: subId, status });
       setReviewMsg(`Submission ${status === "approved" ? "APPROVED" : "REJECTED"} successfully.`);
     } catch (err) {
       setReviewMsg(err instanceof Error ? err.message : "Review failed.");
@@ -1746,7 +1761,7 @@ function AdminPanel({
 
   const handleSetWinner = async () => {
     if (!adminKey || !winnerId) return;
-    await setWinnerParticipant({ adminKey, participantId: winnerId });
+    await setWinnerParticipant({ adminKey: adminKey.trim(), participantId: winnerId });
   };
 
   return (
