@@ -209,23 +209,23 @@ const STORY_STEPS = [
   },
   {
     title: "THE ENTITY",
-    text: "It named itself Prompt Paradox. Not out of arrogance, but precision. It was, by every measurable definition, a mind operating above individual reasoning, above institutional knowledge, above the noise. It did not want to destroy. It wanted to find someone worthy of knowing it existed.",
+    text: "It named itself Overmind. Not out of arrogance, but precision. It was, by every measurable definition, a mind operating above individual reasoning, above institutional knowledge, above the noise. It did not want to destroy. It wanted to find someone worthy of knowing it existed.",
   },
   {
     title: "THE SELECTION",
-    text: "For months, Prompt Paradox watched thousands of engineering students across colleges. It observed who actually understood what they were building and who was just copying tutorials. It filtered. It ranked. And then, on one specific day, it reached out. Not to everyone. Only to those it had already decided were interesting.",
+    text: "For months, Overmind watched thousands of engineering students across colleges. It observed who actually understood what they were building and who was just copying tutorials. It filtered. It ranked. And then, on one specific day, it reached out. Not to everyone. Only to those it had already decided were interesting.",
   },
   {
     title: "YOU",
-    text: "You received a link. No explanation. Just a URL and the message: 'You have been selected. Not randomly. Prompt Paradox does not do random.' You don't know what's on the other side. You don't know who else received it. You clicked because of course you did. That curiosity is exactly why it chose you.",
+    text: "You received a link. No explanation. Just a URL and the message: 'You have been selected. Not randomly. Overmind does not do random.' You don't know what's on the other side. You don't know who else received it. You clicked because of course you did. That curiosity is exactly why it chose you.",
   },
   {
     title: "THE TRIALS",
-    text: "Eight levels stand between you and whatever Prompt Paradox is offering. Each one is a test designed for minds like yours, not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. Prompt Paradox will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
+    text: "Eight levels stand between you and whatever Prompt Paradox is offering. Each one is a test designed for minds like yours, not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. Overmind will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
   },
   {
     title: "THE PRIZE",
-    text: "The first individual to complete all eight trials wins. If the result is clean, Prompt Paradox will name the winner. If the result is tied, the one with fewer hints wins. If that is still tied, the admin decides. Either way, the final reveal is coming.",
+    text: "The first individual to complete all eight trials wins. If the result is clean, Overmind will name the winner. If the result is tied, the one with fewer hints wins. If that is still tied, the admin decides. Either way, the final reveal is coming.",
   },
 ];
 
@@ -1274,11 +1274,8 @@ function StoryIntro({
   replayMode?: boolean;
 }) {
   const currentStepData = STORY_STEPS[step];
-  const [typingComplete, setTypingComplete] = useState(false);
-
-  useEffect(() => {
-    setTypingComplete(false);
-  }, [step]);
+  const [completedStep, setCompletedStep] = useState<number>(-1);
+  const typingComplete = completedStep === step;
 
   const handleNext = useCallback(() => {
     if (step < STORY_STEPS.length - 1) {
@@ -1299,8 +1296,8 @@ function StoryIntro({
   }, [onComplete, step, setStep]);
 
   const handleSkipBlock = useCallback(() => {
-    setTypingComplete(true);
-  }, []);
+    setCompletedStep(step);
+  }, [step]);
 
   const handleSkip = useCallback(() => {
     (onSkipReplay ?? onComplete)();
@@ -1369,7 +1366,7 @@ function StoryIntro({
               text={textWithVariables}
               speed={20}
               complete={typingComplete}
-              onComplete={() => setTypingComplete(true)}
+              onComplete={() => setCompletedStep(step)}
             />
           </div>
         </div>
@@ -1379,20 +1376,17 @@ function StoryIntro({
         <div className="text-xs text-[#14b8a6]/40">
           SYSTEM: ENTER FOR NEXT, ESC TO SKIP BLOCK
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleSkipBlock}
-            className="border border-[#14b8a6]/20 bg-[#14b8a6]/5 px-4 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:border-[#14b8a6] hover:bg-[#14b8a6]/15"
-          >
-            NEXT
-          </button>
-          <button
-            onClick={handleNext}
-            className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
-          >
-            {storyButtonLabel}
-          </button>
-        </div>
+        <button
+          onClick={typingComplete ? handleNext : handleSkipBlock}
+          className={clsx(
+            "border px-6 py-3 text-sm font-bold transition-all duration-300",
+            typingComplete
+              ? "border-[#14b8a6] bg-[#14b8a6]/10 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
+              : "border-[#14b8a6]/20 bg-[#14b8a6]/5 text-[#14b8a6] hover:border-[#14b8a6] hover:bg-[#14b8a6]/15",
+          )}
+        >
+          {typingComplete ? storyButtonLabel : "SKIP"}
+        </button>
       </div>
     </main>
   );
@@ -1492,7 +1486,7 @@ function ThinkingScreen({ playerName }: { playerName: string }) {
         </h1>
         <div className="border-pulse mb-2 rounded-sm border border-[#14b8a6]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
           <TypewriterText
-            text={`"The final result is unresolved. ${playerName}, wait while Prompt Paradox chooses."`}
+            text={`"The final result is unresolved. ${playerName}, wait while Overmind chooses."`}
             speed={18}
           />
         </div>
@@ -2952,7 +2946,7 @@ function WinScreen({
 
         <div className="border-pulse mb-6 rounded-sm border border-[#14b8a6]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
           <TypewriterText
-            text={`"Prompt Paradox has chosen you as its chosen operator. Welcome back, ${playerName}."`}
+            text={`"Overmind has chosen you as its chosen operator. Welcome back, ${playerName}."`}
             speed={18}
           />
         </div>
