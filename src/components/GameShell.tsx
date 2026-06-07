@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import {
   gameApi,
-  type AdminLeaderboardRow,
   type PublicParticipant,
   type LeaderboardRank,
 } from "~/lib/convexApi";
@@ -50,20 +49,13 @@ import {
 type RankRow = {
   id: string;
   name: string;
-  college: string;
+  college?: string;
   level: number;
   time: string;
-  hints: number;
+  hints?: number;
   startTime?: number | string;
-  finishTime?: number;
+  finishTime?: number | string | null;
 };
-
-function formatElapsed(totalSeconds: number) {
-  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
-  const minutes = Math.floor(safeSeconds / 60);
-  const seconds = safeSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
 
 function useAmbientBGM() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -221,7 +213,7 @@ const STORY_STEPS = [
   },
   {
     title: "THE TRIALS",
-    text: "Eight levels stand between you and whatever Prompt Paradox is offering. Each one is a test designed for minds like yours, not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. Overmind will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
+    text: "Eight levels stand between you and whatever Overmind is offering. Each one is a test designed for minds like yours, not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. Overmind will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
   },
   {
     title: "THE PRIZE",
@@ -424,7 +416,7 @@ export function GameShell() {
     } catch {
       /* ignore */
     }
-  }, [bgm]);
+  }, [bgm.playing, bgm.toggle]);
 
   // Ensure BGM is stopped when on the home/intro/registration screens
   useEffect(() => {
@@ -459,10 +451,7 @@ export function GameShell() {
   const boardRanks = useQuery(gameApi.leaderboard);
   const event = useQuery(gameApi.eventState);
 
-  const leaderboardRows = useMemo(
-    () => (Array.isArray(boardRanks) ? boardRanks : []),
-    [boardRanks],
-  );
+  const leaderboardRows = Array.isArray(boardRanks) ? boardRanks : [];
 
   const player = participant;
   const eventStarted = event?.started ?? true;
@@ -525,9 +514,11 @@ export function GameShell() {
       }
     };
 
-    document.addEventListener("click", markClick, { passive: true });
+    document.addEventListener("mousedown", markClick);
+    document.addEventListener("touchstart", markClick);
     return () => {
-      document.removeEventListener("click", markClick);
+      document.removeEventListener("mousedown", markClick);
+      document.removeEventListener("touchstart", markClick);
     };
   }, []);
 
@@ -569,7 +560,7 @@ export function GameShell() {
       startTime: rank.startTime,
       finishTime: rank.finishTime,
     }));
-  }, [leaderboardRows]);
+  }, [boardRanks]);
 
   const submitAnswer = useCallback(
     async (customAnswer?: string) => {
@@ -760,15 +751,7 @@ export function GameShell() {
   }
 
   if (!eventStarted && view !== "admin") {
-    return (
-      <LoadingGate
-        onOpenAdmin={() => setView("admin")}
-        onOpenStory={() => {
-          setIntroStep(0);
-          setStoryReplayOpen(true);
-        }}
-      />
-    );
+    return <LoadingGate onOpenAdmin={() => setView("admin")} />;
   }
 
   if (storyReplayOpen) {
@@ -808,11 +791,11 @@ export function GameShell() {
             <div className="h-2 w-2 animate-pulse rounded-full bg-[#14b8a6] shadow-[0_0_8px_#14b8a6]" />
             <div>
               <p className="text-pulse text-xs font-bold tracking-[0.35em] text-[#14b8a6] uppercase">
-                PROMPT PARADOX
+                OVERMIND
               </p>
               <h1 className="flex items-center gap-2 font-mono text-lg font-bold text-[#d1ffd6]">
                 <Terminal size={16} className="text-[#14b8a6]" />
-                <span>PROMPT_PARADOX_TRIALS</span>
+                <span>OVERMIND_TRIALS</span>
               </h1>
             </div>
           </div>
@@ -1174,11 +1157,6 @@ function Registration({
 
     setLoading(true);
     try {
-      try {
-        playPowerOn();
-      } catch {
-        /* ignore */
-      }
       await onRegister({ name, college, email });
     } catch (err) {
       setErrorMsg(
@@ -1202,7 +1180,7 @@ function Registration({
       >
         <div className="mb-6 text-center">
           <p className="text-pulse text-xs font-bold tracking-[0.4em] text-[#14b8a6] uppercase">
-            PROMPT PARADOX
+            OVERMIND
           </p>
           <h1 className="mt-3 font-mono text-2xl font-black tracking-wider text-[#d1ffd6]">
             START CHALLENGE
@@ -1274,10 +1252,20 @@ function StoryIntro({
   replayMode?: boolean;
 }) {
   const currentStepData = STORY_STEPS[step];
-  const [completedStep, setCompletedStep] = useState<number>(-1);
-  const typingComplete = completedStep === step;
+  const [typingComplete, setTypingComplete] = useState(false);
 
-  const handleNext = useCallback(() => {
+  useEffect(() => {
+    setTypingComplete(false);
+  }, [step]);
+
+  const handleNext = () => {
+    if (!typingComplete) {
+      // Force completion is handled inside TypewriterText by clicking it,
+      // but if they click the button we skip typing or advance.
+      setTypingComplete(true);
+      return;
+    }
+
     if (step < STORY_STEPS.length - 1) {
       setStep(step + 1);
     } else {
@@ -1293,11 +1281,7 @@ function StoryIntro({
       }
       onComplete();
     }
-  }, [onComplete, step, setStep]);
-
-  const handleSkipBlock = useCallback(() => {
-    setCompletedStep(step);
-  }, [step]);
+  };
 
   const handleSkip = useCallback(() => {
     (onSkipReplay ?? onComplete)();
@@ -1315,16 +1299,11 @@ function StoryIntro({
         event.preventDefault();
         handleSkip();
       }
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (!typingComplete) handleSkipBlock();
-        else handleNext();
-      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNext, handleSkip, handleSkipBlock, typingComplete]);
+  }, [handleSkip]);
 
   if (!currentStepData) return null;
 
@@ -1341,7 +1320,7 @@ function StoryIntro({
       {/* Top Info Bar */}
       <div className="flex items-center justify-between border-b border-[#14b8a6]/20 pb-3">
         <span className="text-xs tracking-widest text-[#14b8a6]/60 uppercase">
-          PROMPT PARADOX // {replayMode ? "STORY ARCHIVE" : "INTRO"}
+          OVERMIND // {replayMode ? "STORY ARCHIVE" : "INTRO"}
         </span>
         <button
           onClick={handleSkip}
@@ -1362,28 +1341,69 @@ function StoryIntro({
           </p>
           <div className="min-h-[180px] font-mono text-sm leading-relaxed text-[#d1ffd6] md:text-base">
             <TypewriterText
-              key={`${step}-${replayMode ? "replay" : "story"}`}
               text={textWithVariables}
               speed={20}
               complete={typingComplete}
-              onComplete={() => setCompletedStep(step)}
+              onComplete={() => setTypingComplete(true)}
             />
           </div>
         </div>
       </div>
+      {/* Full Leaderboard */}
+      {/* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */}
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
+          <ListOrdered size={14} /> Full Leaderboard
+        </h3>
+        <div className="max-h-[360px] overflow-auto">
+          <table className="w-full text-left font-mono text-xs">
+            <thead>
+              <tr className="text-[#14b8a6]/60">
+                <th className="py-2 pr-4">#</th>
+                <th>Participant</th>
+                <th>Level</th>
+                <th>Hints</th>
+                <th>Finished</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ranks.map((r, idx) => {
+                const maskedName = r.name
+                  ? `${r.name[0].toUpperCase()}***`
+                  : "Anonymous";
+                return (
+                  <tr key={r.id} className="border-t border-[#14b8a6]/10">
+                    <td className="py-2 pr-4">#{idx + 1}</td>
+                    <td className="font-bold text-[#d1ffd6]">{maskedName}</td>
+                    <td>{r.level}</td>
+                    <td>{r.hints ?? "-"}</td>
+                    <td>{r.finishTime ? "Yes" : "No"}</td>
+                    <td className="text-right">
+                      <button
+                        onClick={() => setSelectedParticipantId(r.id)}
+                        className="border border-[#14b8a6]/20 px-2 py-1 text-[11px] text-[#14b8a6] hover:bg-[#14b8a6]/10"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {/* eslint-enable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */}
+
       {/* Bottom Controls */}
       <div className="flex items-center justify-between border-t border-[#14b8a6]/20 pt-4">
         <div className="text-xs text-[#14b8a6]/40">
-          SYSTEM: ENTER FOR NEXT, ESC TO SKIP BLOCK
+          SYSTEM: CLICK DIALOGUE TO ADVANCE
         </div>
         <button
-          onClick={typingComplete ? handleNext : handleSkipBlock}
-          className={clsx(
-            "border px-6 py-3 text-sm font-bold transition-all duration-300",
-            typingComplete
-              ? "border-[#14b8a6] bg-[#14b8a6]/10 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
-              : "border-[#14b8a6]/20 bg-[#14b8a6]/5 text-[#14b8a6] hover:border-[#14b8a6] hover:bg-[#14b8a6]/15",
-          )}
+          onClick={handleNext}
+          className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
         >
           {typingComplete ? storyButtonLabel : "SKIP"}
         </button>
@@ -1392,13 +1412,7 @@ function StoryIntro({
   );
 }
 
-function LoadingGate({
-  onOpenAdmin,
-  onOpenStory,
-}: {
-  onOpenAdmin: () => void;
-  onOpenStory: () => void;
-}) {
+function LoadingGate({ onOpenAdmin }: { onOpenAdmin: () => void }) {
   return (
     <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020402] p-6 font-mono text-[#a7f3d0]">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
@@ -1410,7 +1424,7 @@ function LoadingGate({
       </div>
       <div className="border-pulse w-full max-w-xl border border-[#14b8a6]/25 bg-[#070e08]/90 p-8 text-center">
         <p className="mb-4 text-[10px] font-bold tracking-[0.35em] text-[#14b8a6]/70 uppercase">
-          PROMPT PARADOX // STANDBY
+          OVERMIND // STANDBY
         </p>
         <h2 className="mb-4 text-2xl font-black tracking-wider text-[#d1ffd6]">
           [LOADING...]
@@ -1418,14 +1432,6 @@ function LoadingGate({
         <p className="text-sm leading-relaxed text-[#a7f3d0]/80">
           Story received. Waiting for the admin to start the challenge.
         </p>
-        <div className="mt-5 flex justify-center gap-3">
-          <button
-            onClick={onOpenStory}
-            className="border border-[#14b8a6]/20 bg-[#14b8a6]/5 px-4 py-2 text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:border-[#14b8a6] hover:bg-[#14b8a6]/15"
-          >
-            STORY MODE
-          </button>
-        </div>
         <div className="mt-6 space-y-3">
           <RedactedBlock className="mx-auto h-3 w-40 rounded-sm" />
           <RedactedBlock className="mx-auto h-40 w-full rounded-sm" />
@@ -1480,9 +1486,9 @@ function ThinkingScreen({ playerName }: { playerName: string }) {
         </p>
         <h1
           className="glitch mb-6 font-mono text-3xl font-black tracking-wider text-[#d1ffd6]"
-          data-text="PROMPT PARADOX IS THINKING..."
+          data-text="OVERMIND IS THINKING..."
         >
-          PROMPT PARADOX IS THINKING...
+          OVERMIND IS THINKING...
         </h1>
         <div className="border-pulse mb-2 rounded-sm border border-[#14b8a6]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
           <TypewriterText
@@ -1561,7 +1567,7 @@ function GamePanel({
 
         <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-3 font-mono text-xs leading-relaxed text-[#14b8a6] italic">
           <span className="font-bold text-[#14b8a6] select-none">
-            &gt;_ PROMPT PARADOX:
+            &gt;_ OVERMIND:
           </span>
           <div className="flex-1">
             <TypewriterText text={`"${level.prompt}"`} speed={20} />
@@ -1692,7 +1698,7 @@ function Level7Challenge() {
         </span>
         {/* White background equivalent container for invisible secret */}
         <div className="mt-4 rounded-sm bg-white p-3 leading-none font-bold text-white select-all select-text">
-          PROMPT PARADOX
+          OVERMIND
         </div>
         <p className="mt-2 text-[10px] text-[#14b8a6]/30">
           (Highlight text inside white box or press Ctrl+A / Cmd+A to reveal
@@ -2337,8 +2343,10 @@ function Leaderboard({
 }: {
   ranks: Array<{
     name: string;
+    college: string;
     level: number;
     time: string;
+    hints: number;
   }>;
 }) {
   return (
@@ -2348,16 +2356,18 @@ function Leaderboard({
         <span>Leaderboard</span>
       </h2>
       <p className="mb-4 font-mono text-xs text-[#14b8a6]/50">
-        Updates automatically. Public details are limited.
+        Updates automatically. High-priority candidate scores synced live.
       </p>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[420px] text-left font-mono text-xs">
+        <table className="w-full min-w-[500px] text-left font-mono text-xs">
           <thead className="border-b border-[#14b8a6]/20 text-[#14b8a6]/55">
             <tr>
               <th className="py-2.5">RANK</th>
               <th>NAME</th>
+              <th>COLLEGE</th>
               <th>LEVELS COMPLETED</th>
               <th>TIME FLAG</th>
+              <th>HINTS REQUESTED</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#14b8a6]/10">
@@ -2384,19 +2394,21 @@ function Leaderboard({
                     <span>{String(index + 1).padStart(2, "0")}</span>
                   </td>
                   <td>{rank.name}</td>
+                  <td>{rank.college}</td>
                   <td>
                     <span className="rounded-sm border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-2 py-0.5">
                       {rank.level} / {levels.length}
                     </span>
                   </td>
                   <td className="uppercase">{rank.time}</td>
+                  <td>{rank.hints} hints</td>
                 </tr>
               );
             })}
             {ranks.length === 0 && (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={6}
                   className="py-6 text-center tracking-widest text-[#14b8a6]/40 uppercase"
                 >
                   No active connection records found.
@@ -2417,7 +2429,7 @@ function AdminPanel({
   eventStarted,
   message,
   setEventStarted,
-  ranks: _ranks,
+  ranks,
 }: {
   eventStarted: boolean;
   message: string;
@@ -2426,10 +2438,6 @@ function AdminPanel({
 }) {
   const [adminKey, setAdminKey] = useState("");
   const [loadQueue, setLoadQueue] = useState(false);
-  const adminRanks = useQuery(
-    gameApi.adminLeaderboard,
-    adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
-  );
   const pendingQuery = useQuery(
     gameApi.getPendingSubmissions,
     loadQueue && adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
@@ -2470,9 +2478,7 @@ function AdminPanel({
     }
   };
 
-  const eligibleRanks = (Array.isArray(adminRanks) ? adminRanks : []).filter(
-    (rank: AdminLeaderboardRow) => Boolean(rank.finishTime),
-  );
+  const eligibleRanks = ranks.filter((rank) => Boolean(rank.finishTime));
   const winnerDecision = useMemo(() => {
     if (eligibleRanks.length === 0) {
       return { candidateId: "", exactDraw: false };
@@ -2751,12 +2757,9 @@ function AdminPanel({
                   <th className="py-2 pr-4">#</th>
                   <th>Name</th>
                   <th>College</th>
-                  <th>Email</th>
                   <th>Level</th>
                   <th>Hints</th>
                   <th>Finish</th>
-                  <th>Current</th>
-                  <th>Status</th>
                   <th className="text-right">Actions</th>
                 </tr>
               </thead>
@@ -2766,7 +2769,6 @@ function AdminPanel({
                     <td className="py-2 pr-4">#{idx + 1}</td>
                     <td className="font-bold text-[#d1ffd6]">{r.name}</td>
                     <td>{r.college}</td>
-                    <td>{r.email}</td>
                     <td>{r.level}</td>
                     <td>{r.hints}</td>
                     <td>
@@ -2774,8 +2776,6 @@ function AdminPanel({
                         ? new Date(r.finishTime).toLocaleString()
                         : "-"}
                     </td>
-                    <td>{r.currentLevel}</td>
-                    <td>{r.level5Status ?? "none"}</td>
                     <td className="text-right">
                       <button
                         onClick={() => setSelectedParticipantId(r.id)}
