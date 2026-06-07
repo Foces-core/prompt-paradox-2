@@ -393,6 +393,7 @@ export function GameShell() {
   const [introStep, setIntroStep] = useState<number>(0);
   const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
   const [viewedLevelId, setViewedLevelId] = useState<number>(1);
+  const [confirmedLevelFloor, setConfirmedLevelFloor] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
   const [hintRevealedLevels, setHintRevealedLevels] = useState<number[]>([]);
 
@@ -468,7 +469,7 @@ export function GameShell() {
   const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
   const levelId = player?.currentLevel ?? 1;
-  const currentLevel = levelId;
+  const currentLevel = Math.max(levelId, confirmedLevelFloor);
 
   // Handle case where levelId completes all levels
   const level = levels[levelId - 1] ?? levels[levels.length - 1]!;
@@ -492,6 +493,12 @@ export function GameShell() {
   useEffect(() => {
     setHintRevealedLevels([]);
   }, [participantId]);
+
+  useEffect(() => {
+    if ((player?.currentLevel ?? 1) > confirmedLevelFloor) {
+      setConfirmedLevelFloor(player?.currentLevel ?? 1);
+    }
+  }, [player?.currentLevel, confirmedLevelFloor]);
 
   // Global click feedback: briefly mark clicked buttons so CSS can animate them
 
@@ -1038,7 +1045,10 @@ export function GameShell() {
                 onCustomSubmit={submitAnswer}
                 onBack={handleBack}
                 hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
-                onAdvanceToNextLevel={() => setViewedLevelId(6)}
+                onAdvanceToNextLevel={() => {
+                  setConfirmedLevelFloor(6);
+                  setViewedLevelId(6);
+                }}
               />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
