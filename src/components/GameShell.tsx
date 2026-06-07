@@ -423,7 +423,7 @@ export function GameShell() {
     } catch {
       /* ignore */
     }
-  }, [bgm.playing, bgm.toggle]);
+  }, [bgm]);
 
   // Ensure BGM is stopped when on the home/intro/registration screens
   useEffect(() => {
@@ -458,7 +458,10 @@ export function GameShell() {
   const boardRanks = useQuery(gameApi.leaderboard);
   const event = useQuery(gameApi.eventState);
 
-  const leaderboardRows = Array.isArray(boardRanks) ? boardRanks : [];
+  const leaderboardRows = useMemo(
+    () => (Array.isArray(boardRanks) ? boardRanks : []),
+    [boardRanks],
+  );
 
   const player = participant;
   const eventStarted = event?.started ?? true;
@@ -567,7 +570,7 @@ export function GameShell() {
       startTime: rank.startTime,
       finishTime: rank.finishTime,
     }));
-  }, [boardRanks]);
+  }, [leaderboardRows]);
 
   const submitAnswer = useCallback(
     async (customAnswer?: string) => {
@@ -1904,6 +1907,8 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                         <img
                           src={item.url}
                           alt={`Matrix node ${index}`}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full object-contain"
                           onLoad={() =>
                             setLoadedFlags((p) => ({ ...p, [index]: true }))
@@ -2437,9 +2442,6 @@ function AdminPanel({
   const [winnerId, setWinnerId] = useState("");
   const [winnerActionMsg, setWinnerActionMsg] = useState("");
   const [winnerSaving, setWinnerSaving] = useState(false);
-  const [selectedParticipantId, setSelectedParticipantId] = useState<
-    string | null
-  >(null);
 
   const [reviewMsg, setReviewMsg] = useState("");
 
@@ -2482,12 +2484,6 @@ function AdminPanel({
     [ranks],
   );
   const finalWinnerId = winnerId;
-
-  // Fetch full participant details when a participant is selected
-  const selectedParticipant = useQuery(
-    gameApi.participant,
-    selectedParticipantId ? { participantId: selectedParticipantId } : "skip",
-  );
 
   const handleSetWinner = async () => {
     if (!adminKey || !finalWinnerId) return;
@@ -2616,97 +2612,6 @@ function AdminPanel({
         </p>
       </div>
 
-      {/* Winner Details */}
-      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
-        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
-          <User size={14} /> Winner Details
-        </h3>
-        {selectedParticipant ? (
-          <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">ID</div>
-              <div className="font-bold text-[#d1ffd6]">
-                {selectedParticipant.id}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Name
-              </div>
-              <div className="text-[#d1ffd6]">{selectedParticipant.name}</div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                College
-              </div>
-              <div className="text-[#d1ffd6]">
-                {selectedParticipant.college}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Email
-              </div>
-              <div className="text-[#d1ffd6]">{selectedParticipant.email}</div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Current Level
-              </div>
-              <div className="text-[#d1ffd6]">
-                {selectedParticipant.currentLevel}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Level 5 Status
-              </div>
-              <div className="text-[#d1ffd6]">
-                {selectedParticipant.level5Status ?? "none"}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Completed Levels
-              </div>
-              <div className="text-[#d1ffd6]">
-                {(selectedParticipant.completedLevels || []).join(", ")}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Hints Used
-              </div>
-              <div className="text-[#d1ffd6]">
-                {(selectedParticipant.hintsUsed || []).length}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Start Time
-              </div>
-              <div className="text-[#d1ffd6]">
-                {new Date(selectedParticipant.startTime).toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-[11px] text-[#14b8a6]/60">
-                Finish Time
-              </div>
-              <div className="text-[#d1ffd6]">
-                {selectedParticipant.finishTime
-                  ? new Date(selectedParticipant.finishTime).toLocaleString()
-                  : "-"}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <p className="text-[11px] text-[#14b8a6]/40">
-            No participant selected.
-          </p>
-        )}
-      </div>
-
       {/* Candidates Leaderboard (finished players only) */}
       <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
         <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
@@ -2744,12 +2649,6 @@ function AdminPanel({
                         : "-"}
                     </td>
                     <td className="text-right">
-                      <button
-                        onClick={() => setSelectedParticipantId(r.id)}
-                        className="mr-2 border border-[#14b8a6]/20 px-2 py-1 text-[11px] text-[#14b8a6] hover:bg-[#14b8a6]/10"
-                      >
-                        Preview
-                      </button>
                       <button
                         onClick={() => setWinnerId(r.id)}
                         className="border border-[#14b8a6] bg-[#14b8a6]/10 px-2 py-1 text-[11px] font-bold text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black"
@@ -2889,6 +2788,8 @@ function AdminPanel({
                       <img
                         src={sub.screenshotUrl}
                         alt="Screenshot proof"
+                        loading="lazy"
+                        decoding="async"
                         className="h-auto w-full"
                       />
                     </a>

@@ -23,6 +23,10 @@ async function advanceThroughStory(page: Page) {
 }
 
 async function applyProjectVariant(page: Page, projectName: string) {
+  if (projectName === "reduced-motion") {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+  }
+
   if (projectName === "slow-3g") {
     const client = await page.context().newCDPSession(page);
     await client.send("Network.enable");
@@ -114,5 +118,11 @@ test.describe("responsive UI", () => {
     );
 
     expect(visible.every(Boolean)).toBeTruthy();
+  });
+
+  test("reduced motion lane still loads the shell", async ({ page }) => {
+    await applyProjectVariant(page, test.info().project.name);
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: "START CHALLENGE" })).toBeVisible();
   });
 });

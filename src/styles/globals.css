@@ -224,6 +224,19 @@ textarea {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .scanline,
+  .glitch,
+  .glitch::before,
+  .glitch::after,
+  .transmission-flicker,
+  .text-pulse,
+  .border-pulse,
+  .bg-binary-rain::before {
+    animation: none !important;
+  }
+}
+
 /* CRT glow & pulsing text */
 .text-pulse {
   animation: pulseGlow 2s infinite alternate;
