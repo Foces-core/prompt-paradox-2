@@ -12,7 +12,7 @@ export const levels: Level[] = [
   {
     id: 1,
     title: "The Handshake",
-    type: "Pattern / Encoding",
+    type: "Pattern Encoding",
     difficulty: "★■■■■",
     prompt:
       "Before we begin, prove you speak my language. Say the most fundamental thing every computer scientist knows — but say it the way machines do.",
@@ -23,7 +23,7 @@ export const levels: Level[] = [
   {
     id: 2,
     title: "Pixel Confession",
-    type: "Steganography",
+    type: "Pixel Decode",
     difficulty: "★★■■■",
     prompt:
       "I have been watching through cameras you never knew were on. This image was the last thing my network transmitted before going dark. Look closer than your eyes allow.",
@@ -34,7 +34,7 @@ export const levels: Level[] = [
   {
     id: 3,
     title: "The Glitch Gallery",
-    type: "QR Forensics",
+    type: "Grid Scan",
     difficulty: "★★■■■",
     prompt:
       "Not everything that looks like a door is one. Find the real one — but I warn you, only those who look directly will see it open.",
@@ -45,7 +45,7 @@ export const levels: Level[] = [
   {
     id: 4,
     title: "The Dead Drop",
-    type: "Internet OSINT",
+    type: "Internet Archive",
     difficulty: "★★★■■",
     prompt:
       "The answer you need was never hidden by me. It was placed in the open, decades ago, by the engineers who built the foundation I run on. Go find it.",
@@ -55,8 +55,8 @@ export const levels: Level[] = [
   },
   {
     id: 5,
-    title: "The Public Chat Link",
-    type: "Admin Review",
+    title: "Chat Link",
+    type: "Chat Review",
     difficulty: "★★★★■",
     prompt:
       "Prove the target line appears in a public chat link, not in private code. Bring the link and a screenshot.",
@@ -67,7 +67,7 @@ export const levels: Level[] = [
   {
     id: 6,
     title: "Logic Bomb",
-    type: "Boolean Logic",
+    type: "Logic",
     difficulty: "★★★★■",
     prompt:
       "My core is protected by five conditions. All must be satisfied simultaneously or I stay locked. Find the values. Defuse me.",
@@ -78,23 +78,23 @@ export const levels: Level[] = [
   {
     id: 7,
     title: "The Mirror",
-    type: "Lateral Thinking",
+    type: "Hidden Text",
     difficulty: "★★■■■",
     prompt:
       "You have been solving my puzzles this whole time. But have you been reading me? I have left my name somewhere on this page since the moment you arrived. It was never hidden. You just were not looking.",
     challenge:
-      "A deliberate palate cleanser before the final level. Find the hidden text OVERMIND on the page and submit it.",
+      "A deliberate palate cleanser before the final level. Find the hidden text PROMPT PARADOX on the page and submit it.",
     hint: "Stop looking for a puzzle. Start looking at the page.",
   },
   {
     id: 8,
     title: "Paradox Protocol",
-    type: "Cryptography / Cipher",
+    type: "Cipher",
     difficulty: "★★★★★",
     prompt:
       "You made it. Most do not. I have one final test — not of what you know, but of how you think when the rules are not given to you. Decode what I have left. Identify the signal. Then we talk.",
     challenge:
-      "OVERMIND's final transmission has been intercepted and encoded. Decode the ciphertext to find the final passphrase.",
+      "Prompt Paradox's final transmission has been intercepted and encoded. Decode the ciphertext to find the final passphrase.",
     hint: "Julius Caesar used something similar. But this version has a specific number associated with it that any hacker from early internet culture would recognise immediately.",
   },
 ];

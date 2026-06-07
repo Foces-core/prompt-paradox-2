@@ -37,6 +37,14 @@ type LeaderboardRow = {
   finishTime?: number;
 };
 
+type AdminLeaderboardRow = LeaderboardRow & {
+  email: string;
+  completedLevels: number[];
+  hintsUsed: number[];
+  currentLevel: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
+};
+
 function compareLeaderboardRows(a: LeaderboardRow, b: LeaderboardRow) {
   const levelDelta = b.level - a.level;
   if (levelDelta) return levelDelta;
@@ -125,6 +133,33 @@ export const leaderboard = query({
       hints: participant.hintsUsed.length,
       startTime: participant.startTime,
       finishTime: participant.finishTime,
+    }));
+
+    return participants.sort(compareLeaderboardRows).slice(0, 100);
+  },
+});
+
+export const adminLeaderboard = query({
+  args: { adminKey: v.string() },
+  handler: async (ctx, args) => {
+    if (!isValidAdminKey(args.adminKey)) return [];
+    if (isMaintenanceMode()) return [];
+
+    const participants: AdminLeaderboardRow[] = (
+      await ctx.db.query("participants").collect()
+    ).map((participant) => ({
+      id: participant._id,
+      name: participant.name,
+      college: participant.college,
+      email: participant.email,
+      level: participant.completedLevels.length,
+      hints: participant.hintsUsed.length,
+      startTime: participant.startTime,
+      finishTime: participant.finishTime,
+      completedLevels: participant.completedLevels,
+      hintsUsed: participant.hintsUsed,
+      currentLevel: participant.currentLevel,
+      level5Status: participant.level5Status,
     }));
 
     return participants.sort(compareLeaderboardRows).slice(0, 100);

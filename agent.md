@@ -1,16 +1,16 @@
 # Prompt Paradox 2 Agent Guide
 
-## Scope
+## Purpose
 
-- Build and maintain the public Prompt Paradox 2 app.
-- Keep the public path stable, cheap to run, and easy to verify.
-- Treat the offline demo copy as separate unless the user says to merge work back.
+- Maintain the public Prompt Paradox 2 experience.
+- Keep the main repo aligned with the deployed site.
+- Prefer small, verifiable changes over broad rewrites.
 
-## Repo
+## Working Set
 
-- Main work tree: `C:\Users\sebin\pp2-publish`
-- Main branch is the public/deploy branch.
-- Keep commits focused. Do not rewrite unrelated user changes.
+- Repo root: `C:\Users\sebin\pp2-publish`
+- Main branch is the deploy branch.
+- Keep the offline demo copy separate unless the user explicitly asks to merge it back.
 
 ## Stack
 
@@ -23,16 +23,15 @@
 - `clsx`
 - `pnpm`
 
-## Package workflow
+## Commands
 
-- Use `sfw` for package commands when available.
-- Prefer:
-  - `sfw pnpm run check`
-  - `sfw pnpm run build`
-  - `sfw pnpm run dev`
-  - `sfw pnpm exec convex deploy`
+- Install: `sfw pnpm install`
+- Check: `sfw pnpm run check`
+- Build: `sfw pnpm run build`
+- Dev: `sfw pnpm run dev`
+- Deploy Convex: `sfw pnpm exec convex deploy`
 
-## Core files
+## Repository Areas
 
 - `src/components/GameShell.tsx`
 - `src/lib/game.ts`
@@ -42,63 +41,81 @@
 - `convex/schema.ts`
 - `public/puzzles/level2.png`
 
-## Product rules
+## Product Rules
 
-- Keep the terminal / overmind look.
-- No marketing landing page. First screen must be usable.
-- Do not add decorative fluff that hurts scan speed.
-- Keep controls obvious and fast.
-- BGM must stay off by default.
+- Keep the overmind / terminal tone.
+- Do not turn the first screen into a marketing page.
+- Keep the UI snappy and readable.
+- Audio must stay off by default.
+- Avoid decorative clutter that slows scanning or hides controls.
 
-## Runtime rules
+## Game Flow
 
-- Story first, then `[LOADING...]`, then play.
-- Loading must stay until admin starts the game.
-- Final reveal text must stay as:
+- Story first.
+- Then `[LOADING...]`.
+- Then play only after admin starts the game.
+- Final reveal text:
   - `OVERMIND has chosen you as its chosen operator`
 - Left arrow = back.
 - Right arrow = submit and advance where possible.
 - Enter on already-submitted pages should behave like right arrow.
 - Esc should bypass the monologue.
 
-## Admin rules
+## Admin Rules
 
-- Admin panel must stay visible and not blank the page.
-- Trim admin key input before use.
-- `getPendingSubmissions` must fail closed without throwing.
-- Safe fallback admin key for demo continuity: `overmind` if env key is missing.
-- If the key is wrong, return empty queue or a clear message, not a runtime crash.
+- Admin panel must stay visible.
+- A bad key must not blank the page.
+- Trim the admin key before use.
+- Queue fetch must fail closed, not crash.
+- Demo fallback admin key: `overmind` when no env key is present.
 
-## Level rules
+## Puzzle Rules
 
-- Level 2 image is local PNG so hidden data stays intact.
+- Level 2 must use the local PNG asset so hidden bytes survive.
 - Level 3 cards are generated locally as SVG/data URLs.
-- Do not depend on Cloudinary or external image CDN for puzzle-critical assets.
-- Hint state must be tied to the displayed level, not a hidden internal pointer.
-- Hints should reveal only on click.
+- Do not use Cloudinary or any remote image CDN for puzzle-critical assets.
+- Hints should reveal only after clicking HINT.
+- Hint state must follow the displayed level.
 
-## Deployment rules
+## State Source
 
-- Public frontend deploys as static output / hosted site.
-- Convex remains the live state layer for the public game.
-- If backend code changes, deploy Convex and verify the live flow.
-- Keep deployment note in public docs, but remove demo-only warnings from public site text.
-
-## Test rules
-
-- Always run `sfw pnpm run check`.
-- Run `sfw pnpm run build` before shipping.
-- Browser-smoke the public flow after runtime changes.
-- Verify:
-  - register
-  - intro bypass
-  - level navigation
+- Convex is the source of truth for:
+  - registration
+  - level progression
   - hints
-  - admin queue
-  - winner screen
+  - leaderboard
+  - admin start/pause
+  - winner selection
+- Client code is presentation and interaction only.
 
-## Response style
+## Deployment Rules
+
+- Deploy backend changes before trusting browser verification.
+- Keep the public site no-cost where possible.
+- Do not add runtime dependencies that make the game fragile or expensive.
+
+## Verification
+
+- Run `sfw pnpm run check`.
+- Run `sfw pnpm run build`.
+- Smoke test:
+  - register
+  - bypass intro
+  - navigate levels
+  - show hint
+  - open admin panel
+  - load review queue
+  - select winner
+  - confirm final reveal
+
+## Handoff Notes
+
+- When a backend change lands, verify the live deployment, not just local build output.
+- If the shell bridge fails in this thread, let a worker finish the repo-side change instead of stalling.
+- Keep the workspace clean before pushing.
+
+## Response Style
 
 - Be direct.
-- State what changed, what was verified, and what still blocks if anything.
-- If a detail is unclear, ask one short question instead of guessing.
+- State what changed, what was verified, and what still blocks.
+- If something is unclear, ask one short question instead of guessing.

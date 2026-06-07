@@ -1,30 +1,35 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Space_Mono } from "next/font/google";
+import { EB_Garamond } from "next/font/google";
 import { ConvexClientProvider } from "~/components/ConvexClientProvider";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {
-  title: "Prompt Paradox 2.0",
-  description: "Signal Trials event app",
+  title: "Prompt Paradox",
+  description: "Prompt Paradox challenge app",
   icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
-  viewport: "width=device-width, initial-scale=1",
 };
 
-const spaceMono = Space_Mono({
+// Next.js App Router expects viewport to be exported via `export const viewport`.
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+const garamond = EB_Garamond({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-garamond",
 });
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${spaceMono.variable}`}>
-      <body className="bg-[#020502] text-[#d1ffd6] antialiased selection:bg-[#00ff66]/25 selection:text-[#00ff66]">
+    <html lang="en" className={`${garamond.variable}`}>
+      <body className="bg-[#020502] text-[#d1ffd6] antialiased selection:bg-[#14b8a6]/25 selection:text-[#14b8a6]">
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>
