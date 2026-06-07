@@ -1038,6 +1038,7 @@ export function GameShell() {
                 onCustomSubmit={submitAnswer}
                 onBack={handleBack}
                 hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
+                onAdvanceToNextLevel={() => setViewedLevelId(6)}
               />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
@@ -1502,6 +1503,7 @@ function GamePanel({
   onCustomSubmit,
   onBack,
   hintRevealed,
+  onAdvanceToNextLevel,
 }: {
   level: Level;
   participantId: string;
@@ -1513,6 +1515,7 @@ function GamePanel({
   onCustomSubmit: (val: string) => Promise<void>;
   onBack: () => void;
   hintRevealed: boolean;
+  onAdvanceToNextLevel: () => void;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -1611,7 +1614,11 @@ function GamePanel({
         )}
 
         {level.id === 5 && (
-          <PromptArchitect participantId={participantId} player={player} />
+          <PromptArchitect
+            participantId={participantId}
+            player={player}
+            onAdvanceToNextLevel={onAdvanceToNextLevel}
+          />
         )}
 
         {level.id === 6 && <LogicBomb onSubmitAnswer={onCustomSubmit} />}
@@ -1944,9 +1951,11 @@ function GlitchGallery({ participantId }: { participantId: string }) {
 function PromptArchitect({
   participantId,
   player,
+  onAdvanceToNextLevel,
 }: {
   participantId: string;
   player: PublicParticipant;
+  onAdvanceToNextLevel: () => void;
 }) {
   const getUploadUrl = useMutation(gameApi.generateUploadUrl);
   const submitL5 = useMutation(gameApi.submitLevel5);
@@ -2040,6 +2049,7 @@ function PromptArchitect({
       setTerminalLogs((prev) => [...prev, "Public link approved."]);
       setShowLogs(false);
       setLoading(false);
+      onAdvanceToNextLevel();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "REQUEST REFUSED";
       setTerminalLogs((prev) => [...prev, `CRITICAL SYSTEM ERROR: ${msg}`]);
