@@ -192,6 +192,13 @@ function useAmbientBGM() {
   return { playing, toggle, start, stop };
 }
 
+function formatElapsed(seconds: number) {
+  const total = Math.max(0, Math.floor(seconds));
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const STORY_STEPS = [
@@ -786,29 +793,31 @@ export function GameShell() {
       {successFlash && <CelebrationBurst seed={celebrateSeed} />}
 
       <header className="sticky top-0 z-10 border-b border-[#14b8a6]/20 bg-[#030704]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="h-2 w-2 animate-pulse rounded-full bg-[#14b8a6] shadow-[0_0_8px_#14b8a6]" />
-            <div>
-              <p className="text-pulse text-xs font-bold tracking-[0.35em] text-[#14b8a6] uppercase">
+            <div className="min-w-0">
+              <p className="text-pulse truncate text-[10px] font-bold tracking-[0.28em] text-[#14b8a6] uppercase sm:text-xs sm:tracking-[0.35em]">
                 OVERMIND
               </p>
-              <h1 className="flex items-center gap-2 font-mono text-lg font-bold text-[#d1ffd6]">
-                <Terminal size={16} className="text-[#14b8a6]" />
-                <span>OVERMIND_TRIALS</span>
+              <h1 className="flex min-w-0 items-center gap-2 font-mono text-base font-bold text-[#d1ffd6] sm:text-lg">
+                <Terminal size={16} className="shrink-0 text-[#14b8a6]" />
+                <span className="truncate">OVERMIND_TRIALS</span>
               </h1>
             </div>
           </div>
-          <nav className="flex items-center gap-2">
+          <nav className="grid w-full grid-cols-5 gap-2 pb-1 sm:flex sm:w-auto sm:flex-nowrap sm:justify-end">
             <NavButton
               active={view === "game"}
               onClick={() => setView("game")}
               label="CHALLENGES"
+              shortLabel="TRIALS"
             />
             <NavButton
               active={view === "board"}
               onClick={() => setView("board")}
               label="LEADERBOARD"
+              shortLabel="BOARD"
             />
             <AdminLogoButton
               onClick={() => setView("admin")}
@@ -823,21 +832,21 @@ export function GameShell() {
                 setIntroStep(0);
                 setStoryReplayOpen(true);
               }}
-              className="border border-[#14b8a6]/20 px-3 py-2 font-mono text-xs tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
+              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-2 font-mono text-[9px] tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
               title="Read the story again"
             >
               STORY
             </button>
             <button
               onClick={handleBack}
-              className="border border-[#14b8a6]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
+              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
               title="Back one level"
             >
               &lt;
             </button>
             <button
               onClick={handleSubmitShortcut}
-              className="border border-[#14b8a6]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
+              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
               title="Submit current task or advance"
             >
               &gt;
@@ -1053,22 +1062,26 @@ function NavButton({
   active,
   onClick,
   label,
+  shortLabel,
 }: {
   active: boolean;
   onClick: () => void;
   label: string;
+  shortLabel?: string;
 }) {
   return (
     <button
       onClick={onClick}
+      aria-label={label}
       className={clsx(
-        "border px-3 py-2 font-mono text-xs tracking-wider transition-all duration-300",
+        "min-w-0 border px-2 py-2 font-mono text-[10px] tracking-wider transition-all duration-300 sm:px-3 sm:text-xs",
         active
           ? "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.2)]"
           : "border-[#14b8a6]/20 text-[#a7f3d0]/60 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]",
       )}
     >
-      {label}
+      <span className="sm:hidden">{shortLabel ?? label}</span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
@@ -1168,7 +1181,7 @@ function Registration({
   }
 
   return (
-    <main className="bg-binary-rain grid min-h-screen place-items-center bg-[#020502] px-4 text-[#a7f3d0]">
+      <main className="bg-binary-rain grid min-h-screen place-items-center bg-[#020502] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] text-[#a7f3d0]">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
 
       <form
@@ -1196,22 +1209,40 @@ function Registration({
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            <label
+              htmlFor="participant-name"
+              className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase"
+            >
               Name
             </label>
-            <Input name="name" placeholder="Enter your answer" />
+            <Input id="participant-name" name="name" placeholder="Enter your answer" />
           </div>
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            <label
+              htmlFor="participant-college"
+              className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase"
+            >
               College
             </label>
-            <Input name="college" placeholder="Enter your answer" />
+            <Input
+              id="participant-college"
+              name="college"
+              placeholder="Enter your answer"
+            />
           </div>
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            <label
+              htmlFor="participant-email"
+              className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase"
+            >
               Email
             </label>
-            <Input name="email" type="email" placeholder="Enter your answer" />
+            <Input
+              id="participant-email"
+              name="email"
+              type="email"
+              placeholder="Enter your answer"
+            />
           </div>
         </div>
 
@@ -1314,26 +1345,26 @@ function StoryIntro({
   );
 
   return (
-    <main className="bg-binary-rain relative flex min-h-screen flex-col justify-between bg-[#020402] p-6 font-mono text-[#a7f3d0]">
+    <main className="bg-binary-rain relative flex min-h-screen flex-col justify-between bg-[#020402] px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] font-mono text-[#a7f3d0] sm:p-6">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
 
       {/* Top Info Bar */}
-      <div className="flex items-center justify-between border-b border-[#14b8a6]/20 pb-3">
-        <span className="text-xs tracking-widest text-[#14b8a6]/60 uppercase">
+      <div className="flex flex-col gap-2 border-b border-[#14b8a6]/20 pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <span className="truncate text-[11px] tracking-[0.22em] text-[#14b8a6]/60 uppercase sm:text-xs sm:tracking-widest">
           OVERMIND // {replayMode ? "STORY ARCHIVE" : "INTRO"}
         </span>
         <button
           onClick={handleSkip}
-          className="border border-red-500/20 bg-red-500/5 px-2 py-1 text-xs text-red-400 hover:border-red-500/60 hover:text-red-300"
+          className="self-start border border-red-500/20 bg-red-500/5 px-2 py-1 text-[11px] text-red-400 hover:border-red-500/60 hover:text-red-300 sm:text-xs"
         >
           {replayMode ? "CLOSE [ESC]" : "EXIT [ESC]"}
         </button>
       </div>
 
       {/* Narrative Centered Content */}
-      <div className="mx-auto my-8 flex max-w-2xl flex-1 flex-col justify-center">
-        <div className="border-pulse border border-[#14b8a6]/30 bg-[#070e08]/90 p-8 shadow-[0_0_25px_rgba(20,184,166,0.05)]">
-          <p className="text-pulse mb-4 text-[10px] font-bold tracking-[0.3em] text-[#14b8a6] uppercase">
+      <div className="mx-auto my-6 flex max-w-2xl flex-1 flex-col justify-center sm:my-8">
+        <div className="border-pulse border border-[#14b8a6]/30 bg-[#070e08]/90 p-5 shadow-[0_0_25px_rgba(20,184,166,0.05)] sm:p-8">
+          <p className="text-pulse mb-4 text-[10px] font-bold tracking-[0.24em] text-[#14b8a6] uppercase sm:tracking-[0.3em]">
             {replayMode ? "STORY ARCHIVE" : "STORY"} {step + 1} OF{" "}
             {STORY_STEPS.length}
             {" - "}
@@ -1349,61 +1380,14 @@ function StoryIntro({
           </div>
         </div>
       </div>
-      {/* Full Leaderboard */}
-      {/* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */}
-      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
-        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
-          <ListOrdered size={14} /> Full Leaderboard
-        </h3>
-        <div className="max-h-[360px] overflow-auto">
-          <table className="w-full text-left font-mono text-xs">
-            <thead>
-              <tr className="text-[#14b8a6]/60">
-                <th className="py-2 pr-4">#</th>
-                <th>Participant</th>
-                <th>Level</th>
-                <th>Hints</th>
-                <th>Finished</th>
-                <th className="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ranks.map((r, idx) => {
-                const maskedName = r.name
-                  ? `${r.name[0].toUpperCase()}***`
-                  : "Anonymous";
-                return (
-                  <tr key={r.id} className="border-t border-[#14b8a6]/10">
-                    <td className="py-2 pr-4">#{idx + 1}</td>
-                    <td className="font-bold text-[#d1ffd6]">{maskedName}</td>
-                    <td>{r.level}</td>
-                    <td>{r.hints ?? "-"}</td>
-                    <td>{r.finishTime ? "Yes" : "No"}</td>
-                    <td className="text-right">
-                      <button
-                        onClick={() => setSelectedParticipantId(r.id)}
-                        className="border border-[#14b8a6]/20 px-2 py-1 text-[11px] text-[#14b8a6] hover:bg-[#14b8a6]/10"
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* eslint-enable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */}
-
       {/* Bottom Controls */}
-      <div className="flex items-center justify-between border-t border-[#14b8a6]/20 pt-4">
-        <div className="text-xs text-[#14b8a6]/40">
+      <div className="flex flex-col gap-3 border-t border-[#14b8a6]/20 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-[11px] text-[#14b8a6]/40 sm:text-xs">
           SYSTEM: CLICK DIALOGUE TO ADVANCE
         </div>
         <button
           onClick={handleNext}
-          className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
+          className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)] sm:self-end"
         >
           {typingComplete ? storyButtonLabel : "SKIP"}
         </button>
@@ -1414,9 +1398,9 @@ function StoryIntro({
 
 function LoadingGate({ onOpenAdmin }: { onOpenAdmin: () => void }) {
   return (
-    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020402] p-6 font-mono text-[#a7f3d0]">
+    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020402] px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] font-mono text-[#a7f3d0] sm:p-6">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
-      <div className="fixed top-4 right-4 z-[70]">
+      <div className="fixed top-[calc(1rem+env(safe-area-inset-top))] right-[calc(1rem+env(safe-area-inset-right))] z-[70]">
         <AdminLogoButton
           onClick={onOpenAdmin}
           className="h-8 w-8 border-[#14b8a6]/5 bg-black/20 text-[#14b8a6]/20 opacity-30 hover:opacity-100"
