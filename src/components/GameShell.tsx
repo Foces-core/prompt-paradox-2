@@ -2583,7 +2583,7 @@ function AdminPanel({
             <option value="">Select winner</option>
             {eligibleRanks.map((rank) => (
               <option key={rank.id} value={rank.id}>
-                {rank.name} - {rank.college}
+                {rank.name} - {rank.college} | L{rank.level} | H{rank.hints} | L5 {rank.level5Status ?? "none"}
               </option>
             ))}
           </select>
@@ -2631,6 +2631,7 @@ function AdminPanel({
                   <th>College</th>
                   <th>Level</th>
                   <th>Hints</th>
+                  <th>L5</th>
                   <th>Finish</th>
                   <th className="text-right">Actions</th>
                 </tr>
@@ -2643,6 +2644,7 @@ function AdminPanel({
                     <td>{r.college}</td>
                     <td>{r.level}</td>
                     <td>{r.hints}</td>
+                    <td>{r.level5Status ?? "none"}</td>
                     <td>
                       {r.finishTime
                         ? new Date(r.finishTime).toLocaleString()
@@ -2836,6 +2838,7 @@ type RankEntry = {
   hints: number;
   startTime?: number;
   finishTime?: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
 };
 
 function WinScreen({

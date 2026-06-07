@@ -35,6 +35,7 @@ type LeaderboardRow = {
   hints: number;
   startTime: number;
   finishTime?: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
 };
 
 type AdminLeaderboardRow = LeaderboardRow & {
@@ -115,6 +116,7 @@ export const leaderboard = query({
       hints: participant.hintsUsed.length,
       startTime: participant.startTime,
       finishTime: participant.finishTime,
+      level5Status: participant.level5Status ?? "none",
     }));
 
     return participants.sort(compareLeaderboardRows).slice(0, 100);
@@ -377,11 +379,16 @@ export const submitLevel5 = mutation({
       prompt: args.prompt,
       screenshotId: args.screenshotId as any,
       submittedAt: Date.now(),
-      status: "pending",
+      status: "approved",
+      reviewedAt: Date.now(),
     });
 
     await ctx.db.patch(args.participantId, {
-      level5Status: "pending",
+      level5Status: "approved",
+      currentLevel: 6,
+      completedLevels: participant.completedLevels.includes(5)
+        ? participant.completedLevels
+        : [...participant.completedLevels, 5],
     });
 
     return { ok: true, submissionId };
@@ -448,6 +455,14 @@ export const reviewLevel5 = mutation({
     }
     const sub = await ctx.db.get(args.submissionId);
     if (!sub) throw new Error("Submission not found.");
+
+    if (args.status === "approved") {
+      await ctx.db.patch(args.submissionId, {
+        status: "approved",
+        reviewedAt: Date.now(),
+      });
+      return { ok: true };
+    }
 
     await ctx.db.patch(args.submissionId, {
       status: args.status,

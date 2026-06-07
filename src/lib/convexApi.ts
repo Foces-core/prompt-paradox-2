@@ -21,6 +21,7 @@ export type LeaderboardRank = {
   hints: number;
   startTime: number;
   finishTime?: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
 };
 
 export type AdminLeaderboardRow = LeaderboardRank & {
