@@ -83,7 +83,7 @@ export const levels: Level[] = [
     prompt:
       "You have been solving my puzzles this whole time. But have you been reading me? I have left my name somewhere on this page since the moment you arrived. It was never hidden. You just were not looking.",
     challenge:
-      "A deliberate palate cleanser before the final level. Find the hidden text PROMPT PARADOX on the page and submit it.",
+      "A deliberate palate cleanser before the final level. Find the hidden text OVERMIND on the page and submit it.",
     hint: "Stop looking for a puzzle. Start looking at the page.",
   },
   {
@@ -94,7 +94,7 @@ export const levels: Level[] = [
     prompt:
       "You made it. Most do not. I have one final test — not of what you know, but of how you think when the rules are not given to you. Decode what I have left. Identify the signal. Then we talk.",
     challenge:
-      "Prompt Paradox's final transmission has been intercepted and encoded. Decode the ciphertext to find the final passphrase.",
+      "Overmind's final transmission has been intercepted and encoded. Decode the ciphertext to find the final passphrase.",
     hint: "Julius Caesar used something similar. But this version has a specific number associated with it that any hacker from early internet culture would recognise immediately.",
   },
 ];
