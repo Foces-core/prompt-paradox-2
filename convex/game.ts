@@ -59,24 +59,6 @@ function compareLeaderboardRows(a: LeaderboardRow, b: LeaderboardRow) {
   return a.startTime - b.startTime;
 }
 
-function getWinnerDecision(rows: LeaderboardRow[]) {
-  const finished = rows.filter((row) => row.finishTime !== undefined);
-  if (finished.length === 0) {
-    return { candidateId: null as string | null, tiedIds: [] as string[] };
-  }
-
-  const sorted = [...finished].sort(compareLeaderboardRows);
-  const best = sorted[0]!;
-  const tied = sorted.filter(
-    (row) => row.finishTime === best.finishTime && row.hints === best.hints,
-  );
-
-  return {
-    candidateId: tied.length === 1 ? best.id : null,
-    tiedIds: tied.map((row) => row.id),
-  };
-}
-
 async function getEvent(ctx: any) {
   return (await ctx.db.query("event").first()) ?? null;
 }
@@ -316,27 +298,6 @@ export const setWinnerParticipant = mutation({
 
     const event = await getEvent(ctx);
     if (!event) throw new Error("Event record not found.");
-
-    const standings: LeaderboardRow[] = (
-      await ctx.db.query("participants").collect()
-    ).map((participant) => ({
-      id: participant._id,
-      name: participant.name,
-      college: participant.college,
-      level: participant.completedLevels.length,
-      hints: participant.hintsUsed.length,
-      startTime: participant.startTime,
-      finishTime: participant.finishTime,
-    }));
-    const decision = getWinnerDecision(standings);
-
-    if (decision.candidateId) {
-      if (args.participantId !== decision.candidateId) {
-        throw new Error("Least-hint finalist wins this draw.");
-      }
-    } else if (!decision.tiedIds.includes(args.participantId)) {
-      throw new Error("Exact draw requires admin review.");
-    }
 
     await ctx.db.patch(event._id, {
       winnerParticipantId: args.participantId as any,

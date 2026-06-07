@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page, type Route } from "@playwright/test";
 
 const sampleParticipant = {
   name: "Sebin Mathew",
@@ -6,7 +6,7 @@ const sampleParticipant = {
   email: "sebin@example.com",
 };
 
-async function advanceThroughStory(page) {
+async function advanceThroughStory(page: Page) {
   const storyButton = page.getByRole("button", { name: /^(SKIP|NEXT|START)$/ });
 
   for (let index = 0; index < 6; index += 1) {
@@ -22,8 +22,32 @@ async function advanceThroughStory(page) {
   await page.waitForTimeout(500);
 }
 
+async function applyProjectVariant(page: Page, projectName: string) {
+  if (projectName === "slow-3g") {
+    const client = await page.context().newCDPSession(page);
+    await client.send("Network.enable");
+    await client.send("Network.emulateNetworkConditions", {
+      offline: false,
+      latency: 500,
+      downloadThroughput: (500 * 1024) / 8,
+      uploadThroughput: (200 * 1024) / 8,
+      connectionType: "cellular3g",
+    });
+  }
+
+  if (projectName === "adblocker") {
+    await page.route(
+      /doubleclick|googlesyndication|google-analytics|adservice|ads\//i,
+      async (route: Route) => {
+        void route.abort();
+      },
+    );
+  }
+}
+
 test.describe("responsive UI", () => {
   test("auth flow stays within viewport", async ({ page }) => {
+    await applyProjectVariant(page, test.info().project.name);
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "START CHALLENGE" })).toBeVisible();
 
@@ -54,6 +78,7 @@ test.describe("responsive UI", () => {
   });
 
   test("header controls stay visible on mobile sized layouts", async ({ page }) => {
+    await applyProjectVariant(page, test.info().project.name);
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "START CHALLENGE" })).toBeVisible();
 
@@ -83,7 +108,7 @@ test.describe("responsive UI", () => {
           box &&
             box.x >= 0 &&
             box.y >= 0 &&
-            box.x + box.width <= (await page.viewportSize())!.width + 1,
+            box.x + box.width <= page.viewportSize()!.width + 1,
         );
       }),
     );

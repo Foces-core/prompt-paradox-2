@@ -49,12 +49,12 @@ import {
 type RankRow = {
   id: string;
   name: string;
-  college?: string;
+  college: string;
   level: number;
   time: string;
-  hints?: number;
-  startTime?: number | string;
-  finishTime?: number | string | null;
+  hints: number;
+  startTime: number;
+  finishTime?: number;
 };
 
 function useAmbientBGM() {
@@ -563,7 +563,7 @@ export function GameShell() {
       college: rank.college,
       level: rank.level,
       time: rank.finishTime ? "done" : "live",
-      hints: rank.hints,
+      hints: rank.hints ?? 0,
       startTime: rank.startTime,
       finishTime: rank.finishTime,
     }));
@@ -2462,41 +2462,20 @@ function AdminPanel({
     }
   };
 
-  const eligibleRanks = ranks.filter((rank) => Boolean(rank.finishTime));
-  const winnerDecision = useMemo(() => {
-    if (eligibleRanks.length === 0) {
-      return { candidateId: "", exactDraw: false };
-    }
-
-    if (eligibleRanks.length === 1) {
-      return { candidateId: eligibleRanks[0]!.id, exactDraw: false };
-    }
-
-    const first = eligibleRanks[0]!;
-    const second = eligibleRanks[1]!;
-    if (
-      first.finishTime === second.finishTime &&
-      first.hints === second.hints
-    ) {
-      return { candidateId: "", exactDraw: true };
-    }
-
-    return { candidateId: first.id, exactDraw: false };
-  }, [eligibleRanks]);
-  const autoSelectedWinnerId = winnerDecision.exactDraw
-    ? ""
-    : winnerDecision.candidateId;
-  const finalWinnerId = winnerId || autoSelectedWinnerId;
-
-  useEffect(() => {
-    if (autoSelectedWinnerId) {
-      setWinnerId(autoSelectedWinnerId);
-    } else if (winnerDecision.exactDraw) {
-      setWinnerId("");
-    }
-    // auto-select winner details when the auto winner changes
-    setSelectedParticipantId(autoSelectedWinnerId || null);
-  }, [autoSelectedWinnerId, winnerDecision.exactDraw]);
+  const eligibleRanks = useMemo(
+    () =>
+      [...ranks]
+        .filter((rank) => Boolean(rank.finishTime))
+        .sort((a, b) => {
+          const finishDelta = (a.finishTime ?? Number.MAX_SAFE_INTEGER) - (b.finishTime ?? Number.MAX_SAFE_INTEGER);
+          if (finishDelta) return finishDelta;
+          const hintDelta = a.hints - b.hints;
+          if (hintDelta) return hintDelta;
+          return a.startTime! - b.startTime!;
+        }),
+    [ranks],
+  );
+  const finalWinnerId = winnerId;
 
   // Fetch full participant details when a participant is selected
   const selectedParticipant = useQuery(
@@ -2625,11 +2604,9 @@ function AdminPanel({
           </p>
         )}
         <p className="mt-2 font-mono text-[10px] tracking-wider text-[#14b8a6]/50 uppercase">
-          {winnerDecision.exactDraw
-            ? "Exact draw. Admin review required."
-            : autoSelectedWinnerId
-              ? "Auto-selected by tie-break. Admin should confirm."
-              : "No finalist yet."}
+          {eligibleRanks.length > 0
+            ? "Sorted by finish time, then hints used. Admin selects manually."
+            : "No finalist yet."}
         </p>
       </div>
 
@@ -2896,6 +2873,7 @@ type RankEntry = {
   level: number;
   time: string;
   hints: number;
+  startTime?: number;
   finishTime?: number;
 };
 

@@ -19,6 +19,18 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], browserName: "chromium" },
     },
     {
+      name: "desktop-firefox",
+      use: { ...devices["Desktop Firefox"], browserName: "firefox" },
+    },
+    {
+      name: "desktop-webkit",
+      use: { ...devices["Desktop Safari"], browserName: "webkit" },
+    },
+    {
+      name: "desktop-linux",
+      use: { ...devices["Desktop Chrome"], browserName: "chromium" },
+    },
+    {
       name: "iphone-se",
       use: { ...devices["iPhone SE"], browserName: "chromium" },
     },
@@ -29,6 +41,26 @@ export default defineConfig({
     {
       name: "ipad-mini",
       use: { ...devices["iPad Mini"], browserName: "chromium" },
+    },
+    {
+      name: "iphone-safari",
+      use: { ...devices["iPhone 13"], browserName: "webkit" },
+    },
+    {
+      name: "android-pixel-7",
+      use: { ...devices["Pixel 7"], browserName: "chromium" },
+    },
+    {
+      name: "android-pixel-5",
+      use: { ...devices["Pixel 5"], browserName: "chromium" },
+    },
+    {
+      name: "slow-3g",
+      use: { ...devices["Desktop Chrome"], browserName: "chromium" },
+    },
+    {
+      name: "adblocker",
+      use: { ...devices["Desktop Chrome"], browserName: "chromium" },
     },
   ],
 });
