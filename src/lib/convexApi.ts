@@ -92,8 +92,16 @@ export const gameApi = {
     { adminKey: string },
     Array<{
       id: string;
+      participantId: string;
       participantName: string;
       participantCollege: string;
+      participantEmail: string;
+      participantCurrentLevel: number;
+      participantLevel5Status: string;
+      participantCompletedLevels: number[];
+      participantHintsUsed: number[];
+      participantStartTime: number;
+      participantFinishTime: number | null;
       prompt: string;
       screenshotUrl: string | null;
       submittedAt: number;

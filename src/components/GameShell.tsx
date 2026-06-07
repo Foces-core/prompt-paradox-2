@@ -2132,17 +2132,23 @@ function PromptArchitect({
 
         <div className="mb-4">
           <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
-            Public link
+            Chat link
           </label>
           <input
             type="url"
             value={publicChatLink}
-            onChange={(event) => setPublicChatLink(event.target.value)}
+            onChange={(event) =>
+              setPublicChatLink(event.target.value.replace(/\s+/g, ""))
+            }
+            inputMode="url"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             className="w-full border border-white/10 bg-black/50 px-3 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#14b8a6] focus:bg-black"
             placeholder="Enter your answer"
           />
           <span className="mt-1 block text-[8px] text-[#14b8a6]/30">
-            Public URL
+            Paste only the public chat link.
           </span>
         </div>
 
@@ -2797,7 +2803,7 @@ function AdminPanel({
                 </div>
                 <div>
                   <div className="mb-1 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
-                    Public link:
+                    Chat link:
                   </div>
                   {/^https?:\/\//i.test(sub.prompt) ? (
                     <a
@@ -2813,6 +2819,60 @@ function AdminPanel({
                       {sub.prompt}
                     </p>
                   )}
+                </div>
+                <div className="grid grid-cols-2 gap-2 border-t border-[#14b8a6]/10 pt-3 text-[10px]">
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Participant ID
+                    </div>
+                    <div className="break-all text-[#d1ffd6]">
+                      {sub.participantId}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Current Level
+                    </div>
+                    <div className="text-[#d1ffd6]">
+                      {sub.participantCurrentLevel}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Level 5 Status
+                    </div>
+                    <div className="text-[#d1ffd6]">
+                      {sub.participantLevel5Status}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Hints Used
+                    </div>
+                    <div className="text-[#d1ffd6]">
+                      {sub.participantHintsUsed.length}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Started
+                    </div>
+                    <div className="text-[#d1ffd6]">
+                      {sub.participantStartTime
+                        ? new Date(sub.participantStartTime).toLocaleString()
+                        : "-"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#14b8a6]/45 uppercase">
+                      Finished
+                    </div>
+                    <div className="text-[#d1ffd6]">
+                      {sub.participantFinishTime
+                        ? new Date(sub.participantFinishTime).toLocaleString()
+                        : "-"}
+                    </div>
+                  </div>
                 </div>
                 {sub.screenshotUrl && (
                   <div>
