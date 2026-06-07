@@ -2037,11 +2037,8 @@ function PromptArchitect({
         screenshotId,
       });
 
-      setTerminalLogs((prev) => [
-        ...prev,
-        "Public link saved.",
-        "AWAITING ADMIN REVIEW...",
-      ]);
+      setTerminalLogs((prev) => [...prev, "Public link approved."]);
+      setShowLogs(false);
       setLoading(false);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "REQUEST REFUSED";
@@ -2051,7 +2048,7 @@ function PromptArchitect({
     }
   };
 
-  const isPending = player.level5Status === "pending" || showLogs;
+  const isPending = player.level5Status === "pending" || (showLogs && loading);
 
   if (isPending) {
     return (
