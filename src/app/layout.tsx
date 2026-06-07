@@ -7,8 +7,8 @@ import { ConvexClientProvider } from "~/components/ConvexClientProvider";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {
-  title: "Prompt Paradox",
-  description: "Prompt Paradox challenge app",
+  title: "Overmind",
+  description: "Overmind challenge app",
   icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
 };
 

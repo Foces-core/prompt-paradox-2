@@ -31,6 +31,7 @@
 >>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 
 ## Core Decisions
+- Current public branding is `Overmind`, not `Prompt Paradox`.
 - Story gate comes first.
 - Loading stays visible until admin starts the game.
 - Final victory line is:
