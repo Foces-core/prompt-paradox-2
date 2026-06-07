@@ -410,8 +410,16 @@ export const getPendingSubmissions = query({
 
           result.push({
             id: sub._id,
+            participantId: sub.participantId,
             participantName: part?.name ?? "Unknown",
             participantCollege: part?.college ?? "Unknown",
+            participantEmail: part?.email ?? "Unknown",
+            participantCurrentLevel: part?.currentLevel ?? 0,
+            participantLevel5Status: part?.level5Status ?? "none",
+            participantCompletedLevels: part?.completedLevels ?? [],
+            participantHintsUsed: part?.hintsUsed ?? [],
+            participantStartTime: part?.startTime ?? 0,
+            participantFinishTime: part?.finishTime ?? null,
             prompt: sub.prompt,
             screenshotUrl,
             submittedAt: sub.submittedAt,
