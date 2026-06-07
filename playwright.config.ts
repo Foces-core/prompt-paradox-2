@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
+const pixel7Firefox = { ...devices["Pixel 7"] };
+delete (pixel7Firefox as { isMobile?: boolean }).isMobile;
 
 export default defineConfig({
   testDir: "./tests",
@@ -51,6 +53,10 @@ export default defineConfig({
       use: { ...devices["Pixel 7"], browserName: "chromium" },
     },
     {
+      name: "android-firefox",
+      use: { ...pixel7Firefox, browserName: "firefox" },
+    },
+    {
       name: "android-pixel-5",
       use: { ...devices["Pixel 5"], browserName: "chromium" },
     },
@@ -60,6 +66,10 @@ export default defineConfig({
     },
     {
       name: "adblocker",
+      use: { ...devices["Desktop Chrome"], browserName: "chromium" },
+    },
+    {
+      name: "reduced-motion",
       use: { ...devices["Desktop Chrome"], browserName: "chromium" },
     },
   ],

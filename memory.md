@@ -1,8 +1,6 @@
 # Prompt Paradox 2 Memory
 
 ## Current Shape
-<<<<<<< HEAD
-
 - Public app: Next.js frontend with Convex as live backend.
 - Main repo: `C:\Users\sebin\pp2-publish`
 - Main branch is the deployment branch.
@@ -11,24 +9,13 @@
 
 ## Live Deployment
 
-=======
-- Public app: Next.js frontend with Convex as live backend.
-- Main repo: `C:\Users\sebin\pp2-publish`
-- Main branch is the deployment branch.
-- Package manager: `pnpm`
-- Command wrapper: `sfw`
-
 ## Live Deployment
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 - Convex production deployment:
   - `prod:proper-goshawk-251`
 - If backend code changes, deploy Convex and recheck the live flow.
 - Public frontend is hosted separately from Convex.
-<<<<<<< HEAD
 
 ## Core Decisions
-=======
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 
 ## Core Decisions
 - Current public branding is `Overmind`, not `Prompt Paradox`.
@@ -114,13 +101,14 @@
 - Back stops at level 1.
 
 ## UX Decisions
-<<<<<<< HEAD
 
 - Overmind / terminal styling stays.
 - Audio toggle starts off.
 - Correct answers should celebrate quickly.
 - Wrong answers should fail fast.
 - Keep the UI readable and compact.
+- Do not expose winner rationale or private winner detail panels in the admin UI.
+- Keep mobile controls safe-area aware and avoid horizontal overflow.
 
 ## Performance Decisions
 
@@ -128,6 +116,8 @@
 - Keep dependencies light.
 - Keep the public deploy cheap to run.
 - Avoid paid image/CDN dependencies in the gameplay path.
+- Lazy-load noncritical images.
+- Respect `prefers-reduced-motion` by disabling decorative animations.
 
 ## Documentation Decisions
 
@@ -151,18 +141,21 @@
 
 ## Stable Strings
 
-=======
 - Overmind / terminal styling stays.
 - Audio toggle starts off.
 - Correct answers should celebrate quickly.
 - Wrong answers should fail fast.
 - Keep the UI readable and compact.
+- Do not expose winner rationale or private winner detail panels in the admin UI.
+- Keep mobile controls safe-area aware and avoid horizontal overflow.
 
 ## Performance Decisions
 - Use deterministic local generation for puzzle visuals when exact bytes matter.
 - Keep dependencies light.
 - Keep the public deploy cheap to run.
 - Avoid paid image/CDN dependencies in the gameplay path.
+- Lazy-load noncritical images.
+- Respect `prefers-reduced-motion` by disabling decorative animations.
 
 ## Documentation Decisions
 - `CLAUDE.md`, `agent.md`, and `memory.md` should stay aligned.
@@ -182,7 +175,6 @@
 - Keep the live deployment and the local repo in sync after every backend change.
 
 ## Stable Strings
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 - Loading gate:
   - `[LOADING...]`
 - Demo fallback admin key:
