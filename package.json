@@ -18,6 +18,7 @@
     "test:answers": "node scripts/test-answers.mjs",
     "test:state": "node scripts/test-state.mjs",
     "test:ui": "node scripts/test-ui-buse.mjs",
+    "test:responsive": "playwright test --config playwright.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",

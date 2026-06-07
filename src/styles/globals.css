@@ -14,6 +14,10 @@ body {
   background: #020502;
   font-family: var(--font-garamond), serif;
   overflow-x: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
 }
 
 button,
@@ -313,11 +317,17 @@ button, input, textarea {
 
 @media (max-width: 640px) {
   :root { --tap-target-size: 48px; }
+  .scanline {
+    opacity: 0.02;
+  }
   button {
     min-height: 44px;
     min-width: 44px;
     padding: 0.5rem 0.75rem;
     font-size: 14px;
+  }
+  h1, h2, h3, .text-pulse {
+    text-wrap: balance;
   }
   input, textarea {
     padding: 0.5rem;
