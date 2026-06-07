@@ -23,6 +23,14 @@ export type LeaderboardRank = {
   finishTime?: number;
 };
 
+export type AdminLeaderboardRow = LeaderboardRank & {
+  email: string;
+  completedLevels: number[];
+  hintsUsed: number[];
+  currentLevel: number;
+  level5Status?: "none" | "pending" | "approved" | "rejected";
+};
+
 export const gameApi = {
   eventState: makeFunctionReference<
     "query",
@@ -34,6 +42,11 @@ export const gameApi = {
     Record<string, never>,
     LeaderboardRank[]
   >("game:leaderboard"),
+  adminLeaderboard: makeFunctionReference<
+    "query",
+    { adminKey: string },
+    AdminLeaderboardRow[]
+  >("game:adminLeaderboard"),
   participant: makeFunctionReference<
     "query",
     { participantId: string },

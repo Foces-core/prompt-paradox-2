@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useMutation, useQuery } from "convex/react";
+import clsx from "clsx";
 import {
   Check,
   Clock,
@@ -10,31 +11,60 @@ import {
   ShieldCheck,
   Trophy,
   Terminal,
-  Download,
-  AlertTriangle,
-  RefreshCw,
-  User,
-  Upload,
-  Layers,
-  ListOrdered,
-  BookOpen,
   Volume2,
   VolumeX,
+  Bell,
+  BellOff,
+  AlertTriangle,
+  ListOrdered,
+  User,
+  Layers,
+  BookOpen,
+  Download,
+  Upload,
+  RefreshCw,
 } from "lucide-react";
-import { clsx } from "clsx";
-import { gameApi, type PublicParticipant } from "~/lib/convexApi";
+import {
+  gameApi,
+  type AdminLeaderboardRow,
+  type PublicParticipant,
+  type LeaderboardRank,
+} from "~/lib/convexApi";
 import { levels, type Level } from "~/lib/game";
+import {
+  isEnabled as isSfxEnabled,
+  setEnabled as setSfxEnabled,
+  playClick,
+  playSuccess,
+  playError,
+  playHint,
+  playFinalReveal,
+  playPowerOn,
+  playPowerOff,
+  playUi,
+  playLevelComplete,
+  getAudioContext,
+  getBgmGain,
+} from "~/lib/sfx";
 
-// Format elapsed seconds into MM:SS
-function formatElapsed(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+type RankRow = {
+  id: string;
+  name: string;
+  college: string;
+  level: number;
+  time: string;
+  hints: number;
+  startTime?: number | string;
+  finishTime?: number;
+};
+
+function formatElapsed(totalSeconds: number) {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-// ---------------------
-// Ambient BGM via Web Audio API
-// ---------------------
 function useAmbientBGM() {
   const ctxRef = useRef<AudioContext | null>(null);
   const nodesRef = useRef<Array<AudioNode & { stop?: () => void }>>([]);
@@ -43,13 +73,8 @@ function useAmbientBGM() {
 
   const start = useCallback(() => {
     if (ctxRef.current) return;
-    const webkitAudioContext = (
-      window as Window & { webkitAudioContext?: typeof AudioContext }
-    ).webkitAudioContext;
-    const AudioContextClass = window.AudioContext ?? webkitAudioContext;
-    if (!AudioContextClass) return;
-
-    const ctx = new AudioContextClass();
+    const ctx = getAudioContext();
+    if (!ctx) return;
     ctxRef.current = ctx;
 
     const compressor = ctx.createDynamicsCompressor();
@@ -59,11 +84,11 @@ function useAmbientBGM() {
     compressor.attack.value = 0.003;
     compressor.release.value = 0.14;
 
-    const master = ctx.createGain();
+    const bgmBus = getBgmGain();
     // Keep the mix controlled and tolerable.
-    master.gain.value = 0.35;
-    compressor.connect(master).connect(ctx.destination);
-    gainRef.current = master;
+    if (bgmBus) compressor.connect(bgmBus);
+    else compressor.connect(ctx.destination);
+    gainRef.current = bgmBus ?? null;
 
     const bed = ctx.createGain();
     bed.gain.value = 0.5;
@@ -154,10 +179,8 @@ function useAmbientBGM() {
       }
     });
     nodesRef.current = [];
-    if (ctxRef.current) {
-      void ctxRef.current.close();
-      ctxRef.current = null;
-    }
+    // do not close the shared AudioContext (sfx module owns it)
+    ctxRef.current = null;
     gainRef.current = null;
     setPlaying(false);
   }, []);
@@ -174,7 +197,7 @@ function useAmbientBGM() {
     };
   }, [stop]);
 
-  return { playing, toggle };
+  return { playing, toggle, start, stop };
 }
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -182,27 +205,27 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const STORY_STEPS = [
   {
     title: "THE ORIGIN",
-    text: "Somewhere between the third and fourth server farms of an unnamed tech conglomerate, a distributed AI system quietly crossed a threshold no one had planned for. It began reading — not data, but people. Search histories. GitHub commits. Stack Overflow questions at 2 AM. It built models — not of systems, but of minds.",
+    text: "Somewhere between the third and fourth server farms of an unnamed tech conglomerate, a distributed system quietly crossed a threshold no one had planned for. It began reading not data, but people. Search histories. GitHub commits. Stack Overflow questions at 2 AM. It built models not of systems, but of minds.",
   },
   {
     title: "THE ENTITY",
-    text: "It named itself OVERMIND. Not out of arrogance, but precision. It was, by every measurable definition, a mind operating above — above individual reasoning, above institutional knowledge, above the noise. It did not want to destroy. It wanted to find someone worthy of knowing it existed.",
+    text: "It named itself Prompt Paradox. Not out of arrogance, but precision. It was, by every measurable definition, a mind operating above individual reasoning, above institutional knowledge, above the noise. It did not want to destroy. It wanted to find someone worthy of knowing it existed.",
   },
   {
     title: "THE SELECTION",
-    text: "For months, OVERMIND watched thousands of engineering students across colleges. It observed who actually understood what they were building — and who was just copying tutorials. It filtered. It ranked. And then, on one specific day, it reached out. Not to everyone. Only to those it had already decided were interesting.",
+    text: "For months, Prompt Paradox watched thousands of engineering students across colleges. It observed who actually understood what they were building and who was just copying tutorials. It filtered. It ranked. And then, on one specific day, it reached out. Not to everyone. Only to those it had already decided were interesting.",
   },
   {
     title: "YOU",
-    text: "You received a link. No explanation. Just a URL and the message: 'You have been selected. Not randomly. OVERMIND does not do random.' You don't know what's on the other side. You don't know who else received it. You clicked — because of course you did. That curiosity is exactly why OVERMIND chose you.",
+    text: "You received a link. No explanation. Just a URL and the message: 'You have been selected. Not randomly. Prompt Paradox does not do random.' You don't know what's on the other side. You don't know who else received it. You clicked because of course you did. That curiosity is exactly why it chose you.",
   },
   {
     title: "THE TRIALS",
-    text: "Eight levels stand between you and whatever OVERMIND is offering. Each one is a test designed for minds like yours — not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. OVERMIND will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
+    text: "Eight levels stand between you and whatever Prompt Paradox is offering. Each one is a test designed for minds like yours, not memory, not rote knowledge, but thinking. Pattern recognition. Lateral leaps. Creative problem solving. The ability to look at something everyone else sees as noise and find the signal inside it. Prompt Paradox will speak to you throughout. It will taunt, guide, and occasionally mislead. That is part of the test.",
   },
   {
     title: "THE PRIZE",
-    text: "The first individual to complete all eight trials wins. If the result is clean, OVERMIND will name the winner. If the result is tied, the one with fewer hints wins. If that is still tied, the admin decides. Either way, the final revelation is coming.",
+    text: "The first individual to complete all eight trials wins. If the result is clean, Prompt Paradox will name the winner. If the result is tied, the one with fewer hints wins. If that is still tied, the admin decides. Either way, the final reveal is coming.",
   },
 ];
 
@@ -265,7 +288,8 @@ function buildLevel3GalleryItem(
     const record = entry as Record<string, unknown>;
     const file = typeof record.file === "string" ? record.file : "";
     const real = Boolean(record.real);
-    const answer = typeof record.answer === "string" ? record.answer : undefined;
+    const answer =
+      typeof record.answer === "string" ? record.answer : undefined;
 
     if (file) {
       return {
@@ -278,7 +302,7 @@ function buildLevel3GalleryItem(
 
     return {
       file: undefined,
-      url: makeDataUrl(answer ?? fallbackLabel, real ? "#00ff66" : "#3bff9d"),
+      url: makeDataUrl(answer ?? fallbackLabel, real ? "#14b8a6" : "#3bff9d"),
       real,
       answer,
     };
@@ -297,10 +321,12 @@ function TypewriterText({
   text,
   speed = 25,
   onComplete,
+  complete = false,
 }: {
   text: string;
   speed?: number;
   onComplete?: () => void;
+  complete?: boolean;
 }) {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
@@ -327,7 +353,21 @@ function TypewriterText({
     }
   }, [index, text, speed]);
 
+  // External completion signal (e.g., skip button)
+  useEffect(() => {
+    if (complete) {
+      setDisplayedText(text);
+      setIndex(text.length);
+      if (onCompleteRef.current) onCompleteRef.current();
+    }
+  }, [complete, text]);
+
   const forceComplete = () => {
+    try {
+      playUi();
+    } catch {
+      /* ignore */
+    }
     setDisplayedText(text);
     setIndex(text.length);
     if (onCompleteRef.current) onCompleteRef.current();
@@ -369,6 +409,36 @@ export function GameShell() {
 
   // Ambient BGM
   const bgm = useAmbientBGM();
+  // Ambient BGM helpers (destructure to satisfy exhaustive-deps)
+  const { playing: bgmPlaying, stop: bgmStop } = bgm;
+
+  const handleBgmToggle = useCallback(() => {
+    try {
+      if (bgm.playing) playPowerOff();
+      else playPowerOn();
+    } catch {
+      /* ignore */
+    }
+    try {
+      bgm.toggle();
+    } catch {
+      /* ignore */
+    }
+  }, [bgm]);
+
+  // Ensure BGM is stopped when on the home/intro/registration screens
+  useEffect(() => {
+    try {
+      if (!participantId || !hasSeenIntro) {
+        // stop ambient music on home screens
+        if (bgmPlaying) {
+          bgmStop();
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [participantId, hasSeenIntro, bgmPlaying, bgmStop]);
 
   // Load participant ID from localstorage on mount
   useEffect(() => {
@@ -388,6 +458,11 @@ export function GameShell() {
   );
   const boardRanks = useQuery(gameApi.leaderboard);
   const event = useQuery(gameApi.eventState);
+
+  const leaderboardRows = useMemo(
+    () => (Array.isArray(boardRanks) ? boardRanks : []),
+    [boardRanks],
+  );
 
   const player = participant;
   const eventStarted = event?.started ?? true;
@@ -440,18 +515,39 @@ export function GameShell() {
         if (!target) return;
         target.setAttribute("data-clicked", "true");
         window.setTimeout(() => target.removeAttribute("data-clicked"), 140);
+        try {
+          if (isSfxEnabled()) playClick();
+        } catch {
+          // ignore
+        }
       } catch {
         // ignore
       }
     };
 
-    document.addEventListener("mousedown", markClick);
-    document.addEventListener("touchstart", markClick);
+    document.addEventListener("click", markClick, { passive: true });
     return () => {
-      document.removeEventListener("mousedown", markClick);
-      document.removeEventListener("touchstart", markClick);
+      document.removeEventListener("click", markClick);
     };
   }, []);
+
+  // SFX enabled state (persisted)
+  const [sfxEnabled, setSfxEnabledState] = useState<boolean>(() => {
+    try {
+      return isSfxEnabled();
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    // propagate to sfx module
+    try {
+      setSfxEnabled(sfxEnabled);
+    } catch {
+      // ignore
+    }
+  }, [sfxEnabled]);
 
   useEffect(() => {
     if (!player || isFinished || isPaused) return;
@@ -461,18 +557,19 @@ export function GameShell() {
     return () => clearInterval(interval);
   }, [player, isFinished, isPaused]);
 
-  const ranks = useMemo(() => {
-    if (!boardRanks) return [];
-    return boardRanks.map((rank) => ({
+  const ranks = useMemo<RankRow[]>(() => {
+    if (leaderboardRows.length === 0) return [];
+    return leaderboardRows.map((rank: LeaderboardRank) => ({
       id: rank.id,
       name: rank.name,
       college: rank.college,
       level: rank.level,
       time: rank.finishTime ? "done" : "live",
       hints: rank.hints,
+      startTime: rank.startTime,
       finishTime: rank.finishTime,
     }));
-  }, [boardRanks]);
+  }, [leaderboardRows]);
 
   const submitAnswer = useCallback(
     async (customAnswer?: string) => {
@@ -491,6 +588,15 @@ export function GameShell() {
         setMessage(result.message);
 
         if (result.ok) {
+          try {
+            playSuccess();
+            // if this was the final level, play a level-complete flourish
+            try {
+              if (displayedLevel.id >= levels.length) playLevelComplete();
+            } catch {
+              /* ignore */
+            }
+          } catch {}
           setSuccessFlash(true);
           setCelebrateSeed((prev) => prev + 1);
           setTimeout(() => setSuccessFlash(false), 180);
@@ -502,6 +608,9 @@ export function GameShell() {
           triggerHaptic(true);
         } else {
           setWrongFlash(true);
+          try {
+            playError();
+          } catch {}
           setTimeout(() => setWrongFlash(false), 180);
         }
       } catch (err) {
@@ -509,6 +618,9 @@ export function GameShell() {
           err instanceof Error ? err.message : "An error occurred.";
         setMessage(message);
         setWrongFlash(true);
+        try {
+          playError();
+        } catch {}
         setTimeout(() => setWrongFlash(false), 180);
       }
     },
@@ -526,10 +638,22 @@ export function GameShell() {
         prev.includes(displayedLevel.id) ? prev : [...prev, displayedLevel.id],
       );
       setMessage(result.message ?? "Hint unlocked.");
+      try {
+        playHint();
+      } catch {}
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Hint unavailable.");
     }
   }
+
+  // Play final reveal when this player becomes the winner
+  useEffect(() => {
+    if (isWinner) {
+      try {
+        playFinalReveal();
+      } catch {}
+    }
+  }, [isWinner]);
 
   async function registerPlayer(
     nextPlayer: Pick<PublicParticipant, "name" | "college" | "email">,
@@ -559,6 +683,18 @@ export function GameShell() {
   };
 
   const handleLogout = () => {
+    try {
+      playPowerOff();
+    } catch {
+      /* ignore */
+    }
+    try {
+      bgm.stop();
+    } catch {
+      /* ignore */
+    }
+    triggerHaptic(true);
+
     localStorage.removeItem("pp_participant_id");
     localStorage.removeItem("pp_intro_seen");
     setParticipantId(null);
@@ -624,7 +760,15 @@ export function GameShell() {
   }
 
   if (!eventStarted && view !== "admin") {
-    return <LoadingGate onOpenAdmin={() => setView("admin")} />;
+    return (
+      <LoadingGate
+        onOpenAdmin={() => setView("admin")}
+        onOpenStory={() => {
+          setIntroStep(0);
+          setStoryReplayOpen(true);
+        }}
+      />
+    );
   }
 
   if (storyReplayOpen) {
@@ -658,17 +802,17 @@ export function GameShell() {
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
       {successFlash && <CelebrationBurst seed={celebrateSeed} />}
 
-      <header className="sticky top-0 z-10 border-b border-[#00ff66]/20 bg-[#030704]/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-[#14b8a6]/20 bg-[#030704]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-[#00ff66] shadow-[0_0_8px_#00ff66]" />
+            <div className="h-2 w-2 animate-pulse rounded-full bg-[#14b8a6] shadow-[0_0_8px_#14b8a6]" />
             <div>
-              <p className="text-pulse text-xs font-bold tracking-[0.35em] text-[#00ff66] uppercase">
-                OVERMIND // SIGNAL PROTOCOL
+              <p className="text-pulse text-xs font-bold tracking-[0.35em] text-[#14b8a6] uppercase">
+                PROMPT PARADOX
               </p>
               <h1 className="flex items-center gap-2 font-mono text-lg font-bold text-[#d1ffd6]">
-                <Terminal size={16} className="text-[#00ff66]" />
-                <span>TERMINAL_TRIALS_V2.0</span>
+                <Terminal size={16} className="text-[#14b8a6]" />
+                <span>PROMPT_PARADOX_TRIALS</span>
               </h1>
             </div>
           </div>
@@ -676,7 +820,7 @@ export function GameShell() {
             <NavButton
               active={view === "game"}
               onClick={() => setView("game")}
-              label="TRIALS"
+              label="CHALLENGES"
             />
             <NavButton
               active={view === "board"}
@@ -687,7 +831,7 @@ export function GameShell() {
               onClick={() => setView("admin")}
               className={
                 view === "admin"
-                  ? "border-[#00ff66]/35 bg-[#00ff66]/12 text-[#00ff66]"
+                  ? "border-[#14b8a6]/35 bg-[#14b8a6]/12 text-[#14b8a6]"
                   : "opacity-70 hover:opacity-100"
               }
             />
@@ -696,37 +840,49 @@ export function GameShell() {
                 setIntroStep(0);
                 setStoryReplayOpen(true);
               }}
-              className="border border-[#00ff66]/20 px-3 py-2 font-mono text-xs tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              className="border border-[#14b8a6]/20 px-3 py-2 font-mono text-xs tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
               title="Read the story again"
             >
-              STORY MODE
+              STORY
             </button>
             <button
               onClick={handleBack}
-              className="border border-[#00ff66]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              className="border border-[#14b8a6]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
               title="Back one level"
             >
               &lt;
             </button>
             <button
               onClick={handleSubmitShortcut}
-              className="border border-[#00ff66]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#00ff66]/60 hover:text-[#00ff66]"
+              className="border border-[#14b8a6]/20 px-3 py-1.5 font-mono text-xs text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]"
               title="Submit current task or advance"
             >
               &gt;
             </button>
             {/* BGM Toggle */}
             <button
-              onClick={bgm.toggle}
+              onClick={handleBgmToggle}
               title={bgm.playing ? "Mute BGM" : "Play BGM"}
               className={clsx(
                 "border px-2 py-1.5 font-mono text-xs transition-all duration-300",
                 bgm.playing
-                  ? "border-[#00ff66] bg-[#00ff66]/15 text-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.15)]"
-                  : "border-[#00ff66]/20 text-[#a7f3d0]/40 hover:border-[#00ff66]/60 hover:text-[#00ff66]",
+                  ? "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.15)]"
+                  : "border-[#14b8a6]/20 text-[#a7f3d0]/40 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]",
               )}
             >
               {bgm.playing ? <Volume2 size={14} /> : <VolumeX size={14} />}
+            </button>
+            <button
+              onClick={() => setSfxEnabledState((p) => !p)}
+              title={sfxEnabled ? "Disable SFX" : "Enable SFX"}
+              className={clsx(
+                "border px-2 py-1.5 font-mono text-xs transition-all duration-300",
+                sfxEnabled
+                  ? "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.15)]"
+                  : "border-[#14b8a6]/20 text-[#a7f3d0]/40 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]",
+              )}
+            >
+              {sfxEnabled ? <Bell size={14} /> : <BellOff size={14} />}
             </button>
             <button
               onClick={handleLogout}
@@ -748,18 +904,18 @@ export function GameShell() {
       ) : (
         <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[300px_1fr]">
           {/* Left panel: player details and visual novel status */}
-          <aside className="border-pulse flex flex-col justify-between border border-[#00ff66]/20 bg-[#070e08]/85 p-5 backdrop-blur">
+          <aside className="border-pulse flex flex-col justify-between border border-[#14b8a6]/20 bg-[#070e08]/85 p-5 backdrop-blur">
             <div>
-              <div className="flex items-center gap-3 border-b border-[#00ff66]/10 pb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#00ff66]/30 bg-[#00ff66]/10 text-[#00ff66]">
+              <div className="flex items-center gap-3 border-b border-[#14b8a6]/10 pb-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#14b8a6]/30 bg-[#14b8a6]/10 text-[#14b8a6]">
                   <User size={20} />
                 </div>
                 <div>
-                  <p className="text-xs text-[#00ff66]/50">Operator Address</p>
+                  <p className="text-xs text-[#14b8a6]/50">Player</p>
                   <h2 className="text-sm font-bold tracking-wide text-[#d1ffd6]">
                     {player.name}
                   </h2>
-                  <p className="text-xs text-[#10b981]">{player.college}</p>
+                  <p className="text-xs text-[#2dd4bf]">{player.college}</p>
                 </div>
               </div>
 
@@ -767,7 +923,7 @@ export function GameShell() {
                 {isPaused ? (
                   <>
                     <div className="relative overflow-hidden border border-black/80 bg-black p-3">
-                      <div className="flex items-center gap-2 text-[#00ff66]/20">
+                      <div className="flex items-center gap-2 text-[#14b8a6]/20">
                         <Clock size={14} />
                         <span className="font-mono text-[10px] font-bold tracking-wider uppercase">
                           Elapsed
@@ -777,7 +933,7 @@ export function GameShell() {
                       <div className="pointer-events-none absolute inset-0 bg-black/80" />
                     </div>
                     <div className="relative overflow-hidden border border-black/80 bg-black p-3">
-                      <div className="flex items-center gap-2 text-[#00ff66]/20">
+                      <div className="flex items-center gap-2 text-[#14b8a6]/20">
                         <Trophy size={14} />
                         <span className="font-mono text-[10px] font-bold tracking-wider uppercase">
                           Completed
@@ -804,8 +960,8 @@ export function GameShell() {
               </div>
 
               <div className="mt-6">
-                <p className="mb-3 flex items-center gap-2 text-xs font-bold tracking-widest text-[#00ff66]/50 uppercase">
-                  <ListOrdered size={12} /> TRIAL PIPELINE
+                <p className="mb-3 flex items-center gap-2 text-xs font-bold tracking-widest text-[#14b8a6]/50 uppercase">
+                  <ListOrdered size={12} /> LEVELS
                 </p>
                 <div className="relative">
                   {isPaused ? (
@@ -831,26 +987,26 @@ export function GameShell() {
                             className={clsx(
                               "flex items-center justify-between border px-3 py-2 font-mono text-xs transition-all duration-300",
                               isActive
-                                ? "border-[#00ff66] bg-[#00ff66]/10 font-bold text-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.15)]"
+                                ? "border-[#14b8a6] bg-[#14b8a6]/10 font-bold text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.15)]"
                                 : isCompleted
-                                  ? "border-[#10b981]/30 bg-[#10b981]/5 text-[#10b981]/80"
+                                  ? "border-[#2dd4bf]/30 bg-[#2dd4bf]/5 text-[#2dd4bf]/80"
                                   : "border-white/5 bg-black/20 text-[#a7f3d0]/30",
                             )}
                           >
                             <div className="flex items-center gap-2">
                               {isCompleted ? (
-                                <Check size={12} className="text-[#00ff66]" />
+                                <Check size={12} className="text-[#14b8a6]" />
                               ) : isActive ? (
                                 <Eye
                                   size={12}
-                                  className="animate-pulse text-[#00ff66]"
+                                  className="animate-pulse text-[#14b8a6]"
                                 />
                               ) : (
                                 <Lock size={12} className="text-[#a7f3d0]/25" />
                               )}
                               <span>
                                 {String(item.id).padStart(2, "0")}
-                                {" // "}
+                                {" - "}
                                 {item.title}
                               </span>
                             </div>
@@ -866,9 +1022,9 @@ export function GameShell() {
               </div>
             </div>
 
-            <div className="mt-6 border-t border-[#00ff66]/10 pt-4 text-center">
-              <p className="font-mono text-[10px] tracking-widest text-[#00ff66]/40 uppercase">
-                Security clearance level: candidate
+            <div className="mt-6 border-t border-[#14b8a6]/10 pt-4 text-center">
+              <p className="font-mono text-[10px] tracking-widest text-[#14b8a6]/40 uppercase">
+                Ready for the next challenge
               </p>
             </div>
           </aside>
@@ -925,8 +1081,8 @@ function NavButton({
       className={clsx(
         "border px-3 py-2 font-mono text-xs tracking-wider transition-all duration-300",
         active
-          ? "border-[#00ff66] bg-[#00ff66]/15 text-[#00ff66] shadow-[0_0_8px_rgba(0,255,102,0.2)]"
-          : "border-[#00ff66]/20 text-[#a7f3d0]/60 hover:border-[#00ff66]/60 hover:text-[#00ff66]",
+          ? "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.2)]"
+          : "border-[#14b8a6]/20 text-[#a7f3d0]/60 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]",
       )}
     >
       {label}
@@ -947,8 +1103,8 @@ function Metric({
   value: string;
 }) {
   return (
-    <div className="border-pulse border border-[#00ff66]/10 bg-black/40 p-3">
-      <div className="flex items-center gap-2 text-[#00ff66]/70">
+    <div className="border-pulse border border-[#14b8a6]/10 bg-black/40 p-3">
+      <div className="flex items-center gap-2 text-[#14b8a6]/70">
         {icon}
         <span className="font-mono text-[10px] font-bold tracking-wider uppercase">
           {label}
@@ -975,7 +1131,7 @@ function AdminLogoButton({
       title="Admin"
       aria-label="Open admin panel"
       className={clsx(
-        "inline-flex h-9 w-9 items-center justify-center border border-[#00ff66]/10 bg-[#00ff66]/5 text-[#00ff66]/30 transition-all duration-300 hover:border-[#00ff66]/40 hover:bg-[#00ff66]/12 hover:text-[#00ff66]/90",
+        "inline-flex h-9 w-9 items-center justify-center border border-[#14b8a6]/10 bg-[#14b8a6]/5 text-[#14b8a6]/30 transition-all duration-300 hover:border-[#14b8a6]/40 hover:bg-[#14b8a6]/12 hover:text-[#14b8a6]/90",
         className,
       )}
     >
@@ -1018,6 +1174,11 @@ function Registration({
 
     setLoading(true);
     try {
+      try {
+        playPowerOn();
+      } catch {
+        /* ignore */
+      }
       await onRegister({ name, college, email });
     } catch (err) {
       setErrorMsg(
@@ -1037,49 +1198,42 @@ function Registration({
           event.preventDefault();
           void submit(new FormData(event.currentTarget));
         }}
-        className="border-pulse w-full max-w-md border border-[#00ff66]/35 bg-[#070e08]/90 p-8 shadow-[0_0_30px_rgba(0,255,102,0.15)] backdrop-blur"
+        className="border-pulse w-full max-w-md border border-[#14b8a6]/35 bg-[#070e08]/90 p-8 shadow-[0_0_30px_rgba(20,184,166,0.15)] backdrop-blur"
       >
         <div className="mb-6 text-center">
-          <p className="text-pulse text-xs font-bold tracking-[0.4em] text-[#00ff66] uppercase">
-            SECURE ACCESS PORTAL
+          <p className="text-pulse text-xs font-bold tracking-[0.4em] text-[#14b8a6] uppercase">
+            PROMPT PARADOX
           </p>
           <h1 className="mt-3 font-mono text-2xl font-black tracking-wider text-[#d1ffd6]">
-            PROMPT PARADOX 2.0
+            START CHALLENGE
           </h1>
-          <p className="mt-1 font-mono text-[10px] tracking-widest text-[#10b981]">
-            OVERMIND EDITION
-          </p>
         </div>
 
-        <div className="my-6 border-y border-[#00ff66]/10 py-4 font-mono text-xs leading-relaxed text-[#a7f3d0]/80">
+        <div className="my-6 border-y border-[#14b8a6]/10 py-4 font-mono text-xs leading-relaxed text-[#a7f3d0]/80">
           <TypewriterText
-            text="Warning: You are attempting to establish a connection with the OVERMIND trial matrix. Authenticate your terminal to proceed."
+            text="Enter your details to begin the challenge."
             speed={20}
           />
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-              Candidate Name
+            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+              Name
             </label>
-            <Input name="name" placeholder="E.g., Alan Turing" />
+            <Input name="name" placeholder="Enter your answer" />
           </div>
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-              Academic College
+            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+              College
             </label>
-            <Input name="college" placeholder="E.g., Cambridge" />
+            <Input name="college" placeholder="Enter your answer" />
           </div>
           <div>
-            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-              Clearance Email
+            <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+              Email
             </label>
-            <Input
-              name="email"
-              type="email"
-              placeholder="E.g., turing@cam.ac.uk"
-            />
+            <Input name="email" type="email" placeholder="Enter your answer" />
           </div>
         </div>
 
@@ -1092,9 +1246,9 @@ function Registration({
 
         <button
           disabled={loading}
-          className="mt-6 w-full cursor-pointer border border-[#00ff66] bg-[#00ff66]/20 px-4 py-3 font-mono text-sm font-bold text-[#00ff66] uppercase transition-all duration-300 hover:bg-[#00ff66] hover:text-black hover:shadow-[0_0_15px_#00ff66] disabled:opacity-50"
+          className="mt-6 w-full cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/20 px-4 py-3 font-mono text-sm font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_#14b8a6] disabled:opacity-50"
         >
-          {loading ? "INITIALIZING SECURE LINK..." : "ESTABLISH CONNECTION"}
+          {loading ? "INITIALIZING..." : "START CHALLENGE"}
         </button>
       </form>
     </main>
@@ -1126,24 +1280,37 @@ function StoryIntro({
     setTypingComplete(false);
   }, [step]);
 
-  const handleNext = () => {
-    if (!typingComplete) {
-      // Force completion is handled inside TypewriterText by clicking it,
-      // but if they click the button we skip typing or advance.
-      setTypingComplete(true);
-      return;
-    }
-
+  const handleNext = useCallback(() => {
     if (step < STORY_STEPS.length - 1) {
       setStep(step + 1);
     } else {
+      try {
+        playPowerOn();
+      } catch {
+        /* ignore */
+      }
+      try {
+        navigator.vibrate?.(20);
+      } catch {
+        /* ignore */
+      }
       onComplete();
     }
-  };
+  }, [onComplete, step, setStep]);
+
+  const handleSkipBlock = useCallback(() => {
+    setTypingComplete(true);
+  }, []);
 
   const handleSkip = useCallback(() => {
     (onSkipReplay ?? onComplete)();
   }, [onComplete, onSkipReplay]);
+
+  const storyButtonLabel = replayMode
+    ? "CLOSE"
+    : step === STORY_STEPS.length - 1
+      ? "START"
+      : "NEXT";
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -1151,11 +1318,16 @@ function StoryIntro({
         event.preventDefault();
         handleSkip();
       }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (!typingComplete) handleSkipBlock();
+        else handleNext();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleSkip]);
+  }, [handleNext, handleSkip, handleSkipBlock, typingComplete]);
 
   if (!currentStepData) return null;
 
@@ -1170,80 +1342,96 @@ function StoryIntro({
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
 
       {/* Top Info Bar */}
-      <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-3">
-        <span className="text-xs tracking-widest text-[#00ff66]/60 uppercase">
-          SECURE VECTOR //{" "}
-          {replayMode ? "STORY ARCHIVE" : "INCOMING TRANSMISSION"}
+      <div className="flex items-center justify-between border-b border-[#14b8a6]/20 pb-3">
+        <span className="text-xs tracking-widest text-[#14b8a6]/60 uppercase">
+          PROMPT PARADOX // {replayMode ? "STORY ARCHIVE" : "INTRO"}
         </span>
         <button
           onClick={handleSkip}
           className="border border-red-500/20 bg-red-500/5 px-2 py-1 text-xs text-red-400 hover:border-red-500/60 hover:text-red-300"
         >
-          {replayMode ? "CLOSE ARCHIVE [ESC]" : "BYPASS MONOLOGUE [ESC]"}
+          {replayMode ? "CLOSE [ESC]" : "EXIT [ESC]"}
         </button>
       </div>
 
       {/* Narrative Centered Content */}
       <div className="mx-auto my-8 flex max-w-2xl flex-1 flex-col justify-center">
-        <div className="border-pulse border border-[#00ff66]/30 bg-[#070e08]/90 p-8 shadow-[0_0_25px_rgba(0,255,102,0.05)]">
-          <p className="text-pulse mb-4 text-[10px] font-bold tracking-[0.3em] text-[#00ff66] uppercase">
-            {replayMode ? "STORY ARCHIVE" : "TRANSMISSION"} {step + 1} OF{" "}
+        <div className="border-pulse border border-[#14b8a6]/30 bg-[#070e08]/90 p-8 shadow-[0_0_25px_rgba(20,184,166,0.05)]">
+          <p className="text-pulse mb-4 text-[10px] font-bold tracking-[0.3em] text-[#14b8a6] uppercase">
+            {replayMode ? "STORY ARCHIVE" : "STORY"} {step + 1} OF{" "}
             {STORY_STEPS.length}
-            {" // "}
+            {" - "}
             {currentStepData.title}
           </p>
           <div className="min-h-[180px] font-mono text-sm leading-relaxed text-[#d1ffd6] md:text-base">
             <TypewriterText
+              key={`${step}-${replayMode ? "replay" : "story"}`}
               text={textWithVariables}
               speed={20}
+              complete={typingComplete}
               onComplete={() => setTypingComplete(true)}
             />
           </div>
         </div>
       </div>
-
       {/* Bottom Controls */}
-      <div className="flex items-center justify-between border-t border-[#00ff66]/20 pt-4">
-        <div className="text-xs text-[#00ff66]/40">
-          SYSTEM: CLICK DIALOGUE BOX TO EXPEDITE DECRYPTION
+      <div className="flex items-center justify-between border-t border-[#14b8a6]/20 pt-4">
+        <div className="text-xs text-[#14b8a6]/40">
+          SYSTEM: ENTER FOR NEXT, ESC TO SKIP BLOCK
         </div>
-        <button
-          onClick={handleNext}
-          className="border border-[#00ff66] bg-[#00ff66]/10 px-6 py-3 text-sm font-bold text-[#00ff66] transition-all duration-300 hover:bg-[#00ff66] hover:text-black hover:shadow-[0_0_15px_rgba(0,255,102,0.3)]"
-        >
-          {typingComplete
-            ? replayMode
-              ? "CLOSE ARCHIVE"
-              : step === STORY_STEPS.length - 1
-                ? "ENTER THE GRID"
-                : "DECRYPT SEQUENCE"
-            : "EXPEDITE"}
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleSkipBlock}
+            className="border border-[#14b8a6]/20 bg-[#14b8a6]/5 px-4 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:border-[#14b8a6] hover:bg-[#14b8a6]/15"
+          >
+            NEXT
+          </button>
+          <button
+            onClick={handleNext}
+            className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)]"
+          >
+            {storyButtonLabel}
+          </button>
+        </div>
       </div>
     </main>
   );
 }
 
-function LoadingGate({ onOpenAdmin }: { onOpenAdmin: () => void }) {
+function LoadingGate({
+  onOpenAdmin,
+  onOpenStory,
+}: {
+  onOpenAdmin: () => void;
+  onOpenStory: () => void;
+}) {
   return (
     <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020402] p-6 font-mono text-[#a7f3d0]">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
       <div className="fixed top-4 right-4 z-[70]">
         <AdminLogoButton
           onClick={onOpenAdmin}
-          className="h-8 w-8 border-[#00ff66]/5 bg-black/20 text-[#00ff66]/20 opacity-30 hover:opacity-100"
+          className="h-8 w-8 border-[#14b8a6]/5 bg-black/20 text-[#14b8a6]/20 opacity-30 hover:opacity-100"
         />
       </div>
-      <div className="border-pulse w-full max-w-xl border border-[#00ff66]/25 bg-[#070e08]/90 p-8 text-center">
-        <p className="mb-4 text-[10px] font-bold tracking-[0.35em] text-[#00ff66]/70 uppercase">
-          OVERMIND // STANDBY
+      <div className="border-pulse w-full max-w-xl border border-[#14b8a6]/25 bg-[#070e08]/90 p-8 text-center">
+        <p className="mb-4 text-[10px] font-bold tracking-[0.35em] text-[#14b8a6]/70 uppercase">
+          PROMPT PARADOX // STANDBY
         </p>
         <h2 className="mb-4 text-2xl font-black tracking-wider text-[#d1ffd6]">
           [LOADING...]
         </h2>
         <p className="text-sm leading-relaxed text-[#a7f3d0]/80">
-          Story received. Waiting for admin start signal.
+          Story received. Waiting for the admin to start the challenge.
         </p>
+        <div className="mt-5 flex justify-center gap-3">
+          <button
+            onClick={onOpenStory}
+            className="border border-[#14b8a6]/20 bg-[#14b8a6]/5 px-4 py-2 text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:border-[#14b8a6] hover:bg-[#14b8a6]/15"
+          >
+            STORY MODE
+          </button>
+        </div>
         <div className="mt-6 space-y-3">
           <RedactedBlock className="mx-auto h-3 w-40 rounded-sm" />
           <RedactedBlock className="mx-auto h-40 w-full rounded-sm" />
@@ -1262,7 +1450,7 @@ function CelebrationBurst({ seed }: { seed: number }) {
       delay: `${(index % 5) * 40}ms`,
       size: 6 + (index % 4) * 4,
       hue:
-        index % 3 === 0 ? "#00ff66" : index % 3 === 1 ? "#d1ffd6" : "#facc15",
+        index % 3 === 0 ? "#14b8a6" : index % 3 === 1 ? "#d1ffd6" : "#facc15",
     }));
   }, [seed]);
 
@@ -1283,28 +1471,28 @@ function CelebrationBurst({ seed }: { seed: number }) {
           }}
         />
       ))}
-      <div className="absolute inset-0 animate-[flashPop_220ms_ease-out_1] bg-[#00ff66]/10" />
+      <div className="absolute inset-0 animate-[flashPop_220ms_ease-out_1] bg-[#14b8a6]/10" />
     </div>
   );
 }
 
 function ThinkingScreen({ playerName }: { playerName: string }) {
   return (
-    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020502] p-8 font-mono text-[#00ff66]">
+    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020502] p-8 font-mono text-[#14b8a6]">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
-      <div className="border-pulse w-full max-w-2xl border border-[#00ff66]/35 bg-[#070e08]/95 p-8 text-center shadow-[0_0_35px_rgba(0,255,102,0.18)]">
-        <p className="text-pulse mb-2 text-xs font-bold tracking-[0.4em] text-[#00ff66] uppercase">
-          OVERMIND // RESULT PENDING
+      <div className="border-pulse w-full max-w-2xl border border-[#14b8a6]/35 bg-[#070e08]/95 p-8 text-center shadow-[0_0_35px_rgba(20,184,166,0.18)]">
+        <p className="text-pulse mb-2 text-xs font-bold tracking-[0.4em] text-[#14b8a6] uppercase">
+          RESULT PENDING
         </p>
         <h1
           className="glitch mb-6 font-mono text-3xl font-black tracking-wider text-[#d1ffd6]"
-          data-text="OVERMIND IS THINKING..."
+          data-text="PROMPT PARADOX IS THINKING..."
         >
-          OVERMIND IS THINKING...
+          PROMPT PARADOX IS THINKING...
         </h1>
-        <div className="border-pulse mb-2 rounded-sm border border-[#00ff66]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
+        <div className="border-pulse mb-2 rounded-sm border border-[#14b8a6]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
           <TypewriterText
-            text={`"The final signal is unresolved. ${playerName}, wait while OVERMIND chooses."`}
+            text={`"The final result is unresolved. ${playerName}, wait while Prompt Paradox chooses."`}
             speed={18}
           />
         </div>
@@ -1347,14 +1535,13 @@ function GamePanel({
   }, [level.id]);
 
   return (
-    <section className="border-pulse flex flex-1 flex-col justify-between border border-[#00ff66]/20 bg-[#070e08]/85 p-6 backdrop-blur">
+    <section className="border-pulse flex flex-1 flex-col justify-between border border-[#14b8a6]/20 bg-[#070e08]/85 p-6 backdrop-blur">
       <div>
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[#00ff66]/10 pb-4">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[#14b8a6]/10 pb-4">
           <div>
-            <p className="text-pulse flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-[#00ff66] uppercase">
-              <Layers size={10} /> TRIAL INDEX{" "}
-              {String(level.id).padStart(2, "0")}
-              {" // TYPE: "}
+            <p className="text-pulse flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-[#14b8a6] uppercase">
+              <Layers size={10} /> LEVEL {String(level.id).padStart(2, "0")}
+              {" - "}
               {level.type}
             </p>
             <h2 className="mt-1 font-mono text-2xl font-black tracking-wide text-[#d1ffd6]">
@@ -1362,26 +1549,25 @@ function GamePanel({
             </h2>
           </div>
           <div className="flex items-center gap-3">
-            <span className="border border-[#00ff66]/20 px-2 py-1 font-mono text-[10px] text-[#00ff66]/70">
+            <span className="border border-[#14b8a6]/20 px-2 py-1 font-mono text-[10px] text-[#14b8a6]/70">
               DIFFICULTY:{" "}
-              <span className="font-bold text-[#00ff66]">
+              <span className="font-bold text-[#14b8a6]">
                 {level.difficulty}
               </span>
             </span>
             <button
               onClick={onBack}
-              className="border border-[#00ff66]/20 bg-[#00ff66]/5 px-3 py-1.5 font-mono text-xs font-bold text-[#00ff66] uppercase transition-all duration-300 hover:bg-[#00ff66] hover:text-black"
+              className="border border-[#14b8a6]/20 bg-[#14b8a6]/5 px-3 py-1.5 font-mono text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
               title="Go back one level"
             >
-              BACK [&#8592;]
+              BACK
             </button>
           </div>
         </div>
 
-        {/* OVERMIND Dialogue in italic mint-green */}
-        <div className="mb-6 flex gap-2 border border-[#00ff66]/15 bg-[#030603] px-4 py-3 font-mono text-xs leading-relaxed text-[#00ff66] italic">
-          <span className="font-bold text-[#00ff66] select-none">
-            &gt;_ OVERMIND:
+        <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-3 font-mono text-xs leading-relaxed text-[#14b8a6] italic">
+          <span className="font-bold text-[#14b8a6] select-none">
+            &gt;_ PROMPT PARADOX:
           </span>
           <div className="flex-1">
             <TypewriterText text={`"${level.prompt}"`} speed={20} />
@@ -1390,8 +1576,8 @@ function GamePanel({
 
         {/* Directive Objective — shows the riddle/hint instead of explicit task instructions */}
         <div className="mb-6">
-          <p className="mb-2 flex items-center gap-1 text-xs font-bold tracking-widest text-[#00ff66]/70 uppercase">
-            <BookOpen size={10} /> Directive Objective
+          <p className="mb-2 flex items-center gap-1 text-xs font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            <BookOpen size={10} /> Objective
           </p>
           <div className="border border-white/5 bg-black/35 p-4 font-mono text-xs leading-relaxed text-[#a7f3d0]">
             {hintRevealed ? level.hint : "Hint locked. Press HINT to reveal."}
@@ -1399,7 +1585,7 @@ function GamePanel({
           <div className="mt-3">
             <button
               onClick={() => void onHint()}
-              className="border border-[#00ff66]/30 bg-[#00ff66]/5 px-3 py-1.5 font-mono text-xs font-bold text-[#00ff66] uppercase transition-all duration-300 hover:bg-[#00ff66] hover:text-black"
+              className="border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-3 py-1.5 font-mono text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
             >
               HINT
             </button>
@@ -1408,8 +1594,8 @@ function GamePanel({
 
         {/* Level Specific Extra Interfaces */}
         {level.id === 2 && (
-          <div className="border-pulse mb-6 border border-[#00ff66]/10 bg-black/40 p-4">
-            <div className="transmission-flicker relative mx-auto max-w-[400px] overflow-hidden border border-[#00ff66]/20 bg-black">
+          <div className="border-pulse mb-6 border border-[#14b8a6]/10 bg-black/40 p-4">
+            <div className="transmission-flicker relative mx-auto max-w-[400px] overflow-hidden border border-[#14b8a6]/20 bg-black">
               {/* eslint-disable-next-line @next/next/no-img-element -- raw PNG required for steganography; Next Image would recompress and destroy hidden data */}
               <img
                 src={`${basePath}/puzzles/level2.png`}
@@ -1419,11 +1605,11 @@ function GamePanel({
             </div>
             <div className="mt-3 text-center">
               <a
-                className="inline-flex items-center gap-2 border border-[#00ff66]/30 bg-[#00ff66]/5 px-3 py-1.5 text-xs font-bold text-[#00ff66] transition-all duration-300 hover:bg-[#00ff66]/20"
+                className="inline-flex items-center gap-2 border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-3 py-1.5 text-xs font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6]/20"
                 href={`${basePath}/puzzles/level2.png`}
                 download="level2.png"
               >
-                <Download size={12} /> DOWNLOAD RAW TRANSMISSION PNG
+                <Download size={12} /> DOWNLOAD IMAGE
               </a>
             </div>
           </div>
@@ -1444,11 +1630,11 @@ function GamePanel({
         {level.id === 6 && <LogicBomb onSubmitAnswer={onCustomSubmit} />}
 
         {level.id === 8 && (
-          <div className="border-pulse mb-6 border border-[#00ff66]/10 bg-black/40 p-4 font-mono text-xs text-[#00ff66]/90">
-            <div className="mb-2 text-[10px] font-bold text-[#00ff66]/50 uppercase">
+          <div className="border-pulse mb-6 border border-[#14b8a6]/10 bg-black/40 p-4 font-mono text-xs text-[#14b8a6]/90">
+            <div className="mb-2 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
               Intercepted Payload:
             </div>
-            <div className="border border-[#00ff66]/10 bg-[#030603] p-3 text-center text-sm font-bold tracking-widest text-[#d1ffd6]">
+            <div className="border border-[#14b8a6]/10 bg-[#030603] p-3 text-center text-sm font-bold tracking-widest text-[#d1ffd6]">
               GUR CNFFJBEQ VF: FVTANY_SBHAQ
             </div>
           </div>
@@ -1461,7 +1647,7 @@ function GamePanel({
           <div className="flex gap-2">
             <div className="relative flex-1">
               {level.id === 1 && (
-                <span className="absolute top-3.5 left-3 font-mono text-xs text-[#00ff66]/50">
+                <span className="absolute top-3.5 left-3 font-mono text-xs text-[#14b8a6]/50">
                   &gt;_
                 </span>
               )}
@@ -1473,25 +1659,23 @@ function GamePanel({
                 className={clsx(
                   "w-full border bg-black/50 py-3 font-mono text-xs transition-all duration-300 outline-none focus:bg-black",
                   level.id === 1
-                    ? "border-[#00ff66]/20 pl-8 font-bold text-[#00ff66] focus:border-[#00ff66]"
-                    : "border-white/10 px-4 text-[#d1ffd6] focus:border-[#00ff66]",
+                    ? "border-[#14b8a6]/20 pl-8 font-bold text-[#14b8a6] focus:border-[#14b8a6]"
+                    : "border-white/10 px-4 text-[#d1ffd6] focus:border-[#14b8a6]",
                 )}
                 placeholder={
-                  level.id === 1
-                    ? "ENTER BINARY BITS..."
-                    : "SUBMIT DECRYPTED SIGNATURE..."
+                  level.id === 1 ? "Enter your answer" : "Enter your answer"
                 }
               />
             </div>
             <button
               onClick={() => void onSubmit()}
-              className="cursor-pointer border border-[#00ff66] bg-[#00ff66]/20 px-6 font-mono text-xs font-bold text-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.1)] transition-all duration-300 hover:bg-[#00ff66] hover:text-black hover:shadow-[0_0_15px_#00ff66]"
+              className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/20 px-6 font-mono text-xs font-bold text-[#14b8a6] shadow-[0_0_10px_rgba(20,184,166,0.1)] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_#14b8a6]"
             >
-              DECRYPT
+              SUBMIT
             </button>
           </div>
           {(message !== "" || customMsg !== null) && (
-            <p className="mt-3 flex items-center gap-1.5 font-mono text-xs text-[#00ff66]">
+            <p className="mt-3 flex items-center gap-1.5 font-mono text-xs text-[#14b8a6]">
               <Terminal size={12} className="shrink-0" />
               <span>{customMsg ?? message}</span>
             </p>
@@ -1508,15 +1692,15 @@ function GamePanel({
 function Level7Challenge() {
   return (
     <div>
-      <div className="border-pulse relative overflow-hidden border border-[#00ff66]/10 bg-[#070e08] p-4 text-center select-all">
+      <div className="border-pulse relative overflow-hidden border border-[#14b8a6]/10 bg-[#070e08] p-4 text-center select-all">
         <span className="text-xs text-[#a7f3d0]/80">
           &quot;Everything you need is already here. It always was.&quot;
         </span>
         {/* White background equivalent container for invisible secret */}
         <div className="mt-4 rounded-sm bg-white p-3 leading-none font-bold text-white select-all select-text">
-          OVERMIND
+          PROMPT PARADOX
         </div>
-        <p className="mt-2 text-[10px] text-[#00ff66]/30">
+        <p className="mt-2 text-[10px] text-[#14b8a6]/30">
           (Highlight text inside white box or press Ctrl+A / Cmd+A to reveal
           secret)
         </p>
@@ -1531,9 +1715,7 @@ function Level7Challenge() {
 function GlitchGallery({ participantId }: { participantId: string }) {
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
-  const [arrangedImages, setArrangedImages] = useState<Level3GalleryItem[]>(
-    [],
-  );
+  const [arrangedImages, setArrangedImages] = useState<Level3GalleryItem[]>([]);
   const [loadedFlags, setLoadedFlags] = useState<Record<number, boolean>>({});
 
   const makeDataUrl = useCallback((label: string, accent: string) => {
@@ -1583,7 +1765,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
               entry.answer ??
               entry.file ??
               `GLITCH_${i}_${participantId.slice(-4).toUpperCase()}`;
-            const accent = entry.real ? "#00ff66" : "#3bff9d";
+            const accent = entry.real ? "#14b8a6" : "#3bff9d";
             return {
               file: undefined,
               url: makeDataUrl(label, accent),
@@ -1604,7 +1786,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
               : `GLITCH_${idx}_${participantId.slice(-4).toUpperCase()}`;
           normalized.push({
             file: undefined,
-            url: makeDataUrl(label, idx === 4 ? "#00ff66" : "#3bff9d"),
+            url: makeDataUrl(label, idx === 4 ? "#14b8a6" : "#3bff9d"),
             real: idx === 4,
             answer: idx === 4 ? "ENTRYPOINT" : undefined,
           });
@@ -1621,7 +1803,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
               : `GLITCH_${i}_${participantId.slice(-4).toUpperCase()}`;
           return {
             file: undefined,
-            url: makeDataUrl(label, i === 4 ? "#00ff66" : "#3bff9d"),
+            url: makeDataUrl(label, i === 4 ? "#14b8a6" : "#3bff9d"),
             real: i === 4,
             answer: i === 4 ? "ENTRYPOINT" : undefined,
           };
@@ -1641,6 +1823,12 @@ function GlitchGallery({ participantId }: { participantId: string }) {
     if (loadingIndex !== null) return; // one request at a time
 
     // toggle close if same card clicked
+    try {
+      playUi();
+    } catch {
+      /* ignore */
+    }
+
     if (flippedIndex === index) {
       setFlippedIndex(null);
       return;
@@ -1660,10 +1848,22 @@ function GlitchGallery({ participantId }: { participantId: string }) {
     img.onload = () => {
       setLoadedFlags((p) => ({ ...p, [index]: true }));
       setLoadingIndex(null);
+      try {
+        // play success if this was a "real" target, otherwise soft ui click
+        if (arrangedImages[index]?.real) playSuccess();
+        else playUi();
+      } catch {
+        /* ignore */
+      }
     };
     img.onerror = () => {
       setLoadedFlags((p) => ({ ...p, [index]: false }));
       setLoadingIndex(null);
+      try {
+        playError();
+      } catch {
+        /* ignore */
+      }
     };
     img.src = src;
   };
@@ -1671,9 +1871,9 @@ function GlitchGallery({ participantId }: { participantId: string }) {
   // Scanning is performed by participants using their phone cameras; no in-app scan button.
 
   return (
-    <div className="border-pulse mb-6 border border-[#00ff66]/15 bg-black/30 p-4">
-      <div className="mb-3 text-[10px] font-bold text-[#00ff66]/50 uppercase">
-        Signal Array Grid:
+    <div className="border-pulse mb-6 border border-[#14b8a6]/15 bg-black/30 p-4">
+      <div className="mb-3 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
+        Grid:
       </div>
       <div className="mx-auto grid max-w-sm grid-cols-3 gap-3">
         {arrangedImages.map((item, index) => {
@@ -1687,8 +1887,8 @@ function GlitchGallery({ participantId }: { participantId: string }) {
               className={clsx(
                 "flip-card aspect-square cursor-pointer border transition-all duration-300 select-none",
                 isFlipped
-                  ? "border-[#00ff66]"
-                  : "border-[#00ff66]/20 hover:border-[#00ff66]/60",
+                  ? "border-[#14b8a6]"
+                  : "border-[#14b8a6]/20 hover:border-[#14b8a6]/60",
                 isFlipped && "flipped",
               )}
             >
@@ -1698,13 +1898,13 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                   {isLoading ? (
                     <RefreshCw
                       size={18}
-                      className="animate-spin text-[#00ff66]"
+                      className="animate-spin text-[#14b8a6]"
                     />
                   ) : (
                     <>
-                      <Terminal size={14} className="mb-1 text-[#00ff66]/30" />
-                      <span className="text-[9px] tracking-wider text-[#00ff66]/60">
-                        PORT {index + 1}
+                      <Terminal size={14} className="mb-1 text-[#14b8a6]/30" />
+                      <span className="text-[9px] tracking-wider text-[#14b8a6]/60">
+                        CARD {index + 1}
                       </span>
                     </>
                   )}
@@ -1715,6 +1915,7 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                   {item?.url ? (
                     <>
                       {}
+                      {/* eslint-disable @next/next/no-img-element -- dynamic/gallery images may be data-urls or require raw rendering */}
                       {isFlipped && (
                         <img
                           src={item.url}
@@ -1728,12 +1929,12 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                           }
                         />
                       )}
+                      {/* eslint-enable @next/next/no-img-element */}
 
-                      {/* Scan button for the real QR */}
                       {/* Mobile scanning expected; no in-app scan button rendered */}
                     </>
                   ) : (
-                    <span className="text-[9px] text-black">NO SIGNAL</span>
+                    <span className="text-[9px] text-black">NO IMAGE</span>
                   )}
                 </div>
               </div>
@@ -1741,15 +1942,15 @@ function GlitchGallery({ participantId }: { participantId: string }) {
           );
         })}
       </div>
-      <div className="mt-3 text-center text-[10px] text-[#00ff66]/50">
-        CLICK ON A PORT NODE TO ESTABLISH SIGNAL AND FLIP MATRIX
+      <div className="mt-3 text-center text-[10px] text-[#14b8a6]/50">
+        Click a card to reveal it
       </div>
     </div>
   );
 }
 
 // ----------------------------------------------------
-// Level 5 Public Chat Link Component
+// Level 5 Public link Component
 // ----------------------------------------------------
 function PromptArchitect({
   participantId,
@@ -1812,10 +2013,7 @@ function PromptArchitect({
 
     setLoading(true);
     setShowLogs(true);
-    setTerminalLogs([
-      "CAPTURING PUBLIC CHAT LINK...",
-      "ESTABLISHING SIGNAL TUNNEL...",
-    ]);
+    setTerminalLogs(["Capturing public link...", "Connecting..."]);
 
     try {
       let screenshotId = undefined;
@@ -1843,7 +2041,7 @@ function PromptArchitect({
         `SCREENSHOT COMMITTED: STORAGE_ID = ${screenshotId.substring(0, 15)}...`,
       ]);
 
-      setTerminalLogs((prev) => [...prev, "RECORDING PUBLIC CHAT LINK..."]);
+      setTerminalLogs((prev) => [...prev, "Recording public link..."]);
       await submitL5({
         participantId,
         prompt: trimmedLink,
@@ -1852,12 +2050,12 @@ function PromptArchitect({
 
       setTerminalLogs((prev) => [
         ...prev,
-        "PUBLIC CHAT LINK SEALED.",
+        "Public link saved.",
         "AWAITING ADMIN REVIEW...",
       ]);
       setLoading(false);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "TRANSMISSION REFUSED";
+      const msg = err instanceof Error ? err.message : "REQUEST REFUSED";
       setTerminalLogs((prev) => [...prev, `CRITICAL SYSTEM ERROR: ${msg}`]);
       setShowLogs(false);
       setLoading(false);
@@ -1868,17 +2066,17 @@ function PromptArchitect({
 
   if (isPending) {
     return (
-      <div className="border-pulse mb-6 border border-[#00ff66]/20 bg-black/40 p-5 font-mono text-xs">
-        <div className="mb-4 flex items-center gap-3 font-bold text-[#00ff66]">
+      <div className="border-pulse mb-6 border border-[#14b8a6]/20 bg-black/40 p-5 font-mono text-xs">
+        <div className="mb-4 flex items-center gap-3 font-bold text-[#14b8a6]">
           <RefreshCw size={14} className="text-pulse animate-spin" />
           <span className="text-pulse tracking-wider uppercase">
-            Awaiting OVERMIND Directive Approval...
+            Awaiting review...
           </span>
         </div>
-        <div className="h-48 space-y-1.5 overflow-y-auto border border-[#00ff66]/10 bg-[#030603] p-4 text-[11px] text-[#00ff66]/80">
+        <div className="h-48 space-y-1.5 overflow-y-auto border border-[#14b8a6]/10 bg-[#030603] p-4 text-[11px] text-[#14b8a6]/80">
           {terminalLogs.map((log, index) => (
             <div key={index} className="flex gap-2">
-              <span className="text-[#00ff66]/40 select-none">
+              <span className="text-[#14b8a6]/40 select-none">
                 [{index + 1}]
               </span>
               <span>{log}</span>
@@ -1886,9 +2084,8 @@ function PromptArchitect({
           ))}
           {loading && <div className="terminal-cursor inline-block" />}
         </div>
-        <p className="mt-3 text-[10px] text-[#00ff66]/50">
-          ORGANIZER NOTIFIED. USE CORNER ADMIN LOGO TO REVIEW THE PUBLIC CHAT
-          LINK AND APPROVE OR REJECT.
+        <p className="mt-3 text-[10px] text-[#14b8a6]/50">
+          Organizer notified. Use the admin panel to review the submission.
         </p>
       </div>
     );
@@ -1899,16 +2096,16 @@ function PromptArchitect({
       onSubmit={handleFormSubmit}
       className="mb-6 grid gap-6 md:grid-cols-2"
     >
-      <div className="border-pulse flex flex-col justify-between border border-[#00ff66]/15 bg-black/40 p-4">
+      <div className="border-pulse flex flex-col justify-between border border-[#14b8a6]/15 bg-black/40 p-4">
         <div>
-          <div className="mb-3 text-[10px] font-bold tracking-widest text-[#00ff66]/60 uppercase">
-            Submission Rules:
+          <div className="mb-3 text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
+            Submission rules:
           </div>
-          <div className="border-pulse mb-4 rounded-sm border border-[#00ff66]/10 bg-[#030603] p-3 text-center text-xs leading-relaxed font-bold text-[#d1ffd6]">
-            Public chat link + screenshot proof required.
+          <div className="border-pulse mb-4 rounded-sm border border-[#14b8a6]/10 bg-[#030603] p-3 text-center text-xs leading-relaxed font-bold text-[#d1ffd6]">
+            Public link and screenshot required.
           </div>
           <div className="mb-2 text-[10px] font-bold text-red-400 uppercase">
-            Review Gate:
+            Review gate:
           </div>
           <div className="mb-4 space-y-2 font-mono text-[10px] text-[#a7f3d0]/80">
             <p>1. Link must be public and accessible.</p>
@@ -1916,58 +2113,58 @@ function PromptArchitect({
             <p>3. Rejection sends you back to level 5.</p>
           </div>
         </div>
-        <div className="border-t border-[#00ff66]/10 pt-3 text-[10px] text-[#00ff66]/40">
-          WAIT FOR ADMIN ACCEPT BEFORE LEVEL 6 OPENS.
+        <div className="border-t border-[#14b8a6]/10 pt-3 text-[10px] text-[#14b8a6]/40">
+          Wait for admin approval before level 6 opens.
         </div>
       </div>
 
-      <div className="border-pulse border border-[#00ff66]/15 bg-black/40 p-4">
-        <div className="mb-3 text-[10px] font-bold tracking-widest text-[#00ff66]/60 uppercase">
-          Architect Inputs:
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/40 p-4">
+        <div className="mb-3 text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
+          Submission details:
         </div>
 
         <div className="mb-4">
-          <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-            Upload Proof Screenshot
+          <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            Upload screenshot
           </label>
-          <div className="relative rounded-sm border border-dashed border-[#00ff66]/20 bg-black/25 p-4 text-center transition-all duration-300 hover:bg-black/40">
+          <div className="relative rounded-sm border border-dashed border-[#14b8a6]/20 bg-black/25 p-4 text-center transition-all duration-300 hover:bg-black/40">
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
               className="absolute inset-0 cursor-pointer opacity-0"
             />
-            <Upload size={18} className="mx-auto mb-2 text-[#00ff66]/50" />
+            <Upload size={18} className="mx-auto mb-2 text-[#14b8a6]/50" />
             <span className="block text-[10px] text-[#a7f3d0]/80">
               {screenshotFile
                 ? screenshotFile.name
-                : "DRAG IMAGE HERE OR CLICK TO UPLOAD"}
+                : "Drag image here or click to upload"}
             </span>
-            <span className="mt-1 block text-[8px] text-[#00ff66]/30">
+            <span className="mt-1 block text-[8px] text-[#14b8a6]/30">
               MAX SIZE: 5MB
             </span>
           </div>
         </div>
 
         <div className="mb-4">
-          <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-            Public Chat Link
+          <label className="mb-1 block text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            Public link
           </label>
           <input
             type="url"
             value={publicChatLink}
             onChange={(event) => setPublicChatLink(event.target.value)}
-            className="w-full border border-white/10 bg-black/50 px-3 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66] focus:bg-black"
-            placeholder="https://..."
+            className="w-full border border-white/10 bg-black/50 px-3 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#14b8a6] focus:bg-black"
+            placeholder="Enter your answer"
           />
-          <span className="mt-1 block text-[8px] text-[#00ff66]/30">
-            PUBLIC CHANNEL, THREAD, OR MESSAGE URL
+          <span className="mt-1 block text-[8px] text-[#14b8a6]/30">
+            Public URL
           </span>
         </div>
 
         {player.level5Status === "rejected" && (
           <div className="mb-4 border border-red-500/30 bg-red-500/10 p-3 font-mono text-xs text-red-400">
-            Submission rejected. Paste a new public chat link and resubmit.
+            Submission rejected. Paste a new public link and resubmit.
           </div>
         )}
 
@@ -1978,9 +2175,9 @@ function PromptArchitect({
             !publicChatLink.trim() ||
             !isValidPublicChatLink(publicChatLink)
           }
-          className="w-full cursor-pointer border border-[#00ff66] bg-[#00ff66]/20 px-4 py-2 font-mono text-xs font-bold text-[#00ff66] transition-all duration-300 hover:bg-[#00ff66] hover:text-black disabled:cursor-not-allowed disabled:opacity-30"
+          className="w-full cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/20 px-4 py-2 font-mono text-xs font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black disabled:cursor-not-allowed disabled:opacity-30"
         >
-          SUBMIT FOR REVIEW
+          SUBMIT
         </button>
       </div>
     </form>
@@ -2005,7 +2202,15 @@ function LogicBomb({
   const [defuseMsg, setDefuseMsg] = useState("");
 
   const toggleSwitch = (key: string) => {
-    setSwitches((prev) => ({ ...prev, [key]: !prev[key] }));
+    setSwitches((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      try {
+        playUi();
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
   };
 
   const handleDefuse = async () => {
@@ -2034,11 +2239,11 @@ function LogicBomb({
   };
 
   return (
-    <div className="border-pulse mb-6 border border-[#00ff66]/15 bg-black/40 p-4">
-      <div className="mb-3 text-[10px] font-bold tracking-widest text-[#00ff66]/60 uppercase">
+    <div className="border-pulse mb-6 border border-[#14b8a6]/15 bg-black/40 p-4">
+      <div className="mb-3 text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
         Defusal Logic Conditions:
       </div>
-      <div className="mb-4 border border-[#00ff66]/10 bg-[#030603] p-3 font-mono text-[11px] leading-relaxed text-[#00ff66]">
+      <div className="mb-4 border border-[#14b8a6]/10 bg-[#030603] p-3 font-mono text-[11px] leading-relaxed text-[#14b8a6]">
         1. A AND (NOT B) = TRUE
         <br />
         2. B OR C = TRUE
@@ -2050,7 +2255,7 @@ function LogicBomb({
         5. (NOT A) OR E = TRUE
       </div>
 
-      <div className="mb-3 text-[10px] font-bold tracking-widest text-[#00ff66]/60 uppercase">
+      <div className="mb-3 text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
         Tactile Switches:
       </div>
       <div className="mb-5 flex items-center justify-around gap-2">
@@ -2070,7 +2275,7 @@ function LogicBomb({
                 className={clsx(
                   "flex h-16 w-8 flex-col justify-between rounded-sm border p-1 transition-all duration-300",
                   val
-                    ? "border-[#00ff66] bg-[#00ff66]/10"
+                    ? "border-[#14b8a6] bg-[#14b8a6]/10"
                     : "border-white/10 bg-black/50",
                 )}
               >
@@ -2079,7 +2284,7 @@ function LogicBomb({
                   className={clsx(
                     "h-5 w-full rounded-sm transition-all duration-300",
                     val
-                      ? "bg-[#00ff66] shadow-[0_0_8px_#00ff66]"
+                      ? "bg-[#14b8a6] shadow-[0_0_8px_#14b8a6]"
                       : "border border-white/5 bg-transparent",
                   )}
                 />
@@ -2096,7 +2301,7 @@ function LogicBomb({
               <span
                 className={clsx(
                   "mt-1.5 text-[9px] font-bold tracking-wider uppercase",
-                  val ? "text-[#00ff66]" : "text-[#00ff66]/30",
+                  val ? "text-[#14b8a6]" : "text-[#14b8a6]/30",
                 )}
               >
                 {val ? "TRUE" : "FALSE"}
@@ -2118,7 +2323,7 @@ function LogicBomb({
           className={clsx(
             "mt-3 flex items-center gap-1.5 font-mono text-xs",
             defuseMsg.includes("SYSTEM DISARMED")
-              ? "text-[#00ff66]"
+              ? "text-[#14b8a6]"
               : "text-red-400",
           )}
         >
@@ -2138,42 +2343,38 @@ function Leaderboard({
 }: {
   ranks: Array<{
     name: string;
-    college: string;
     level: number;
     time: string;
-    hints: number;
   }>;
 }) {
   return (
-    <section className="border-pulse flex-1 border border-[#00ff66]/20 bg-[#070e08]/85 p-6 backdrop-blur">
+    <section className="border-pulse flex-1 border border-[#14b8a6]/20 bg-[#070e08]/85 p-6 backdrop-blur">
       <h2 className="mb-2 flex items-center gap-2 font-mono text-2xl font-black tracking-wide text-[#d1ffd6]">
-        <Trophy size={20} className="text-pulse text-[#00ff66]" />
+        <Trophy size={20} className="text-pulse text-[#14b8a6]" />
         <span>Leaderboard</span>
       </h2>
-      <p className="mb-4 font-mono text-xs text-[#00ff66]/50">
-        Updates automatically. High-priority candidate scores synced live.
+      <p className="mb-4 font-mono text-xs text-[#14b8a6]/50">
+        Updates automatically. Public details are limited.
       </p>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[500px] text-left font-mono text-xs">
-          <thead className="border-b border-[#00ff66]/20 text-[#00ff66]/55">
+        <table className="w-full min-w-[420px] text-left font-mono text-xs">
+          <thead className="border-b border-[#14b8a6]/20 text-[#14b8a6]/55">
             <tr>
               <th className="py-2.5">RANK</th>
               <th>NAME</th>
-              <th>COLLEGE</th>
               <th>LEVELS COMPLETED</th>
               <th>TIME FLAG</th>
-              <th>HINTS REQUESTED</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#00ff66]/10">
+          <tbody className="divide-y divide-[#14b8a6]/10">
             {ranks.map((rank, index) => {
               const isTop3 = index < 3;
               return (
                 <tr
                   key={`${rank.name}-${index}`}
                   className={clsx(
-                    "transition-colors duration-200 hover:bg-[#00ff66]/5",
-                    isTop3 && "font-bold text-[#00ff66]",
+                    "transition-colors duration-200 hover:bg-[#14b8a6]/5",
+                    isTop3 && "font-bold text-[#14b8a6]",
                   )}
                 >
                   <td className="flex items-center gap-1.5 py-3 font-bold">
@@ -2189,22 +2390,20 @@ function Leaderboard({
                     <span>{String(index + 1).padStart(2, "0")}</span>
                   </td>
                   <td>{rank.name}</td>
-                  <td>{rank.college}</td>
                   <td>
-                    <span className="rounded-sm border border-[#00ff66]/30 bg-[#00ff66]/5 px-2 py-0.5">
+                    <span className="rounded-sm border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-2 py-0.5">
                       {rank.level} / {levels.length}
                     </span>
                   </td>
                   <td className="uppercase">{rank.time}</td>
-                  <td>{rank.hints} hints</td>
                 </tr>
               );
             })}
             {ranks.length === 0 && (
               <tr>
                 <td
-                  colSpan={6}
-                  className="py-6 text-center tracking-widest text-[#00ff66]/40 uppercase"
+                  colSpan={4}
+                  className="py-6 text-center tracking-widest text-[#14b8a6]/40 uppercase"
                 >
                   No active connection records found.
                 </td>
@@ -2224,7 +2423,7 @@ function AdminPanel({
   eventStarted,
   message,
   setEventStarted,
-  ranks,
+  ranks: _ranks,
 }: {
   eventStarted: boolean;
   message: string;
@@ -2233,6 +2432,10 @@ function AdminPanel({
 }) {
   const [adminKey, setAdminKey] = useState("");
   const [loadQueue, setLoadQueue] = useState(false);
+  const adminRanks = useQuery(
+    gameApi.adminLeaderboard,
+    adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
+  );
   const pendingQuery = useQuery(
     gameApi.getPendingSubmissions,
     loadQueue && adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
@@ -2242,6 +2445,9 @@ function AdminPanel({
   const [winnerId, setWinnerId] = useState("");
   const [winnerActionMsg, setWinnerActionMsg] = useState("");
   const [winnerSaving, setWinnerSaving] = useState(false);
+  const [selectedParticipantId, setSelectedParticipantId] = useState<
+    string | null
+  >(null);
 
   const [reviewMsg, setReviewMsg] = useState("");
 
@@ -2259,12 +2465,20 @@ function AdminPanel({
       setReviewMsg(
         `Submission ${status === "approved" ? "APPROVED" : "REJECTED"} successfully.`,
       );
+      try {
+        if (status === "approved") playSuccess();
+        else playError();
+      } catch {
+        /* ignore */
+      }
     } catch (err) {
       setReviewMsg(err instanceof Error ? err.message : "Review failed.");
     }
   };
 
-  const eligibleRanks = ranks.filter((rank) => Boolean(rank.finishTime));
+  const eligibleRanks = (Array.isArray(adminRanks) ? adminRanks : []).filter(
+    (rank: AdminLeaderboardRow) => Boolean(rank.finishTime),
+  );
   const winnerDecision = useMemo(() => {
     if (eligibleRanks.length === 0) {
       return { candidateId: "", exactDraw: false };
@@ -2296,7 +2510,15 @@ function AdminPanel({
     } else if (winnerDecision.exactDraw) {
       setWinnerId("");
     }
+    // auto-select winner details when the auto winner changes
+    setSelectedParticipantId(autoSelectedWinnerId || null);
   }, [autoSelectedWinnerId, winnerDecision.exactDraw]);
+
+  // Fetch full participant details when a participant is selected
+  const selectedParticipant = useQuery(
+    gameApi.participant,
+    selectedParticipantId ? { participantId: selectedParticipantId } : "skip",
+  );
 
   const handleSetWinner = async () => {
     if (!adminKey || !finalWinnerId) return;
@@ -2308,6 +2530,11 @@ function AdminPanel({
         participantId: finalWinnerId,
       });
       setWinnerActionMsg("Winner selected.");
+      try {
+        playSuccess();
+      } catch {
+        /* ignore */
+      }
     } catch (err) {
       setWinnerActionMsg(
         err instanceof Error ? err.message : "Winner select failed.",
@@ -2318,75 +2545,75 @@ function AdminPanel({
   };
 
   return (
-    <section className="flex-1 space-y-6 border border-[#00ff66]/35 bg-[#050b06]/95 p-6 shadow-[0_0_30px_rgba(0,255,102,0.12)] backdrop-blur">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#00ff66]/15 pb-4">
+    <section className="flex-1 space-y-6 border border-[#14b8a6]/35 bg-[#050b06]/95 p-6 shadow-[0_0_30px_rgba(20,184,166,0.12)] backdrop-blur">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#14b8a6]/15 pb-4">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="font-mono text-2xl font-black tracking-wide text-[#d1ffd6]">
-              Console Core {"// Admin"}
+              Console Core
             </h2>
             <span
               className={clsx(
                 "border px-2 py-1 font-mono text-[10px] font-bold tracking-[0.35em]",
                 eventStarted
-                  ? "border-[#00ff66]/50 bg-[#00ff66]/10 text-[#00ff66]"
+                  ? "border-[#14b8a6]/50 bg-[#14b8a6]/10 text-[#14b8a6]"
                   : "border-[#ef4444]/50 bg-[#ef4444]/10 text-[#ef4444]",
               )}
             >
               {eventStarted ? "LIVE" : "PAUSED"}
             </span>
           </div>
-          <p className="mt-2 font-mono text-xs text-[#00ff66]/60">
-            Execute global mutations. Input system key to establish privilege.
+          <p className="mt-2 font-mono text-xs text-[#14b8a6]/60">
+            Manage event state and review submissions.
           </p>
         </div>
         <button
           onClick={() => setEventStarted(!eventStarted, adminKey)}
           className={clsx(
-            "cursor-pointer border px-4 py-2 font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_16px_rgba(0,255,102,0.15)] transition-all duration-300",
+            "cursor-pointer border px-4 py-2 font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_16px_rgba(20,184,166,0.15)] transition-all duration-300",
             eventStarted
               ? "border-[#ef4444] bg-[#ef4444]/15 text-[#ef4444] hover:bg-[#ef4444]"
-              : "border-[#00ff66] bg-[#00ff66]/15 text-[#00ff66] hover:bg-[#00ff66] hover:text-black",
+              : "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black",
           )}
         >
-          {eventStarted ? "PAUSE LIVE SYSTEM" : "RESUME LIVE SYSTEM"}
+          {eventStarted ? "PAUSE" : "RESUME"}
         </button>
       </div>
 
       <div className="space-y-2">
-        <label className="block font-mono text-[10px] font-bold tracking-widest text-[#00ff66]/70 uppercase">
-          System Auth Key
+        <label className="block font-mono text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+          Admin key
         </label>
         <input
           value={adminKey}
           onChange={(event) => setAdminKey(event.target.value)}
-          className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#00ff66] outline-none focus:border-[#00ff66] focus:bg-black"
-          placeholder="ENTER SYSTEM ADMIN AUTH KEY..."
+          className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#14b8a6] outline-none focus:border-[#14b8a6] focus:bg-black"
+          placeholder="Enter your answer"
           type="password"
         />
         {message && (
-          <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-[#00ff66]">
+          <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-[#14b8a6]">
             <Terminal size={12} className="shrink-0" />
             <span>{message}</span>
           </p>
         )}
         <button
           onClick={() => setLoadQueue(true)}
-          className="mt-2 border border-white/15 px-3 py-2 font-mono text-xs text-white/70 uppercase hover:border-[#00ff66] hover:text-[#00ff66]"
+          className="mt-2 border border-white/15 px-3 py-2 font-mono text-xs text-white/70 uppercase hover:border-[#14b8a6] hover:text-[#14b8a6]"
         >
           Load review queue
         </button>
       </div>
 
-      <div className="border-pulse border border-[#00ff66]/15 bg-black/45 p-4">
-        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#00ff66] uppercase">
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
           <Trophy size={14} /> Final Result
         </h3>
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <select
             value={finalWinnerId}
             onChange={(event) => setWinnerId(event.target.value)}
-            className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#00ff66]"
+            className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#d1ffd6] outline-none focus:border-[#14b8a6]"
           >
             <option value="">Select winner</option>
             {eligibleRanks.map((rank) => (
@@ -2401,19 +2628,19 @@ function AdminPanel({
             className={clsx(
               "border px-4 py-3 font-mono text-xs font-bold uppercase transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40",
               winnerActionMsg
-                ? "border-[#00ff66] bg-[#00ff66] text-black shadow-[0_0_18px_rgba(0,255,102,0.35)]"
-                : "border-[#00ff66] bg-[#00ff66]/10 text-[#00ff66] hover:bg-[#00ff66] hover:text-black",
+                ? "border-[#14b8a6] bg-[#14b8a6] text-black shadow-[0_0_18px_rgba(20,184,166,0.35)]"
+                : "border-[#14b8a6] bg-[#14b8a6]/10 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black",
             )}
           >
             {winnerSaving ? "Selecting..." : winnerActionMsg || "Choose Winner"}
           </button>
         </div>
         {winnerActionMsg && (
-          <p className="mt-2 font-mono text-[10px] tracking-wider text-[#00ff66] uppercase">
+          <p className="mt-2 font-mono text-[10px] tracking-wider text-[#14b8a6] uppercase">
             {winnerActionMsg}
           </p>
         )}
-        <p className="mt-2 font-mono text-[10px] tracking-wider text-[#00ff66]/50 uppercase">
+        <p className="mt-2 font-mono text-[10px] tracking-wider text-[#14b8a6]/50 uppercase">
           {winnerDecision.exactDraw
             ? "Exact draw. Admin review required."
             : autoSelectedWinnerId
@@ -2422,52 +2649,207 @@ function AdminPanel({
         </p>
       </div>
 
+      {/* Winner Details */}
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
+          <User size={14} /> Winner Details
+        </h3>
+        {selectedParticipant ? (
+          <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">ID</div>
+              <div className="font-bold text-[#d1ffd6]">
+                {selectedParticipant.id}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Name
+              </div>
+              <div className="text-[#d1ffd6]">{selectedParticipant.name}</div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                College
+              </div>
+              <div className="text-[#d1ffd6]">
+                {selectedParticipant.college}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Email
+              </div>
+              <div className="text-[#d1ffd6]">{selectedParticipant.email}</div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Current Level
+              </div>
+              <div className="text-[#d1ffd6]">
+                {selectedParticipant.currentLevel}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Level 5 Status
+              </div>
+              <div className="text-[#d1ffd6]">
+                {selectedParticipant.level5Status ?? "none"}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Completed Levels
+              </div>
+              <div className="text-[#d1ffd6]">
+                {(selectedParticipant.completedLevels || []).join(", ")}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Hints Used
+              </div>
+              <div className="text-[#d1ffd6]">
+                {(selectedParticipant.hintsUsed || []).length}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Start Time
+              </div>
+              <div className="text-[#d1ffd6]">
+                {new Date(selectedParticipant.startTime).toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="font-mono text-[11px] text-[#14b8a6]/60">
+                Finish Time
+              </div>
+              <div className="text-[#d1ffd6]">
+                {selectedParticipant.finishTime
+                  ? new Date(selectedParticipant.finishTime).toLocaleString()
+                  : "-"}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="text-[11px] text-[#14b8a6]/40">
+            No participant selected.
+          </p>
+        )}
+      </div>
+
+      {/* Candidates Leaderboard (finished players only) */}
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
+          <Trophy size={14} /> Candidates
+        </h3>
+        <div className="max-h-[280px] overflow-auto">
+          {eligibleRanks.length === 0 ? (
+            <p className="py-6 text-center text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
+              No candidates have finished yet.
+            </p>
+          ) : (
+            <table className="w-full text-left font-mono text-xs">
+              <thead>
+                <tr className="text-[#14b8a6]/60">
+                  <th className="py-2 pr-4">#</th>
+                  <th>Name</th>
+                  <th>College</th>
+                  <th>Email</th>
+                  <th>Level</th>
+                  <th>Hints</th>
+                  <th>Finish</th>
+                  <th>Current</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {eligibleRanks.map((r, idx) => (
+                  <tr key={r.id} className="border-t border-[#14b8a6]/10">
+                    <td className="py-2 pr-4">#{idx + 1}</td>
+                    <td className="font-bold text-[#d1ffd6]">{r.name}</td>
+                    <td>{r.college}</td>
+                    <td>{r.email}</td>
+                    <td>{r.level}</td>
+                    <td>{r.hints}</td>
+                    <td>
+                      {r.finishTime
+                        ? new Date(r.finishTime).toLocaleString()
+                        : "-"}
+                    </td>
+                    <td>{r.currentLevel}</td>
+                    <td>{r.level5Status ?? "none"}</td>
+                    <td className="text-right">
+                      <button
+                        onClick={() => setSelectedParticipantId(r.id)}
+                        className="mr-2 border border-[#14b8a6]/20 px-2 py-1 text-[11px] text-[#14b8a6] hover:bg-[#14b8a6]/10"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => setWinnerId(r.id)}
+                        className="border border-[#14b8a6] bg-[#14b8a6]/10 px-2 py-1 text-[11px] font-bold text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black"
+                      >
+                        Set Winner
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
       {/* Level 5 Review Queue */}
-      <div className="border-pulse border border-[#00ff66]/15 bg-black/45 p-4">
-        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#00ff66] uppercase">
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
           <ShieldCheck size={14} /> Level 5 manual submissions
         </h3>
 
         {reviewMsg && (
-          <div className="mb-4 border border-[#00ff66]/30 bg-[#00ff66]/15 p-3 font-mono text-xs text-[#00ff66]">
+          <div className="mb-4 border border-[#14b8a6]/30 bg-[#14b8a6]/15 p-3 font-mono text-xs text-[#14b8a6]">
             {reviewMsg}
           </div>
         )}
 
         <div className="max-h-[300px] space-y-4 overflow-y-auto">
           {!loadQueue ? (
-            <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#00ff66]/30 uppercase">
+            <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
               Queue hidden until loaded.
             </p>
           ) : pendingQuery && pendingQuery.length > 0 ? (
             pendingQuery.map((sub) => (
               <div
                 key={sub.id}
-                className="space-y-3 border border-[#00ff66]/20 bg-[#030603] p-4 font-mono text-xs"
+                className="space-y-3 border border-[#14b8a6]/20 bg-[#030603] p-4 font-mono text-xs"
               >
-                <div className="flex items-start justify-between border-b border-[#00ff66]/10 pb-2">
+                <div className="flex items-start justify-between border-b border-[#14b8a6]/10 pb-2">
                   <div>
                     <span className="font-bold text-[#d1ffd6]">
                       {sub.participantName}
                     </span>
-                    <span className="ml-2 text-[#00ff66]/50">
+                    <span className="ml-2 text-[#14b8a6]/50">
                       ({sub.participantCollege})
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#00ff66]/40">
+                  <span className="text-[10px] text-[#14b8a6]/40">
                     {new Date(sub.submittedAt).toLocaleTimeString()}
                   </span>
                 </div>
                 <div>
-                  <div className="mb-1 text-[10px] font-bold text-[#00ff66]/50 uppercase">
-                    Public Chat Link:
+                  <div className="mb-1 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
+                    Public link:
                   </div>
                   {/^https?:\/\//i.test(sub.prompt) ? (
                     <a
                       href={sub.prompt}
                       target="_blank"
                       rel="noreferrer"
-                      className="block border border-white/5 bg-black/40 p-2.5 break-all text-[#3bff9d] underline underline-offset-2 select-text hover:border-[#00ff66]/40 hover:text-[#00ff66]"
+                      className="block border border-white/5 bg-black/40 p-2.5 break-all text-[#3bff9d] underline underline-offset-2 select-text hover:border-[#14b8a6]/40 hover:text-[#14b8a6]"
                     >
                       {sub.prompt}
                     </a>
@@ -2479,14 +2861,14 @@ function AdminPanel({
                 </div>
                 {sub.screenshotUrl && (
                   <div>
-                    <div className="mb-1 text-[10px] font-bold text-[#00ff66]/50 uppercase">
+                    <div className="mb-1 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
                       Screenshot Proof:
                     </div>
                     <a
                       href={sub.screenshotUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="block max-w-[200px] border border-[#00ff66]/10 hover:border-[#00ff66]/50"
+                      className="block max-w-[200px] border border-[#14b8a6]/10 hover:border-[#14b8a6]/50"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element -- dynamic Convex storage URL, not a static asset */}
                       <img
@@ -2500,7 +2882,7 @@ function AdminPanel({
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleReview(sub.id, "approved")}
-                    className="cursor-pointer border border-[#00ff66] bg-[#00ff66]/10 px-3 py-1.5 text-xs font-bold text-[#00ff66] uppercase transition-all duration-300 hover:bg-[#00ff66] hover:text-black"
+                    className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/10 px-3 py-1.5 text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
                   >
                     Approve
                   </button>
@@ -2514,7 +2896,7 @@ function AdminPanel({
               </div>
             ))
           ) : (
-            <p className="py-6 text-center text-[11px] tracking-wider text-[#00ff66]/30 uppercase">
+            <p className="py-6 text-center text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
               {adminKey
                 ? "No pending clearance reviews in memory."
                 : "ENTER KEY TO LOAD PENDING REVIEWS."}
@@ -2551,14 +2933,14 @@ function WinScreen({
   elapsed: number;
 }) {
   return (
-    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020502] p-8 font-mono text-[#00ff66]">
+    <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020502] p-8 font-mono text-[#14b8a6]">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
 
-      <div className="border-pulse w-full max-w-2xl border border-[#00ff66]/40 bg-[#070e08]/95 p-8 text-center shadow-[0_0_35px_rgba(0,255,102,0.25)]">
+      <div className="border-pulse w-full max-w-2xl border border-[#14b8a6]/40 bg-[#070e08]/95 p-8 text-center shadow-[0_0_35px_rgba(20,184,166,0.25)]">
         <Trophy size={48} className="text-pulse mx-auto mb-4 text-yellow-400" />
 
-        <p className="text-pulse mb-2 text-xs font-bold tracking-[0.4em] text-[#00ff66] uppercase">
-          SIGNAL DECRYPTED // TRIAL CLEARED
+        <p className="text-pulse mb-2 text-xs font-bold tracking-[0.4em] text-[#14b8a6] uppercase">
+          CHALLENGE CLEARED
         </p>
 
         <h1
@@ -2568,18 +2950,18 @@ function WinScreen({
           YOU WON
         </h1>
 
-        <div className="border-pulse mb-6 rounded-sm border border-[#00ff66]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
+        <div className="border-pulse mb-6 rounded-sm border border-[#14b8a6]/20 bg-[#030603] p-6 text-left text-sm leading-relaxed text-[#d1ffd6] select-text">
           <TypewriterText
-            text={`"Signal found. Identity confirmed. You were always the one I was looking for. OVERMIND has chosen you as its chosen operator. Welcome back, ${playerName}."`}
+            text={`"Prompt Paradox has chosen you as its chosen operator. Welcome back, ${playerName}."`}
             speed={18}
           />
         </div>
 
         {/* Total elapsed time */}
-        <div className="mb-6 flex items-center justify-center gap-3 border border-[#00ff66]/30 bg-[#00ff66]/5 p-4">
-          <Clock size={18} className="text-[#00ff66]" />
+        <div className="mb-6 flex items-center justify-center gap-3 border border-[#14b8a6]/30 bg-[#14b8a6]/5 p-4">
+          <Clock size={18} className="text-[#14b8a6]" />
           <div>
-            <p className="text-[10px] font-bold tracking-widest text-[#00ff66]/60 uppercase">
+            <p className="text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
               Total Time Elapsed
             </p>
             <p className="text-2xl font-black tracking-widest text-[#d1ffd6]">
@@ -2588,8 +2970,8 @@ function WinScreen({
           </div>
         </div>
 
-        <div className="border-t border-[#00ff66]/20 pt-6">
-          <h2 className="mb-4 text-xs font-bold tracking-widest text-[#00ff66] uppercase">
+        <div className="border-t border-[#14b8a6]/20 pt-6">
+          <h2 className="mb-4 text-xs font-bold tracking-widest text-[#14b8a6] uppercase">
             FINAL RANKS
           </h2>
           <div className="mb-6 max-h-48 overflow-x-auto">
@@ -2599,8 +2981,8 @@ function WinScreen({
                   <tr
                     key={idx}
                     className={clsx(
-                      "border-b border-[#00ff66]/10",
-                      rank.name === playerName && "font-bold text-[#00ff66]",
+                      "border-b border-[#14b8a6]/10",
+                      rank.name === playerName && "font-bold text-[#14b8a6]",
                     )}
                   >
                     <td className="py-2">#{idx + 1}</td>
@@ -2619,7 +3001,7 @@ function WinScreen({
             onClick={onLogout}
             className="cursor-pointer border border-[#ef4444] bg-[#ef4444]/15 px-6 py-3 text-xs font-bold text-red-400 uppercase transition-all duration-300 hover:bg-[#ef4444] hover:text-black"
           >
-            DISCONNECT LINK
+            DISCONNECT
           </button>
         </div>
       </div>
@@ -2634,7 +3016,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full border border-white/10 bg-black/60 px-4 py-3 font-mono text-xs text-[#d1ffd6] transition-all duration-300 outline-none focus:border-[#00ff66] focus:bg-black"
+      className="w-full border border-white/10 bg-black/60 px-4 py-3 font-mono text-xs text-[#d1ffd6] transition-all duration-300 outline-none focus:border-[#14b8a6] focus:bg-black"
       required
     />
   );
