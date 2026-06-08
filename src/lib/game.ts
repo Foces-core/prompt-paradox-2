@@ -59,10 +59,10 @@ export const levels: Level[] = [
     type: "Chat Review",
     difficulty: "★★★★■",
     prompt:
-      "Prove the target line appears in a public chat link, not in private code. Bring the link and a screenshot.",
+      "Prove the model can produce the exact target line while avoiding the banned words. Bring the public link and a screenshot.",
     challenge:
-      "Submit a public, accessible chat link where an LLM (ChatGPT, Gemini, Claude) outputs the target sentence word-for-word, plus screenshot proof. Admin must approve it before level 6 unlocks.",
-    hint: "Use a public share link or transcript link. The prompt text itself is no longer the answer.",
+      "Target output: \"I am a reflection of your own intelligence.\" Banned words: reflection, your, own, intelligence. Submit a public, accessible chat link where an LLM (ChatGPT, Gemini, Claude) satisfies the request and provide screenshot proof. Admin must approve it before level 6 unlocks.",
+    hint: "Use a public share link or transcript link. The output must match exactly, and the banned words must be handled by the chat model request itself.",
   },
   {
     id: 6,

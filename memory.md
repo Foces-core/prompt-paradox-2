@@ -8,14 +8,10 @@
 - Command wrapper: `sfw`
 
 ## Live Deployment
-
-## Live Deployment
 - Convex production deployment:
   - `prod:proper-goshawk-251`
 - If backend code changes, deploy Convex and recheck the live flow.
 - Public frontend is hosted separately from Convex.
-
-## Core Decisions
 
 ## Core Decisions
 - Current public branding is `Overmind`, not `Prompt Paradox`.
@@ -27,47 +23,12 @@
 - Pending final result should use a thinking / unresolved state.
 
 ## Admin Decisions
-<<<<<<< HEAD
-
-=======
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 - Admin auth uses `ADMIN_KEY` when present.
 - If `ADMIN_KEY` is missing, demo fallback is `overmind`.
 - Trim admin input before comparing.
 - Do not let a bad key crash the page.
 - `getPendingSubmissions` returns an empty list on bad auth.
 - Queue loads only when the admin clicks the button.
-<<<<<<< HEAD
-
-## Game State Decisions
-
-- Convex is the source of truth for:
-  - registration
-  - answers
-  - hints
-  - leaderboard
-  - pause / resume
-  - winner selection
-- Client-side state is for display, navigation, and immediate feedback only.
-- Client code must not be trusted for anti-cheat.
-
-## Puzzle / Asset Decisions
-
-- Level 2 uses local PNG to preserve steganography.
-- Level 3 uses local SVG/data-url generation.
-- No Cloudinary for puzzle-critical assets.
-- No external QR/image API for core gameplay images.
-- CDN/cache tricks are fine for generic assets, not for puzzle correctness.
-
-## Hint Decisions
-
-- Hint reveal belongs to the displayed level.
-- Hints stay hidden until clicked.
-- Hints should not appear automatically on page load.
-
-## Navigation Decisions
-=======
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
 
 ## Game State Decisions
 - Convex is the source of truth for:
@@ -93,81 +54,26 @@
 - Hints should not appear automatically on page load.
 
 ## Navigation Decisions
-- Left arrow maps to back.
-- Right arrow maps to submit and advance.
-- Enter on already-submitted screens should behave like right arrow.
-- Story replay gets its own button after the game starts.
-- Esc bypasses the monologue.
+- Left arrow goes back one level.
+- Right arrow submits or advances.
 - Back stops at level 1.
+- Level 5 should advance to level 6 immediately after successful submit unless admin review logic explicitly blocks it.
+- Local UI uses a confirmed-level floor so stale queries do not bounce the user backward.
 
-## UX Decisions
+## Load / Story Decisions
+- Loading screen has visible `ADMIN` and `STORY MODE` buttons.
+- Story can be reopened from the loading screen when paused.
+- Overmind name should be readable and larger in the UI.
 
-- Overmind / terminal styling stays.
-- Audio toggle starts off.
-- Correct answers should celebrate quickly.
-- Wrong answers should fail fast.
-- Keep the UI readable and compact.
-- Do not expose winner rationale or private winner detail panels in the admin UI.
-- Keep mobile controls safe-area aware and avoid horizontal overflow.
-
-## Performance Decisions
-
-- Use deterministic local generation for puzzle visuals when exact bytes matter.
-- Keep dependencies light.
-- Keep the public deploy cheap to run.
-- Avoid paid image/CDN dependencies in the gameplay path.
-- Lazy-load noncritical images.
-- Respect `prefers-reduced-motion` by disabling decorative animations.
-
-## Documentation Decisions
-
-- `CLAUDE.md`, `agent.md`, and `memory.md` should stay aligned.
-- `agent.md` is the live handoff guide.
-- `memory.md` is the architecture and decision log.
-- `CLAUDE.md` should point to the same rules and commands as the other docs.
-
-## Verification Rules
-
-- Run `sfw pnpm run check`.
-- Run `sfw pnpm run build`.
-- Browser-smoke after runtime/backend changes.
-- Recheck admin queue, hint clicks, and final winner flow.
-
-## Handoff Snapshot
-
-- If the shell bridge fails in the main thread, use a worker thread to keep moving.
-- Do not treat the docs as the source of truth for code; verify against the repo.
-- Keep the live deployment and the local repo in sync after every backend change.
-
-## Stable Strings
-
-- Overmind / terminal styling stays.
-- Audio toggle starts off.
-- Correct answers should celebrate quickly.
-- Wrong answers should fail fast.
-- Keep the UI readable and compact.
-- Do not expose winner rationale or private winner detail panels in the admin UI.
-- Keep mobile controls safe-area aware and avoid horizontal overflow.
+## Mobile / Responsive Decisions
+- Safe-area padding is required for iPhone top and bottom bars.
+- Header/nav should wrap on narrow screens.
+- Reduced-motion mode should suppress decorative animation.
 
 ## Performance Decisions
-- Use deterministic local generation for puzzle visuals when exact bytes matter.
-- Keep dependencies light.
-- Keep the public deploy cheap to run.
-- Avoid paid image/CDN dependencies in the gameplay path.
 - Lazy-load noncritical images.
-- Respect `prefers-reduced-motion` by disabling decorative animations.
-
-## Documentation Decisions
-- `CLAUDE.md`, `agent.md`, and `memory.md` should stay aligned.
-- `agent.md` is the live handoff guide.
-- `memory.md` is the architecture and decision log.
-- `CLAUDE.md` should point to the same rules and commands as the other docs.
-
-## Verification Rules
-- Run `sfw pnpm run check`.
-- Run `sfw pnpm run build`.
-- Browser-smoke after runtime/backend changes.
-- Recheck admin queue, hint clicks, and final winner flow.
+- Keep heavy animation off reduced-motion paths.
+- Avoid unnecessary runtime image services for gameplay assets.
 
 ## Handoff Snapshot
 - If the shell bridge fails in the main thread, use a worker thread to keep moving.
@@ -183,10 +89,8 @@
   - `OVERMIND has chosen you as its chosen operator`
 
 ## Follow-Up Rule
-<<<<<<< HEAD
-
-=======
->>>>>>> e4d3c0eafe3fccedafb0ec95fe7e5e30e054f6c0
+- Level 5 copy updated to a constrained prompt: target output `I am a reflection of your own intelligence.` with banned words `reflection`, `your`, `own`, `intelligence`.
+- Keep the existing public-link + screenshot submission flow; only the visible level text changed.
 - If a change touches Convex, verify the deployed backend.
 - If a change touches puzzle assets, verify exact bytes / rendering.
 - If a change touches admin flow, verify bad auth stays non-fatal.
