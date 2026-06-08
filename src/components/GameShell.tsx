@@ -609,9 +609,13 @@ export function GameShell() {
           setCelebrateSeed((prev) => prev + 1);
           setTimeout(() => setSuccessFlash(false), 180);
           if (answerRef.current) answerRef.current.value = "";
-          // Optimistically advance the viewed trial so the UI forwards to the next level.
-          // Server-side state will update `currentLevel` shortly and clamp this view if necessary.
-          setViewedLevelId((prev) => Math.min(prev + 1, levels.length));
+          // Raise the local floor immediately so stale participant queries do not
+          // snap the view back to the just-completed level while Convex catches up.
+          const nextVisibleLevel = Math.min(displayedLevel.id + 1, levels.length);
+          setConfirmedLevelFloor((prev) => Math.max(prev, nextVisibleLevel));
+          setViewedLevelId((prev) =>
+            Math.min(Math.max(prev + 1, nextVisibleLevel), levels.length),
+          );
           // stronger haptic on success
           triggerHaptic(true);
         } else {
@@ -1415,10 +1419,14 @@ function LoadingGate({ onOpenAdmin }: { onOpenAdmin: () => void }) {
     <main className="bg-binary-rain relative flex min-h-screen flex-col items-center justify-center bg-[#020402] px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] font-mono text-[#a7f3d0] sm:p-6">
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
       <div className="fixed top-[calc(1rem+env(safe-area-inset-top))] right-[calc(1rem+env(safe-area-inset-right))] z-[70]">
-        <AdminLogoButton
+        <button
+          type="button"
           onClick={onOpenAdmin}
-          className="h-8 w-8 border-[#14b8a6]/5 bg-black/20 text-[#14b8a6]/20 opacity-30 hover:opacity-100"
-        />
+          className="border border-[#14b8a6]/40 bg-black/70 px-3 py-2 font-mono text-[10px] font-bold tracking-widest text-[#14b8a6] uppercase shadow-[0_0_12px_rgba(20,184,166,0.12)] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
+          aria-label="Open admin panel"
+        >
+          ADMIN
+        </button>
       </div>
       <div className="border-pulse w-full max-w-xl border border-[#14b8a6]/25 bg-[#070e08]/90 p-8 text-center">
         <p className="mb-4 text-[10px] font-bold tracking-[0.35em] text-[#14b8a6]/70 uppercase">
