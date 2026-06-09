@@ -286,6 +286,15 @@ textarea {
   }
 }
 
+.levels-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.levels-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes burst {
   0% {
     transform: translate3d(0, 0, 0) scale(0.6);
