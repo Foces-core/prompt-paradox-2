@@ -2467,9 +2467,10 @@ function AdminPanel({
 }) {
   const [adminKey, setAdminKey] = useState("");
   const [loadQueue, setLoadQueue] = useState(false);
+  const adminKeyValue = adminKey.trim();
   const pendingQuery = useQuery(
     gameApi.getPendingSubmissions,
-    loadQueue && adminKey.trim() ? { adminKey: adminKey.trim() } : "skip",
+    loadQueue && adminKeyValue ? { adminKey: adminKeyValue } : "skip",
   );
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
@@ -2567,6 +2568,7 @@ function AdminPanel({
           </p>
         </div>
         <button
+          type="button"
           onClick={() => setEventStarted(!eventStarted, adminKey)}
           className={clsx(
             "cursor-pointer border px-4 py-2 font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_16px_rgba(20,184,166,0.15)] transition-all duration-300",
@@ -2597,6 +2599,7 @@ function AdminPanel({
           </p>
         )}
         <button
+          type="button"
           onClick={() => setLoadQueue(true)}
           className="mt-2 border border-white/15 px-3 py-2 font-mono text-xs text-white/70 uppercase hover:border-[#14b8a6] hover:text-[#14b8a6]"
         >
@@ -2717,6 +2720,10 @@ function AdminPanel({
             <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
               Queue hidden until loaded.
             </p>
+          ) : loadQueue && adminKeyValue && pendingQuery === undefined ? (
+            <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/50 uppercase">
+              Loading review queue...
+            </p>
           ) : pendingQuery && pendingQuery.length > 0 ? (
             pendingQuery.map((sub) => (
               <div
@@ -2833,12 +2840,14 @@ function AdminPanel({
                 )}
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => handleReview(sub.id, "approved")}
                     className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/10 px-3 py-1.5 text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
                   >
                     Approve
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleReview(sub.id, "rejected")}
                     className="cursor-pointer border border-red-500 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 uppercase transition-all duration-300 hover:bg-red-500 hover:text-black"
                   >

@@ -94,6 +94,7 @@
 - Level progression should be driven by server-returned `nextLevel` values, not a persistent client-side floor. Remove floor bump hacks when they reappear.
 - Level 5 is auto-approved on submit; there should be no pending-review waiting state in the normal flow.
 - Level 5 completion must use the server-returned `nextLevel` value instead of hardcoding `6`.
+- Admin review queue should always show an explicit loading / empty / hidden state; never a visually blank panel while resolving.
 - If a change touches Convex, verify the deployed backend.
 - If a change touches puzzle assets, verify exact bytes / rendering.
 - If a change touches admin flow, verify bad auth stays non-fatal.
