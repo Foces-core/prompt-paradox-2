@@ -98,3 +98,4 @@
 - If a change touches Convex, verify the deployed backend.
 - If a change touches puzzle assets, verify exact bytes / rendering.
 - If a change touches admin flow, verify bad auth stays non-fatal.
+- Level 5 proof is reviewed inside winner selection, not as a separate admin queue; expose chat link, screenshot, and participant metadata only in the finalist detail view.

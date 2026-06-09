@@ -444,6 +444,54 @@ export const getPendingSubmissions = query({
   },
 });
 
+export const getFinalistProofs = query({
+  args: { adminKey: v.string() },
+  handler: async (ctx, args) => {
+    if (!isValidAdminKey(args.adminKey)) {
+      return [];
+    }
+
+    try {
+      const submissions = await ctx.db.query("level5Submissions").collect();
+      const result = [];
+
+      for (const sub of submissions) {
+        try {
+          const part = await ctx.db.get(sub.participantId);
+          const screenshotUrl = sub.screenshotId
+            ? await ctx.storage.getUrl(sub.screenshotId)
+            : null;
+
+          result.push({
+            id: sub._id,
+            participantId: sub.participantId,
+            participantName: part?.name ?? "Unknown",
+            participantCollege: part?.college ?? "Unknown",
+            participantEmail: part?.email ?? "Unknown",
+            participantCurrentLevel: part?.currentLevel ?? 0,
+            participantLevel5Status: part?.level5Status ?? "none",
+            participantCompletedLevels: part?.completedLevels ?? [],
+            participantHintsUsed: part?.hintsUsed ?? [],
+            participantStartTime: part?.startTime ?? 0,
+            participantFinishTime: part?.finishTime ?? null,
+            prompt: sub.prompt,
+            screenshotUrl,
+            submittedAt: sub.submittedAt,
+            status: sub.status,
+            reviewedAt: sub.reviewedAt ?? null,
+          });
+        } catch {
+          // Skip a corrupted row rather than taking down the admin screen.
+        }
+      }
+
+      return result.sort((a, b) => b.submittedAt - a.submittedAt);
+    } catch {
+      return [];
+    }
+  },
+});
+
 export const reviewLevel5 = mutation({
   args: {
     adminKey: v.string(),

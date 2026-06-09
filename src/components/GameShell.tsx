@@ -2466,45 +2466,27 @@ function AdminPanel({
   ranks: RankEntry[];
 }) {
   const [adminKey, setAdminKey] = useState("");
-  const [loadQueue, setLoadQueue] = useState(false);
   const adminKeyValue = adminKey.trim();
-  const pendingQuery = useQuery(
-    gameApi.getPendingSubmissions,
-    loadQueue && adminKeyValue ? { adminKey: adminKeyValue } : "skip",
+  const finalistProofQuery = useQuery(
+    gameApi.getFinalistProofs,
+    adminKeyValue ? { adminKey: adminKeyValue } : "skip",
   );
-  const pendingSubmissions = Array.isArray(pendingQuery) ? pendingQuery : [];
-  const reviewSub = useMutation(gameApi.reviewLevel5);
+  const finalistProofs = useMemo<FinalistProofEntry[]>(
+    () =>
+      Array.isArray(finalistProofQuery) ? finalistProofQuery : [],
+    [finalistProofQuery],
+  );
+  const finalistProofByParticipantId = useMemo(
+    () =>
+      new Map(
+        finalistProofs.map((proof) => [proof.participantId, proof] as const),
+      ),
+    [finalistProofs],
+  );
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
   const [winnerId, setWinnerId] = useState("");
   const [winnerActionMsg, setWinnerActionMsg] = useState("");
   const [winnerSaving, setWinnerSaving] = useState(false);
-
-  const [reviewMsg, setReviewMsg] = useState("");
-
-  const handleReview = async (
-    subId: string,
-    status: "approved" | "rejected",
-  ) => {
-    setReviewMsg("");
-    try {
-      await reviewSub({
-        adminKey: adminKey.trim(),
-        submissionId: subId,
-        status,
-      });
-      setReviewMsg(
-        `Submission ${status === "approved" ? "APPROVED" : "REJECTED"} successfully.`,
-      );
-      try {
-        if (status === "approved") playSuccess();
-        else playError();
-      } catch {
-        /* ignore */
-      }
-    } catch (err) {
-      setReviewMsg(err instanceof Error ? err.message : "Review failed.");
-    }
-  };
 
   const eligibleRanks = useMemo(
     () =>
@@ -2520,6 +2502,24 @@ function AdminPanel({
     [ranks],
   );
   const finalWinnerId = winnerId;
+  const selectedFinalist = useMemo(
+    () => eligibleRanks.find((rank) => rank.id === finalWinnerId) ?? null,
+    [eligibleRanks, finalWinnerId],
+  );
+  const selectedFinalistProof = selectedFinalist
+    ? finalistProofByParticipantId.get(selectedFinalist.id) ?? null
+    : null;
+
+  const proofSummary = (rank: RankEntry) => {
+    const proof = finalistProofByParticipantId.get(rank.id);
+    if (!proof) return "L5 proof unavailable";
+    const detailBits = [
+      proof.status.toUpperCase(),
+      proof.screenshotUrl ? "screenshot" : "no screenshot",
+      /^https?:\/\//i.test(proof.prompt) ? "chat link" : "raw text",
+    ];
+    return `L5 ${detailBits.join(" · ")}`;
+  };
 
   const handleSetWinner = async () => {
     if (!adminKey || !finalWinnerId) return;
@@ -2599,13 +2599,6 @@ function AdminPanel({
             <span>{message}</span>
           </p>
         )}
-        <button
-          type="button"
-          onClick={() => setLoadQueue(true)}
-          className="mt-2 border border-white/15 px-3 py-2 font-mono text-xs text-white/70 uppercase hover:border-[#14b8a6] hover:text-[#14b8a6]"
-        >
-          Load review queue
-        </button>
       </div>
 
       <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
@@ -2621,7 +2614,7 @@ function AdminPanel({
             <option value="">Select winner</option>
             {eligibleRanks.map((rank) => (
               <option key={rank.id} value={rank.id}>
-                {rank.name} - {rank.college} | L{rank.level} | H{rank.hints} | L5 {rank.level5Status ?? "none"}
+                {rank.name} - {rank.college} | L{rank.level} | H{rank.hints} | {proofSummary(rank)}
               </option>
             ))}
           </select>
@@ -2648,6 +2641,123 @@ function AdminPanel({
             ? "Sorted by finish time, then hints used. Admin selects manually."
             : "No finalist yet."}
         </p>
+        <div className="mt-4 border border-[#14b8a6]/10 bg-black/35 p-4">
+          <h4 className="mb-3 font-mono text-[10px] font-bold tracking-[0.35em] text-[#14b8a6] uppercase">
+            Selected finalist evidence
+          </h4>
+          {selectedFinalist ? (
+            <div className="space-y-3 font-mono text-xs text-[#d1ffd6]">
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Candidate
+                  </div>
+                  <div className="mt-1 font-bold">{selectedFinalist.name}</div>
+                  <div className="text-[#14b8a6]/65">{selectedFinalist.college}</div>
+                  <div className="mt-2 text-[10px] text-[#14b8a6]/55 uppercase">
+                    Level {selectedFinalist.level} · {selectedFinalist.hints} hints
+                  </div>
+                </div>
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    L5 proof state
+                  </div>
+                  <div className="mt-1 font-bold text-[#3bff9d]">
+                    {selectedFinalistProof?.status?.toUpperCase() ?? "MISSING"}
+                  </div>
+                  <div className="mt-2 text-[10px] text-[#14b8a6]/55 uppercase">
+                    {selectedFinalistProof
+                      ? `Submitted ${new Date(selectedFinalistProof.submittedAt).toLocaleString()}`
+                      : "No proof record loaded."}
+                  </div>
+                </div>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Chat link
+                  </div>
+                  {selectedFinalistProof ? (
+                    /^https?:\/\//i.test(selectedFinalistProof.prompt) ? (
+                      <a
+                        href={selectedFinalistProof.prompt}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 block break-all border border-white/5 bg-black/50 p-2.5 text-[#3bff9d] underline underline-offset-2 hover:border-[#14b8a6]/40 hover:text-[#14b8a6]"
+                      >
+                        {selectedFinalistProof.prompt}
+                      </a>
+                    ) : (
+                      <p className="mt-2 break-words border border-white/5 bg-black/50 p-2.5 text-[#a7f3d0]">
+                        {selectedFinalistProof.prompt}
+                      </p>
+                    )
+                  ) : (
+                    <p className="mt-2 text-[#14b8a6]/35">
+                      No chat link on record.
+                    </p>
+                  )}
+                </div>
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Screenshot proof
+                  </div>
+                  {selectedFinalistProof?.screenshotUrl ? (
+                    <a
+                      href={selectedFinalistProof.screenshotUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 block max-w-[220px] border border-[#14b8a6]/10 hover:border-[#14b8a6]/50"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- dynamic Convex storage URL, not a static asset */}
+                      <img
+                        src={selectedFinalistProof.screenshotUrl}
+                        alt="Level 5 proof screenshot"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-auto w-full"
+                      />
+                    </a>
+                  ) : (
+                    <p className="mt-2 text-[#14b8a6]/35">
+                      No screenshot proof attached.
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Participant ID
+                  </div>
+                  <div className="mt-1 break-all text-[#d1ffd6]">
+                    {selectedFinalistProof?.participantId ?? selectedFinalist.id}
+                  </div>
+                </div>
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Current level
+                  </div>
+                  <div className="mt-1 text-[#d1ffd6]">
+                    {selectedFinalistProof?.participantCurrentLevel ?? selectedFinalist.level}
+                  </div>
+                </div>
+                <div className="border border-[#14b8a6]/10 bg-black/40 p-3">
+                  <div className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">
+                    Hints used
+                  </div>
+                  <div className="mt-1 text-[#d1ffd6]">
+                    {selectedFinalistProof?.participantHintsUsed?.length ?? selectedFinalist.hints}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="py-4 text-[11px] tracking-wider text-[#14b8a6]/35 uppercase">
+              Choose a finalist to inspect their level 5 proof.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Candidates Leaderboard (finished players only) */}
@@ -2669,7 +2779,7 @@ function AdminPanel({
                   <th>College</th>
                   <th>Level</th>
                   <th>Hints</th>
-                  <th>L5</th>
+                  <th>L5 proof</th>
                   <th>Finish</th>
                   <th className="text-right">Actions</th>
                 </tr>
@@ -2682,7 +2792,7 @@ function AdminPanel({
                     <td>{r.college}</td>
                     <td>{r.level}</td>
                     <td>{r.hints}</td>
-                    <td>{r.level5Status ?? "none"}</td>
+                    <td>{proofSummary(r)}</td>
                     <td>
                       {r.finishTime
                         ? new Date(r.finishTime).toLocaleString()
@@ -2703,169 +2813,6 @@ function AdminPanel({
           )}
         </div>
       </div>
-
-      {/* Level 5 Review Queue */}
-      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
-        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
-          <ShieldCheck size={14} /> Level 5 manual submissions
-        </h3>
-
-        {reviewMsg && (
-          <div className="mb-4 border border-[#14b8a6]/30 bg-[#14b8a6]/15 p-3 font-mono text-xs text-[#14b8a6]">
-            {reviewMsg}
-          </div>
-        )}
-
-        <div className="max-h-[300px] space-y-4 overflow-y-auto">
-          {!loadQueue ? (
-            <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
-              Queue hidden until loaded.
-            </p>
-          ) : loadQueue && adminKeyValue && pendingQuery === undefined ? (
-            <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/50 uppercase">
-              Loading review queue...
-            </p>
-          ) : pendingSubmissions.length > 0 ? (
-            pendingSubmissions.map((sub) => (
-              <div
-                key={sub.id}
-                className="space-y-3 border border-[#14b8a6]/20 bg-[#030603] p-4 font-mono text-xs"
-              >
-                <div className="flex items-start justify-between border-b border-[#14b8a6]/10 pb-2">
-                  <div>
-                    <span className="font-bold text-[#d1ffd6]">
-                      {sub.participantName}
-                    </span>
-                    <span className="ml-2 text-[#14b8a6]/50">
-                      ({sub.participantCollege})
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-[#14b8a6]/40">
-                    {new Date(sub.submittedAt).toLocaleTimeString()}
-                  </span>
-                </div>
-                <div>
-                  <div className="mb-1 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
-                    Chat link:
-                  </div>
-                  {/^https?:\/\//i.test(sub.prompt) ? (
-                    <a
-                      href={sub.prompt}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block border border-white/5 bg-black/40 p-2.5 break-all text-[#3bff9d] underline underline-offset-2 select-text hover:border-[#14b8a6]/40 hover:text-[#14b8a6]"
-                    >
-                      {sub.prompt}
-                    </a>
-                  ) : (
-                    <p className="border border-white/5 bg-black/40 p-2.5 break-words text-[#a7f3d0] select-text">
-                      {sub.prompt}
-                    </p>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-2 border-t border-[#14b8a6]/10 pt-3 text-[10px]">
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Participant ID
-                    </div>
-                    <div className="break-all text-[#d1ffd6]">
-                      {sub.participantId}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Current Level
-                    </div>
-                    <div className="text-[#d1ffd6]">
-                      {sub.participantCurrentLevel}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Level 5 Status
-                    </div>
-                    <div className="text-[#d1ffd6]">
-                      {sub.participantLevel5Status}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Hints Used
-                    </div>
-                    <div className="text-[#d1ffd6]">
-                      {sub.participantHintsUsed?.length ?? 0}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Started
-                    </div>
-                    <div className="text-[#d1ffd6]">
-                      {sub.participantStartTime
-                        ? new Date(sub.participantStartTime).toLocaleString()
-                        : "-"}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#14b8a6]/45 uppercase">
-                      Finished
-                    </div>
-                    <div className="text-[#d1ffd6]">
-                      {sub.participantFinishTime
-                        ? new Date(sub.participantFinishTime).toLocaleString()
-                        : "-"}
-                    </div>
-                  </div>
-                </div>
-                {sub.screenshotUrl && (
-                  <div>
-                    <div className="mb-1 text-[10px] font-bold text-[#14b8a6]/50 uppercase">
-                      Screenshot Proof:
-                    </div>
-                    <a
-                      href={sub.screenshotUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block max-w-[200px] border border-[#14b8a6]/10 hover:border-[#14b8a6]/50"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element -- dynamic Convex storage URL, not a static asset */}
-                      <img
-                        src={sub.screenshotUrl}
-                        alt="Screenshot proof"
-                        loading="lazy"
-                        decoding="async"
-                        className="h-auto w-full"
-                      />
-                    </a>
-                  </div>
-                )}
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleReview(sub.id, "approved")}
-                    className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/10 px-3 py-1.5 text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleReview(sub.id, "rejected")}
-                    className="cursor-pointer border border-red-500 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 uppercase transition-all duration-300 hover:bg-red-500 hover:text-black"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="py-6 text-center text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
-              {adminKey
-                ? "No pending clearance reviews in memory."
-                : "ENTER KEY TO LOAD PENDING REVIEWS."}
-            </p>
-          )}
-        </div>
-      </div>
     </section>
   );
 }
@@ -2883,6 +2830,25 @@ type RankEntry = {
   startTime?: number;
   finishTime?: number;
   level5Status?: "none" | "pending" | "approved" | "rejected";
+};
+
+type FinalistProofEntry = {
+  id: string;
+  participantId: string;
+  participantName: string;
+  participantCollege: string;
+  participantEmail: string;
+  participantCurrentLevel: number;
+  participantLevel5Status: string;
+  participantCompletedLevels: number[];
+  participantHintsUsed: number[];
+  participantStartTime: number;
+  participantFinishTime: number | null;
+  prompt: string;
+  screenshotUrl: string | null;
+  submittedAt: number;
+  status: "pending" | "approved" | "rejected";
+  reviewedAt: number | null;
 };
 
 function WinScreen({

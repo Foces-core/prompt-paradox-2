@@ -108,6 +108,28 @@ export const gameApi = {
       submittedAt: number;
     }>
   >("game:getPendingSubmissions"),
+  getFinalistProofs: makeFunctionReference<
+    "query",
+    { adminKey: string },
+    Array<{
+      id: string;
+      participantId: string;
+      participantName: string;
+      participantCollege: string;
+      participantEmail: string;
+      participantCurrentLevel: number;
+      participantLevel5Status: string;
+      participantCompletedLevels: number[];
+      participantHintsUsed: number[];
+      participantStartTime: number;
+      participantFinishTime: number | null;
+      prompt: string;
+      screenshotUrl: string | null;
+      submittedAt: number;
+      status: "pending" | "approved" | "rejected";
+      reviewedAt: number | null;
+    }>
+  >("game:getFinalistProofs"),
   reviewLevel5: makeFunctionReference<
     "mutation",
     { adminKey: string; submissionId: string; status: "approved" | "rejected" },
