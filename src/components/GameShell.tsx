@@ -771,18 +771,6 @@ export function GameShell() {
     );
   }
 
-  if (!eventStarted && view !== "admin") {
-    return (
-      <LoadingGate
-        onOpenAdmin={() => setView("admin")}
-        onOpenStory={() => {
-          setIntroStep(0);
-          setStoryReplayOpen(true);
-        }}
-      />
-    );
-  }
-
   if (storyReplayOpen) {
     return (
       <StoryIntro
@@ -792,6 +780,18 @@ export function GameShell() {
         onComplete={() => setStoryReplayOpen(false)}
         onSkipReplay={() => setStoryReplayOpen(false)}
         replayMode
+      />
+    );
+  }
+
+  if (!eventStarted && view !== "admin") {
+    return (
+      <LoadingGate
+        onOpenAdmin={() => setView("admin")}
+        onOpenStory={() => {
+          setIntroStep(0);
+          setStoryReplayOpen(true);
+        }}
       />
     );
   }
@@ -1448,7 +1448,7 @@ function LoadingGate({
             className="border border-[#14b8a6]/40 bg-black/70 px-3 py-2 font-mono text-[10px] font-bold tracking-widest text-[#14b8a6] uppercase shadow-[0_0_12px_rgba(20,184,166,0.12)] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
             aria-label="Open story mode"
           >
-            STORY MODE
+            STORY
           </button>
         </div>
       </div>
@@ -1597,11 +1597,11 @@ function GamePanel({
           </div>
         </div>
 
-        <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-3 font-mono text-xs leading-relaxed text-[#14b8a6] italic">
+        <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-4 font-mono text-sm leading-relaxed text-[#14b8a6] italic sm:text-base">
           <span className="font-bold text-[#14b8a6] select-none">
             &gt;_ OVERMIND:
           </span>
-          <div className="flex-1">
+          <div className="flex-1 text-[15px] leading-7 sm:text-[17px]">
             <TypewriterText text={`"${level.prompt}"`} speed={20} />
           </div>
         </div>
