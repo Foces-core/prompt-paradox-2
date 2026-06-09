@@ -321,11 +321,13 @@ function TypewriterText({
   speed = 25,
   onComplete,
   complete = false,
+  className = "",
 }: {
   text: string;
   speed?: number;
   onComplete?: () => void;
   complete?: boolean;
+  className?: string;
 }) {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
@@ -373,7 +375,10 @@ function TypewriterText({
   };
 
   return (
-    <div onClick={forceComplete} className="cursor-pointer select-none">
+    <div
+      onClick={forceComplete}
+      className={clsx("cursor-pointer select-none", className)}
+    >
       <span>{displayedText}</span>
       {index < text.length && <span className="terminal-cursor" />}
     </div>
@@ -393,7 +398,6 @@ export function GameShell() {
   const [introStep, setIntroStep] = useState<number>(0);
   const [storyReplayOpen, setStoryReplayOpen] = useState<boolean>(false);
   const [viewedLevelId, setViewedLevelId] = useState<number>(1);
-  const [confirmedLevelFloor, setConfirmedLevelFloor] = useState<number>(1);
   const [message, setMessage] = useState("Awaiting signal.");
   const [hintRevealedLevels, setHintRevealedLevels] = useState<number[]>([]);
 
@@ -469,11 +473,11 @@ export function GameShell() {
   const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
   const levelId = player?.currentLevel ?? 1;
-  const currentLevel = Math.max(levelId, confirmedLevelFloor);
+  const currentLevel = levelId;
 
   // Handle case where levelId completes all levels
   const level = levels[levelId - 1] ?? levels[levels.length - 1]!;
-  const displayedLevelId = Math.min(Math.max(viewedLevelId, 1), currentLevel);
+  const displayedLevelId = Math.min(Math.max(viewedLevelId, 1), levels.length);
   const displayedLevel = levels[displayedLevelId - 1] ?? level;
   const isFinished = player
     ? player.currentLevel > levels.length || player.finishTime !== undefined
@@ -486,19 +490,13 @@ export function GameShell() {
   // Ticking timer — runs while the game is active (not finished) and player is loaded
   useEffect(() => {
     if (currentLevel > 0) {
-      setViewedLevelId((prev) => Math.min(Math.max(prev, 1), currentLevel));
+      setViewedLevelId((prev) => Math.min(Math.max(prev, 1), levels.length));
     }
   }, [currentLevel]);
 
   useEffect(() => {
     setHintRevealedLevels([]);
   }, [participantId]);
-
-  useEffect(() => {
-    if ((player?.currentLevel ?? 1) > confirmedLevelFloor) {
-      setConfirmedLevelFloor(player?.currentLevel ?? 1);
-    }
-  }, [player?.currentLevel, confirmedLevelFloor]);
 
   // Global click feedback: briefly mark clicked buttons so CSS can animate them
 
@@ -610,13 +608,13 @@ export function GameShell() {
           setCelebrateSeed((prev) => prev + 1);
           setTimeout(() => setSuccessFlash(false), 180);
           if (answerRef.current) answerRef.current.value = "";
-          // Raise the local floor immediately so stale participant queries do not
-          // snap the view back to the just-completed level while Convex catches up.
-          const nextVisibleLevel = Math.min(displayedLevel.id + 1, levels.length);
-          setConfirmedLevelFloor((prev) => Math.max(prev, nextVisibleLevel));
-          setViewedLevelId((prev) =>
-            Math.min(Math.max(prev + 1, nextVisibleLevel), levels.length),
-          );
+          const nextLevel =
+            (result as { nextLevel?: number } | null | undefined)?.nextLevel;
+          if (typeof nextLevel === "number") {
+            setViewedLevelId(nextLevel);
+          } else {
+            setViewedLevelId((prev) => Math.min(prev + 1, levels.length));
+          }
           // stronger haptic on success
           triggerHaptic(true);
         } else {
@@ -968,7 +966,7 @@ export function GameShell() {
                     <Metric
                       icon={<Trophy size={14} />}
                       label="Completed"
-                      value={`${levelId - 1} / ${levels.length}`}
+                      value={`${Math.max(displayedLevelId - 1, 0)} / ${levels.length}`}
                     />
                   </>
                 )}
@@ -994,8 +992,8 @@ export function GameShell() {
                   ) : (
                     <div className="max-h-[380px] space-y-2 overflow-y-auto pr-1">
                       {levels.map((item) => {
-                        const isCompleted = item.id < levelId;
-                        const isActive = item.id === levelId;
+                        const isCompleted = item.id < displayedLevelId;
+                        const isActive = item.id === displayedLevelId;
                         return (
                           <div
                             key={item.id}
@@ -1054,13 +1052,12 @@ export function GameShell() {
                 answerRef={answerRef}
                 message={message}
                 onHint={showHint}
-                onSubmit={() => submitAnswer()}
-                onCustomSubmit={submitAnswer}
-                onBack={handleBack}
-                hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
-                onAdvanceToNextLevel={() => {
-                  setConfirmedLevelFloor(6);
-                  setViewedLevelId(6);
+              onSubmit={() => submitAnswer()}
+              onCustomSubmit={submitAnswer}
+              onBack={handleBack}
+              hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
+                onAdvanceToNextLevel={(nextLevel) => {
+                  setViewedLevelId(nextLevel);
                 }}
               />
             )}
@@ -1540,7 +1537,7 @@ function GamePanel({
   onCustomSubmit: (val: string) => Promise<void>;
   onBack: () => void;
   hintRevealed: boolean;
-  onAdvanceToNextLevel: () => void;
+  onAdvanceToNextLevel: (nextLevel: number) => void;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -1580,12 +1577,16 @@ function GamePanel({
           </div>
         </div>
 
-        <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-4 font-mono text-sm leading-relaxed text-[#14b8a6] italic sm:text-base">
+          <div className="mb-6 flex gap-2 border border-[#14b8a6]/15 bg-[#030603] px-4 py-4 font-mono text-sm leading-relaxed text-[#14b8a6] italic sm:text-base">
           <span className="font-bold text-[#14b8a6] select-none">
             &gt;_ OVERMIND:
           </span>
           <div className="flex-1 text-[15px] leading-7 sm:text-[17px]">
-            <TypewriterText text={`"${level.prompt}"`} speed={20} />
+            <TypewriterText
+              text={`"${level.prompt}"`}
+              speed={20}
+              className="text-[18px] leading-8 md:text-[20px]"
+            />
           </div>
         </div>
 
@@ -1981,7 +1982,7 @@ function PromptArchitect({
 }: {
   participantId: string;
   player: PublicParticipant;
-  onAdvanceToNextLevel: () => void;
+  onAdvanceToNextLevel: (nextLevel: number) => void;
 }) {
   const getUploadUrl = useMutation(gameApi.generateUploadUrl);
   const submitL5 = useMutation(gameApi.submitLevel5);
@@ -2066,7 +2067,7 @@ function PromptArchitect({
       ]);
 
       setTerminalLogs((prev) => [...prev, "Recording public link..."]);
-      await submitL5({
+      const result = await submitL5({
         participantId,
         prompt: trimmedLink,
         screenshotId,
@@ -2075,7 +2076,7 @@ function PromptArchitect({
       setTerminalLogs((prev) => [...prev, "Public link approved."]);
       setShowLogs(false);
       setLoading(false);
-      onAdvanceToNextLevel();
+      onAdvanceToNextLevel(result.nextLevel);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "REQUEST REFUSED";
       setTerminalLogs((prev) => [...prev, `CRITICAL SYSTEM ERROR: ${msg}`]);
@@ -2127,16 +2128,16 @@ function PromptArchitect({
             Public link and screenshot required.
           </div>
           <div className="mb-2 text-[10px] font-bold text-red-400 uppercase">
-            Review gate:
+            Auto-validation:
           </div>
           <div className="mb-4 space-y-2 font-mono text-[10px] text-[#a7f3d0]/80">
             <p>1. Link must be public and accessible.</p>
             <p>2. Screenshot proof required.</p>
-            <p>3. Rejection sends you back to level 5.</p>
+            <p>3. Accepted submissions unlock level 6 immediately.</p>
           </div>
         </div>
         <div className="border-t border-[#14b8a6]/10 pt-3 text-[10px] text-[#14b8a6]/40">
-          Wait for admin approval before level 6 opens.
+          Level 6 opens as soon as the submission is accepted.
         </div>
       </div>
 
@@ -2244,10 +2245,10 @@ function LogicBomb({
   const handleDefuse = async () => {
     setDefuseMsg("");
     // Solution A=true, B=false, C=true, D=false, E=true
-    if (
-      switches.A === true &&
-      switches.B === false &&
-      switches.C === true &&
+      if (
+        switches.A === true &&
+        switches.B === false &&
+        switches.C === true &&
       switches.D === false &&
       switches.E === true
     ) {

@@ -66,7 +66,7 @@ export const gameApi = {
   submitAnswer: makeFunctionReference<
     "mutation",
     { participantId: string; level: number; answer: string },
-    { ok: boolean; message: string }
+    { ok: boolean; message: string; nextLevel?: number }
   >("game:submitAnswer"),
   setEventStarted: makeFunctionReference<
     "mutation",
@@ -86,7 +86,7 @@ export const gameApi = {
   submitLevel5: makeFunctionReference<
     "mutation",
     { participantId: string; prompt: string; screenshotId?: string },
-    { ok: boolean; submissionId: string }
+    { ok: boolean; submissionId: string; nextLevel: number }
   >("game:submitLevel5"),
   getPendingSubmissions: makeFunctionReference<
     "query",
