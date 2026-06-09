@@ -1719,12 +1719,8 @@ function Level7Challenge() {
         </span>
         {/* White background equivalent container for invisible secret */}
         <div className="mt-4 rounded-sm bg-white p-3 leading-none font-bold text-white select-all select-text">
-          OVERMIND
+          HIDDEN
         </div>
-        <p className="mt-2 text-[10px] text-[#14b8a6]/30">
-          (Highlight text inside white box or press Ctrl+A / Cmd+A to reveal
-          secret)
-        </p>
       </div>
     </div>
   );
@@ -2144,6 +2140,14 @@ function PromptArchitect({
       <div className="border-pulse border border-[#14b8a6]/15 bg-black/40 p-4">
         <div className="mb-3 text-[10px] font-bold tracking-widest text-[#14b8a6]/60 uppercase">
           Submission details:
+        </div>
+
+        <div className="mb-4 border border-[#14b8a6]/15 bg-[#030603] p-3 font-mono text-xs leading-normal">
+          <span className="text-[#14b8a6] font-bold">target sentenceb :</span>{" "}
+          <span className="text-[#d1ffd6]">&quot;Computers think faster than any human mind.&quot;</span>
+          <div className="mt-1 text-[#a7f3d0]/60">
+            <span className="text-red-400 font-bold">— banned words:</span> computers, think, faster, human, mind
+          </div>
         </div>
 
         <div className="mb-4">

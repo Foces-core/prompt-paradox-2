@@ -518,14 +518,6 @@ export const reviewLevel5 = mutation({
     const sub = await ctx.db.get(args.submissionId);
     if (!sub) throw new Error("Submission not found.");
 
-    if (args.status === "approved") {
-      await ctx.db.patch(args.submissionId, {
-        status: "approved",
-        reviewedAt: Date.now(),
-      });
-      return { ok: true };
-    }
-
     await ctx.db.patch(args.submissionId, {
       status: args.status,
       reviewedAt: Date.now(),

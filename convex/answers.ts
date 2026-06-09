@@ -45,7 +45,7 @@ export const answerSets: Record<number, AnswerSet> = {
     strictness: "standard",
   },
   7: {
-    answers: ["OVERMIND"],
+    answers: ["HIDDEN"],
     strictness: "strict",
   },
   8: {
