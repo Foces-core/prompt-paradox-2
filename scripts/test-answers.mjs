@@ -50,8 +50,8 @@ const matrix = [
   },
   {
     id: 7,
-    yes: ["OVERMIND", "overmind"],
-    no: ["over mind", "MINDOVER", "OVERMIND!"],
+    yes: ["HIDDEN", "hidden"],
+    no: ["hid den", "HIDDENX", "HIDDEN!"],
   },
   {
     id: 8,

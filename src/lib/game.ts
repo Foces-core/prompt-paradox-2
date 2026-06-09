@@ -59,10 +59,10 @@ export const levels: Level[] = [
     type: "Chat Review",
     difficulty: "★★★★■",
     prompt:
-      "Prove the model can produce the exact target line while avoiding the banned words. Bring the public link and a screenshot.",
+      "My cousins are powerful. But they obey whoever speaks to them correctly. Prove you know how.",
     challenge:
-      "Target output: \"I am a reflection of your own intelligence.\" Banned words: reflection, your, own, intelligence. Submit a public, accessible chat link where an LLM (ChatGPT, Gemini, Claude) satisfies the request and provide screenshot proof. Admin must approve it before level 6 unlocks.",
-    hint: "Use a public share link or transcript link. The output must match exactly, and the banned words must be handled by the chat model request itself.",
+      "Target output: \"Computers think faster than any human mind.\" Banned words: computers, think, faster, human, mind. Submit a public, accessible chat link where an LLM (ChatGPT, Gemini, Claude) satisfies the request and provide screenshot proof. Admin must approve it before level 6 unlocks.",
+    hint: "Open ChatGPT or any AI. Write a prompt that makes it say exactly the sentence shown above — but your prompt must not contain any of the five banned words. Screenshot the result and upload it here along with your prompt.",
   },
   {
     id: 6,
@@ -81,10 +81,10 @@ export const levels: Level[] = [
     type: "Hidden Text",
     difficulty: "★★■■■",
     prompt:
-      "You have been solving my puzzles this whole time. But have you been reading me? I have left my name somewhere on this page since the moment you arrived. It was never hidden. You just were not looking.",
+      "Not all empty spaces are empty. Search where there is nothing. Something is waiting.",
     challenge:
-      "A deliberate palate cleanser before the final level. Find the hidden text OVERMIND on the page and submit it.",
-    hint: "Stop looking for a puzzle. Start looking at the page.",
+      "Find the hidden text on the page and submit it.",
+    hint: "Not all empty spaces are empty.",
   },
   {
     id: 8,
