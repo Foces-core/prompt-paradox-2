@@ -2472,6 +2472,7 @@ function AdminPanel({
     gameApi.getPendingSubmissions,
     loadQueue && adminKeyValue ? { adminKey: adminKeyValue } : "skip",
   );
+  const pendingSubmissions = Array.isArray(pendingQuery) ? pendingQuery : [];
   const reviewSub = useMutation(gameApi.reviewLevel5);
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
   const [winnerId, setWinnerId] = useState("");
@@ -2724,8 +2725,8 @@ function AdminPanel({
             <p className="py-6 text-center font-mono text-[11px] tracking-wider text-[#14b8a6]/50 uppercase">
               Loading review queue...
             </p>
-          ) : pendingQuery && pendingQuery.length > 0 ? (
-            pendingQuery.map((sub) => (
+          ) : pendingSubmissions.length > 0 ? (
+            pendingSubmissions.map((sub) => (
               <div
                 key={sub.id}
                 className="space-y-3 border border-[#14b8a6]/20 bg-[#030603] p-4 font-mono text-xs"
@@ -2792,7 +2793,7 @@ function AdminPanel({
                       Hints Used
                     </div>
                     <div className="text-[#d1ffd6]">
-                      {sub.participantHintsUsed.length}
+                      {sub.participantHintsUsed?.length ?? 0}
                     </div>
                   </div>
                   <div>
