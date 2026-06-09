@@ -519,6 +519,7 @@ export function GameShell() {
       try {
         const target = (e.target as Element).closest("button");
         if (!target) return;
+        if (target.hasAttribute("data-no-click-sfx")) return;
         target.setAttribute("data-clicked", "true");
         window.setTimeout(() => target.removeAttribute("data-clicked"), 140);
         try {
@@ -1309,20 +1310,8 @@ function StoryIntro({
   replayMode?: boolean;
 }) {
   const currentStepData = STORY_STEPS[step];
-  const [typingComplete, setTypingComplete] = useState(false);
-
-  useEffect(() => {
-    setTypingComplete(false);
-  }, [step]);
 
   const handleNext = () => {
-    if (!typingComplete) {
-      // Force completion is handled inside TypewriterText by clicking it,
-      // but if they click the button we skip typing or advance.
-      setTypingComplete(true);
-      return;
-    }
-
     if (step < STORY_STEPS.length - 1) {
       setStep(step + 1);
     } else {
@@ -1377,7 +1366,7 @@ function StoryIntro({
       {/* Top Info Bar */}
       <div className="flex flex-col gap-2 border-b border-[#14b8a6]/20 pb-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="truncate text-[11px] tracking-[0.22em] text-[#14b8a6]/60 uppercase sm:text-xs sm:tracking-widest">
-          OVERMIND // {replayMode ? "STORY ARCHIVE" : "INTRO"}
+          OVERMIND // INTRO
         </span>
         <button
           onClick={handleSkip}
@@ -1391,31 +1380,25 @@ function StoryIntro({
       <div className="mx-auto my-6 flex max-w-2xl flex-1 flex-col justify-center sm:my-8">
         <div className="border-pulse border border-[#14b8a6]/30 bg-[#070e08]/90 p-5 shadow-[0_0_25px_rgba(20,184,166,0.05)] sm:p-8">
           <p className="text-pulse mb-4 text-[10px] font-bold tracking-[0.24em] text-[#14b8a6] uppercase sm:tracking-[0.3em]">
-            {replayMode ? "STORY ARCHIVE" : "STORY"} {step + 1} OF{" "}
-            {STORY_STEPS.length}
-            {" - "}
-            {currentStepData.title}
+            STORY {step + 1} OF {STORY_STEPS.length}
           </p>
-          <div className="min-h-[180px] font-mono text-sm leading-relaxed text-[#d1ffd6] md:text-base">
-            <TypewriterText
-              text={textWithVariables}
-              speed={20}
-              complete={typingComplete}
-              onComplete={() => setTypingComplete(true)}
-            />
+          <div className="min-h-[180px] font-mono text-base leading-8 text-[#d1ffd6] md:text-lg">
+            <div className="select-none text-[18px] leading-8 md:text-[20px]">
+              {textWithVariables}
+            </div>
           </div>
         </div>
       </div>
       {/* Bottom Controls */}
       <div className="flex flex-col gap-3 border-t border-[#14b8a6]/20 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-[11px] text-[#14b8a6]/40 sm:text-xs">
-          SYSTEM: CLICK DIALOGUE TO ADVANCE
+          SYSTEM: USE THE BUTTON TO ADVANCE
         </div>
         <button
           onClick={handleNext}
           className="border border-[#14b8a6] bg-[#14b8a6]/10 px-6 py-3 text-sm font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_rgba(20,184,166,0.3)] sm:self-end"
         >
-          {typingComplete ? storyButtonLabel : "SKIP"}
+          {storyButtonLabel}
         </button>
       </div>
     </main>
@@ -1617,6 +1600,7 @@ function GamePanel({
           <div className="mt-3">
             <button
               onClick={() => void onHint()}
+              data-no-click-sfx="true"
               className="border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-3 py-1.5 font-mono text-xs font-bold text-[#14b8a6] uppercase transition-all duration-300 hover:bg-[#14b8a6] hover:text-black"
             >
               HINT
