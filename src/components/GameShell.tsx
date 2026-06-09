@@ -990,7 +990,7 @@ export function GameShell() {
                       </div>
                     </div>
                   ) : (
-                    <div className="max-h-[380px] space-y-2 overflow-y-auto pr-1">
+                    <div className="levels-scrollbar max-h-[380px] space-y-2 overflow-y-auto pr-1">
                       {levels.map((item) => {
                         const isCompleted = item.id < displayedLevelId;
                         const isActive = item.id === displayedLevelId;
