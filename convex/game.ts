@@ -171,21 +171,30 @@ export const register = mutation({
 
     if (existing) return publicParticipant(existing);
 
-    const participantId = await ctx.db.insert("participants", {
-      name: args.name.trim(),
-      college: args.college.trim(),
-      email,
-      currentLevel: 1,
-      completedLevels: [],
-      hintsUsed: [],
-      attemptCounts: {},
-      levelTimestamps: {},
-      startTime: Date.now(),
-      level5Status: "none",
-    });
-    const participant = await ctx.db.get(participantId);
-    if (!participant) throw new Error("Registration failed.");
-    return publicParticipant(participant);
+    try {
+      const participantId = await ctx.db.insert("participants", {
+        name: args.name.trim(),
+        college: args.college.trim(),
+        email,
+        currentLevel: 1,
+        completedLevels: [],
+        hintsUsed: [],
+        attemptCounts: {},
+        levelTimestamps: {},
+        startTime: Date.now(),
+        level5Status: "none",
+      });
+      const participant = await ctx.db.get(participantId);
+      if (!participant) throw new Error("Registration failed.");
+      return publicParticipant(participant);
+    } catch (error) {
+      const raced = await ctx.db
+        .query("participants")
+        .withIndex("by_email", (q) => q.eq("email", email))
+        .unique();
+      if (raced) return publicParticipant(raced);
+      throw error;
+    }
   },
 });
 
@@ -230,14 +239,13 @@ export const submitAnswer = mutation({
       return { ok: false, message: "Level 5 requires admin review." };
     }
 
-    const attemptCounts = {
-      ...participant.attemptCounts,
-      [String(args.level)]:
-        (participant.attemptCounts[String(args.level)] ?? 0) + 1,
-    };
-
     if (!isCorrectAnswer(args.level, args.answer)) {
-      await ctx.db.patch(args.participantId, { attemptCounts });
+      await ctx.db.insert("answerAttempts", {
+        participantId: args.participantId,
+        level: args.level,
+        submittedAt: Date.now(),
+        correct: false,
+      });
       return { ok: false, message: "Rejected. Check format, then retry." };
     }
 
@@ -246,16 +254,18 @@ export const submitAnswer = mutation({
     );
     const nextLevel = Math.min(args.level + 1, MAX_LEVEL);
 
+    await ctx.db.insert("answerAttempts", {
+      participantId: args.participantId,
+      level: args.level,
+      submittedAt: Date.now(),
+      correct: true,
+    });
+
     await ctx.db.patch(args.participantId, {
-      attemptCounts,
       completedLevels,
       currentLevel: nextLevel,
       finishTime:
         args.level === MAX_LEVEL ? Date.now() : participant.finishTime,
-      levelTimestamps: {
-        ...participant.levelTimestamps,
-        [String(args.level)]: Date.now(),
-      },
     });
 
     return {
@@ -278,6 +288,9 @@ export const setEventStarted = mutation({
 
     const existing = await getEvent(ctx);
     if (existing) {
+      if (existing.started === args.started) {
+        return { ok: true, unchanged: true };
+      }
       await ctx.db.patch(existing._id, {
         started: args.started,
         updatedAt: Date.now(),

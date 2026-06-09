@@ -26,6 +26,14 @@ export default defineSchema({
     ),
     isAdmin: v.optional(v.boolean()),
   }).index("by_email", ["email"]),
+  answerAttempts: defineTable({
+    participantId: v.id("participants"),
+    level: v.number(),
+    submittedAt: v.number(),
+    correct: v.boolean(),
+  })
+    .index("by_participant", ["participantId"])
+    .index("by_level", ["level"]),
   level5Submissions: defineTable({
     participantId: v.id("participants"),
     prompt: v.string(),
