@@ -102,6 +102,13 @@ export const eventState = query({
   },
 });
 
+export const checkAdminKey = query({
+  args: { adminKey: v.string() },
+  handler: async (ctx, args) => {
+    return isValidAdminKey(args.adminKey);
+  },
+});
+
 export const leaderboard = query({
   args: {},
   handler: async (ctx) => {
@@ -313,12 +320,18 @@ export const setWinnerParticipant = mutation({
     }
 
     const event = await getEvent(ctx);
-    if (!event) throw new Error("Event record not found.");
-
-    await ctx.db.patch(event._id, {
-      winnerParticipantId: args.participantId as any,
-      updatedAt: Date.now(),
-    });
+    if (event) {
+      await ctx.db.patch(event._id, {
+        winnerParticipantId: args.participantId as any,
+        updatedAt: Date.now(),
+      });
+    } else {
+      await ctx.db.insert("event", {
+        started: true,
+        winnerParticipantId: args.participantId as any,
+        updatedAt: Date.now(),
+      });
+    }
     return { ok: true };
   },
 });

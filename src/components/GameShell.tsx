@@ -2471,9 +2471,16 @@ function AdminPanel({
 }) {
   const [adminKey, setAdminKey] = useState("");
   const adminKeyValue = adminKey.trim();
+
+  const isValid = useQuery(
+    gameApi.checkAdminKey,
+    adminKeyValue ? { adminKey: adminKeyValue } : "skip"
+  );
+  const isAuthenticated = isValid === true;
+
   const finalistProofQuery = useQuery(
     gameApi.getFinalistProofs,
-    adminKeyValue ? { adminKey: adminKeyValue } : "skip",
+    isAuthenticated ? { adminKey: adminKeyValue } : "skip",
   );
   const finalistProofs = useMemo<FinalistProofEntry[]>(
     () =>
@@ -2487,10 +2494,24 @@ function AdminPanel({
       ),
     [finalistProofs],
   );
+
+  const pendingSubmissionsQuery = useQuery(
+    gameApi.getPendingSubmissions,
+    isAuthenticated ? { adminKey: adminKeyValue } : "skip",
+  );
+  const pendingSubmissions = useMemo(() =>
+    Array.isArray(pendingSubmissionsQuery) ? pendingSubmissionsQuery : [],
+    [pendingSubmissionsQuery]
+  );
+
   const setWinnerParticipant = useMutation(gameApi.setWinnerParticipant);
+  const reviewLevel5 = useMutation(gameApi.reviewLevel5);
+
   const [winnerId, setWinnerId] = useState("");
   const [winnerActionMsg, setWinnerActionMsg] = useState("");
   const [winnerSaving, setWinnerSaving] = useState(false);
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
+  const [reviewMsg, setReviewMsg] = useState("");
 
   const eligibleRanks = useMemo(
     () =>
@@ -2549,6 +2570,40 @@ function AdminPanel({
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <section className="flex-1 space-y-6 border border-[#14b8a6]/35 bg-[#050b06]/95 p-6 shadow-[0_0_30px_rgba(20,184,166,0.12)] backdrop-blur">
+        <div className="border-b border-[#14b8a6]/15 pb-4">
+          <h2 className="font-mono text-2xl font-black tracking-wide text-[#d1ffd6]">
+            Console Authentication
+          </h2>
+          <p className="mt-2 font-mono text-xs text-[#14b8a6]/60">
+            Please enter a valid admin key to access the control panel.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block font-mono text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
+            Admin key
+          </label>
+          <input
+            value={adminKey}
+            onChange={(event) => setAdminKey(event.target.value)}
+            className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#14b8a6] outline-none focus:border-[#14b8a6] focus:bg-black"
+            placeholder="Enter admin key..."
+            type="password"
+          />
+          {adminKeyValue !== "" && isValid === false && (
+            <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-red-400">
+              <AlertTriangle size={12} className="shrink-0" />
+              <span>Invalid admin key. Access denied.</span>
+            </p>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="flex-1 space-y-6 border border-[#14b8a6]/35 bg-[#050b06]/95 p-6 shadow-[0_0_30px_rgba(20,184,166,0.12)] backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#14b8a6]/15 pb-4">
@@ -2572,37 +2627,148 @@ function AdminPanel({
             Manage event state and review submissions.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setEventStarted(!eventStarted, adminKey)}
-          className={clsx(
-            "cursor-pointer border px-4 py-2 font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_16px_rgba(20,184,166,0.15)] transition-all duration-300",
-            eventStarted
-              ? "border-[#ef4444] bg-[#ef4444]/15 text-[#ef4444] hover:bg-[#ef4444]"
-              : "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black",
-          )}
-        >
-          {eventStarted ? "PAUSE" : "RESUME"}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => setEventStarted(!eventStarted, adminKey)}
+            className={clsx(
+              "cursor-pointer border px-4 py-2 font-mono text-xs font-bold tracking-wider uppercase shadow-[0_0_16px_rgba(20,184,166,0.15)] transition-all duration-300",
+              eventStarted
+                ? "border-[#ef4444] bg-[#ef4444]/15 text-[#ef4444] hover:bg-[#ef4444]"
+                : "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black",
+            )}
+          >
+            {eventStarted ? "PAUSE" : "RESUME"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setAdminKey("")}
+            className="cursor-pointer border border-[#ef4444]/50 bg-[#ef4444]/5 px-3 py-2 font-mono text-xs font-bold text-red-400 hover:bg-[#ef4444]/20"
+          >
+            LOCK
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="block font-mono text-[10px] font-bold tracking-widest text-[#14b8a6]/70 uppercase">
-          Admin key
-        </label>
-        <input
-          value={adminKey}
-          onChange={(event) => setAdminKey(event.target.value)}
-          className="w-full border border-white/10 bg-black/50 px-4 py-3 font-mono text-xs text-[#14b8a6] outline-none focus:border-[#14b8a6] focus:bg-black"
-          placeholder="Enter your answer"
-          type="password"
-        />
-        {message && (
-          <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-[#14b8a6]">
-            <Terminal size={12} className="shrink-0" />
-            <span>{message}</span>
-          </p>
-        )}
+      <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
+        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
+          <Upload size={14} /> Pending Level 5 Submissions
+        </h3>
+        <div className="space-y-4">
+          {pendingSubmissions.length === 0 ? (
+            <p className="py-4 text-center text-[11px] tracking-wider text-[#14b8a6]/30 uppercase">
+              No pending submissions to review.
+            </p>
+          ) : (
+            pendingSubmissions.map((sub) => (
+              <div key={sub.id} className="border border-[#14b8a6]/10 bg-[#030603] p-4 font-mono text-xs text-[#d1ffd6] space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#14b8a6]/10 pb-2">
+                  <div>
+                    <span className="font-bold text-white">{sub.participantName}</span>{" "}
+                    <span className="text-[#14b8a6]/60">({sub.participantCollege})</span>
+                  </div>
+                  <span className="text-[10px] text-[#14b8a6]/45">
+                    {new Date(sub.submittedAt).toLocaleString()}
+                  </span>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <span className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">Chat Link</span>
+                    <a
+                      href={sub.prompt}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 block break-all border border-white/5 bg-black/50 p-2.5 text-[#3bff9d] underline hover:border-[#14b8a6]/40"
+                    >
+                      {sub.prompt}
+                    </a>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold tracking-wider text-[#14b8a6]/45 uppercase">Screenshot</span>
+                    {sub.screenshotUrl ? (
+                      <a
+                        href={sub.screenshotUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1 block max-w-[150px] border border-[#14b8a6]/10 hover:border-[#14b8a6]/50"
+                      >
+                        <img
+                          src={sub.screenshotUrl}
+                          alt="Screenshot proof"
+                          className="h-auto w-full"
+                          loading="lazy"
+                        />
+                      </a>
+                    ) : (
+                      <p className="mt-1 text-[#14b8a6]/35">No screenshot attached.</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    disabled={reviewingId !== null}
+                    onClick={async () => {
+                      setReviewingId(sub.id);
+                      setReviewMsg("");
+                      try {
+                        await reviewLevel5({
+                          adminKey: adminKeyValue,
+                          submissionId: sub.id,
+                          status: "approved",
+                        });
+                        try {
+                          playSuccess();
+                        } catch {}
+                      } catch (err) {
+                        setReviewMsg(err instanceof Error ? err.message : "Approval failed");
+                        try {
+                          playError();
+                        } catch {}
+                      } finally {
+                        setReviewingId(null);
+                      }
+                    }}
+                    className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/10 px-3 py-1 font-bold text-[#14b8a6] hover:bg-[#14b8a6] hover:text-black disabled:opacity-40"
+                  >
+                    {reviewingId === sub.id ? "Processing..." : "Approve"}
+                  </button>
+                  <button
+                    disabled={reviewingId !== null}
+                    onClick={async () => {
+                      setReviewingId(sub.id);
+                      setReviewMsg("");
+                      try {
+                        await reviewLevel5({
+                          adminKey: adminKeyValue,
+                          submissionId: sub.id,
+                          status: "rejected",
+                        });
+                        try {
+                          playSuccess();
+                        } catch {}
+                      } catch (err) {
+                        setReviewMsg(err instanceof Error ? err.message : "Rejection failed");
+                        try {
+                          playError();
+                        } catch {}
+                      } finally {
+                        setReviewingId(null);
+                      }
+                    }}
+                    className="cursor-pointer border border-red-500 bg-red-500/10 px-3 py-1 font-bold text-red-400 hover:bg-red-500 hover:text-black disabled:opacity-40"
+                  >
+                    {reviewingId === sub.id ? "Processing..." : "Reject"}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+          {reviewMsg && (
+            <p className="mt-2 text-red-400 font-mono text-[10px] uppercase">
+              {reviewMsg}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
@@ -2764,7 +2930,6 @@ function AdminPanel({
         </div>
       </div>
 
-      {/* Candidates Leaderboard (finished players only) */}
       <div className="border-pulse border border-[#14b8a6]/15 bg-black/45 p-4">
         <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-[#14b8a6] uppercase">
           <Trophy size={14} /> Candidates

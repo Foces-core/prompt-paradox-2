@@ -38,6 +38,11 @@ export const gameApi = {
     Record<string, never>,
     { started: boolean; winnerParticipantId?: string }
   >("game:eventState"),
+  checkAdminKey: makeFunctionReference<
+    "query",
+    { adminKey: string },
+    boolean
+  >("game:checkAdminKey"),
   leaderboard: makeFunctionReference<
     "query",
     Record<string, never>,
