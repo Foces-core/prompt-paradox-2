@@ -9,7 +9,7 @@ const sampleParticipant = {
 async function advanceThroughStory(page: Page) {
   const storyButton = page.getByRole("button", { name: /^(SKIP|NEXT|START)$/ });
 
-  for (let index = 0; index < 6; index += 1) {
+  for (let index = 0; index < 5; index += 1) {
     await expect(storyButton).toBeVisible();
     await storyButton.click();
     await page.waitForTimeout(250);

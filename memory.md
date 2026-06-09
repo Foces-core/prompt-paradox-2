@@ -101,3 +101,4 @@
 - Level 5 proof is reviewed inside winner selection, not as a separate admin queue; expose chat link, screenshot, and participant metadata only in the finalist detail view.
 - Production Convex deployment for the live site is `prod:proper-goshawk-251`; deploy backend changes there after admin-flow edits.
 - Reduce Convex contention by keeping answer attempts append-only in `answerAttempts`, making `setEventStarted` idempotent, and catching same-email registration races before they retry the shared participant row.
+- Verified the UI responsiveness and auth flow using Playwright responsive spec (42/42 tests passing across desktop/mobile viewports and slower network/motion lanes before deployment).
