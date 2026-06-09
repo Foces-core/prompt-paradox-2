@@ -260,6 +260,7 @@ export const submitAnswer = mutation({
 
     return {
       ok: true,
+      nextLevel,
       message:
         args.level === MAX_LEVEL
           ? "Final signal accepted. Winner lock pending."
@@ -391,7 +392,7 @@ export const submitLevel5 = mutation({
         : [...participant.completedLevels, 5],
     });
 
-    return { ok: true, submissionId };
+    return { ok: true, submissionId, nextLevel: 6 };
   },
 });
 
