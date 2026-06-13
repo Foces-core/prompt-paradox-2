@@ -45,7 +45,7 @@ jobs:
       - name: Deploy Convex Backend
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: pnpm exec convex deploy --prod
+        run: pnpm exec convex deploy
 
       - name: Build
         env:
