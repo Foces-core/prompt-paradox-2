@@ -13,8 +13,8 @@ const matrix = [
   },
   {
     id: 2,
-    yes: ["VOIDWALKER", "void walker", "void-walker", "void_walker"],
-    no: ["void", "walker", "VOIDWALKERX"],
+    yes: ["ECLIPSE", "eclipse", "ECLISPSE", "eclispse"],
+    no: ["eclip", "eclipse_x", "ECLIPSEX"],
   },
   {
     id: 3,

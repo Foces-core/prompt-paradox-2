@@ -35,6 +35,18 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Verify Convex Config
+        run: |
+          if [ -z "${{ secrets.CONVEX_DEPLOY_KEY }}" ]; then
+            echo "::error::CONVEX_DEPLOY_KEY is not configured in GitHub Secrets. Deploy cannot proceed."
+            exit 1
+          fi
+
+      - name: Deploy Convex Backend
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: pnpm exec convex deploy --prod
+
       - name: Build
         env:
           NEXT_PUBLIC_BASE_PATH: /prompt-paradox-2
