@@ -26,10 +26,10 @@ export const levels: Level[] = [
     type: "Pixel Decode",
     difficulty: "★★■■■",
     prompt:
-      "I have been watching through cameras you never knew were on. This image was the last thing my network transmitted before going dark. Look closer than your eyes allow.",
+      "You seek algorithms and keys, yet overlook the simplest instrument you possess: perception.",
     challenge:
-      "Inspect the moody photograph of the server room. Hidden inside using LSB (Least Significant Bit) steganography is a passphrase. Extract it and submit.",
-    hint: "Some images carry secrets in their pixels — invisible to the eye, readable by the right tool. Search: online steganography decoder image.",
+      "Identify the passphrase hidden in the image.",
+    hint: "No tools. No tricks. The answer is already before you.",
   },
   {
     id: 3,

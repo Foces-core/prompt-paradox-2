@@ -13,7 +13,7 @@ export const answerSets: Record<number, AnswerSet> = {
     strictness: "warmup",
   },
   2: {
-    answers: ["VOIDWALKER", "void walker", "void-walker", "void_walker"],
+    answers: ["ECLIPSE", "ECLISPSE"],
     strictness: "warmup",
   },
   3: {

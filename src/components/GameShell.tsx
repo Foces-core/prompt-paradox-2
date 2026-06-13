@@ -20,7 +20,6 @@ import {
   User,
   Layers,
   BookOpen,
-  Download,
   Upload,
   RefreshCw,
 } from "lucide-react";
@@ -1615,19 +1614,10 @@ function GamePanel({
             <div className="transmission-flicker relative mx-auto max-w-[400px] overflow-hidden border border-[#14b8a6]/20 bg-black">
               {/* eslint-disable-next-line @next/next/no-img-element -- raw PNG required for steganography; Next Image would recompress and destroy hidden data */}
               <img
-                src={`${basePath}/puzzles/level2.jpeg`}
+                src={`${basePath}/puzzles/level2.png`}
                 alt="Clearance puzzle LSB"
                 className="block h-auto w-full object-cover opacity-85"
               />
-            </div>
-            <div className="mt-3 text-center">
-              <a
-                className="inline-flex items-center gap-2 border border-[#14b8a6]/30 bg-[#14b8a6]/5 px-3 py-1.5 text-xs font-bold text-[#14b8a6] transition-all duration-300 hover:bg-[#14b8a6]/20"
-                href={`${basePath}/puzzles/level2.jpeg`}
-                download="lvl2.jpeg"
-              >
-                <Download size={12} /> DOWNLOAD IMAGE
-              </a>
             </div>
           </div>
         )}
