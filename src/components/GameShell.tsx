@@ -264,8 +264,7 @@ function useTurnstileToken() {
     };
 
     const turnstile = await waitForTurnstile();
-    if (!widgetIdRef.current) {
-      widgetIdRef.current = turnstile.render(container, {
+    widgetIdRef.current ??= turnstile.render(container, {
         sitekey: turnstileSiteKey,
         size: "invisible",
         callback: (token) => {
@@ -280,7 +279,6 @@ function useTurnstileToken() {
           if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
         },
       });
-    }
 
     return await new Promise<string>((resolve, reject) => {
       resolverRef.current = { resolve, reject };
