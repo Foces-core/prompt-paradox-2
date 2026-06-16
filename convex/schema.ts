@@ -25,6 +25,7 @@ export default defineSchema({
       v.literal("rejected"),
     ),
     isAdmin: v.optional(v.boolean()),
+    isBot: v.optional(v.boolean()),
   }).index("by_email", ["email"]),
   answerAttempts: defineTable({
     participantId: v.id("participants"),
