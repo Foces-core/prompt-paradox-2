@@ -145,4 +145,9 @@ export const gameApi = {
     { adminKey: string; participantId: string },
     { ok: boolean }
   >("game:setWinnerParticipant"),
+  triggerHoneypot: makeFunctionReference<
+    "mutation",
+    { participantId: string },
+    { ok: boolean }
+  >("game:triggerHoneypot"),
 };

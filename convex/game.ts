@@ -142,7 +142,9 @@ export const leaderboard = query({
     if (isMaintenanceMode()) return [];
     const participants: LeaderboardRow[] = (
       await ctx.db.query("participants").collect()
-    ).map((participant) => ({
+    )
+      .filter((p) => !p.isBot)
+      .map((participant) => ({
       id: participant._id,
       name: participant.name,
       college: participant.college,
@@ -287,6 +289,15 @@ export const submitAnswer = mutation({
 
     const participant = await ctx.db.get(args.participantId);
     if (!participant) return { ok: false, message: "Participant not found." };
+    if (participant.isBot) {
+      return { ok: false, message: "Account locked due to Terms of Service violation." };
+    }
+
+    if (args.answer.trim() === "BOT_SURRENDER") {
+      await ctx.db.patch(args.participantId, { isBot: true });
+      return { ok: false, message: "BOT DETECTED. Account locked." };
+    }
+
     if (participant.currentLevel !== args.level) {
       return { ok: false, message: "Wrong level." };
     }
@@ -615,6 +626,18 @@ export const reviewLevel5 = mutation({
         );
       }
       await ctx.db.patch(sub.participantId, patchData);
+    }
+    return { ok: true };
+  },
+});
+
+export const triggerHoneypot = mutation({
+  args: { participantId: v.id("participants") },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) return { ok: false };
+    const participant = await ctx.db.get(args.participantId);
+    if (participant && !participant.isBot) {
+      await ctx.db.patch(args.participantId, { isBot: true });
     }
     return { ok: true };
   },
