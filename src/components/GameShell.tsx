@@ -199,6 +199,102 @@ function formatElapsed(seconds: number) {
 }
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          size?: "invisible" | "normal" | "compact";
+          callback: (token: string) => void;
+          "error-callback"?: () => void;
+          "expired-callback"?: () => void;
+        },
+      ) => string;
+      execute: (widgetId: string) => void;
+      reset: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
+}
+
+function useTurnstileToken() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const resolverRef = useRef<{
+    resolve: (token: string) => void;
+    reject: (error: Error) => void;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!turnstileSiteKey) return;
+    const scriptId = "cf-turnstile-script";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+      }
+    };
+  }, []);
+
+  const getToken = useCallback(async () => {
+    if (!turnstileSiteKey) return undefined;
+    const container = containerRef.current;
+    if (!container) throw new Error("Bot verification is not ready.");
+
+    const waitForTurnstile = async () => {
+      for (let i = 0; i < 40; i += 1) {
+        if (window.turnstile) return window.turnstile;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw new Error("Bot verification failed to load.");
+    };
+
+    const turnstile = await waitForTurnstile();
+    if (!widgetIdRef.current) {
+      widgetIdRef.current = turnstile.render(container, {
+        sitekey: turnstileSiteKey,
+        size: "invisible",
+        callback: (token) => {
+          resolverRef.current?.resolve(token);
+          resolverRef.current = null;
+        },
+        "error-callback": () => {
+          resolverRef.current?.reject(new Error("Bot verification failed."));
+          resolverRef.current = null;
+        },
+        "expired-callback": () => {
+          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
+        },
+      });
+    }
+
+    return await new Promise<string>((resolve, reject) => {
+      resolverRef.current = { resolve, reject };
+      turnstile.execute(widgetIdRef.current!);
+    });
+  }, []);
+
+  return {
+    getToken,
+    widget: turnstileSiteKey ? (
+      <div ref={containerRef} className="fixed bottom-0 right-0 opacity-0" />
+    ) : null,
+  };
+}
 
 const STORY_STEPS = [
   {
@@ -409,6 +505,7 @@ export function GameShell() {
   const [elapsed, setElapsed] = useState(0);
 
   const answerRef = useRef<HTMLInputElement>(null);
+  const botProtection = useTurnstileToken();
 
   // Ambient BGM
   const bgm = useAmbientBGM();
@@ -589,6 +686,7 @@ export function GameShell() {
           participantId,
           level: displayedLevel.id,
           answer: submittedAnswer,
+          botToken: await botProtection.getToken(),
         });
 
         setMessage(result.message);
@@ -634,7 +732,7 @@ export function GameShell() {
         setTimeout(() => setWrongFlash(false), 180);
       }
     },
-    [answerRef, displayedLevel.id, participantId, submitAttempt],
+    [answerRef, botProtection, displayedLevel.id, participantId, submitAttempt],
   );
 
   async function showHint() {
@@ -668,7 +766,10 @@ export function GameShell() {
   async function registerPlayer(
     nextPlayer: Pick<PublicParticipant, "name" | "college" | "email">,
   ) {
-    const registered = await register(nextPlayer);
+    const registered = await register({
+      ...nextPlayer,
+      botToken: await botProtection.getToken(),
+    });
     setParticipantId(registered.id);
 
     localStorage.setItem("pp_participant_id", registered.id);
@@ -754,48 +855,67 @@ export function GameShell() {
 
   // 1. Not Registered / Logged In
   if (!participantId || !player) {
-    return <Registration onRegister={registerPlayer} />;
+    return (
+      <>
+        <Registration onRegister={registerPlayer} />
+        {botProtection.widget}
+      </>
+    );
   }
 
   // 2. Registered but hasn't completed Visual Novel story introduction
   if (!hasSeenIntro) {
     return (
-      <StoryIntro
-        playerName={player.name}
-        step={introStep}
-        setStep={setIntroStep}
-        onComplete={handleFinishIntro}
-      />
+      <>
+        <StoryIntro
+          playerName={player.name}
+          step={introStep}
+          setStep={setIntroStep}
+          onComplete={handleFinishIntro}
+        />
+        {botProtection.widget}
+      </>
     );
   }
 
   if (storyReplayOpen) {
     return (
-      <StoryIntro
-        playerName={player.name}
-        step={introStep}
-        setStep={setIntroStep}
-        onComplete={() => setStoryReplayOpen(false)}
-        onSkipReplay={() => setStoryReplayOpen(false)}
-        replayMode
-      />
+      <>
+        <StoryIntro
+          playerName={player.name}
+          step={introStep}
+          setStep={setIntroStep}
+          onComplete={() => setStoryReplayOpen(false)}
+          onSkipReplay={() => setStoryReplayOpen(false)}
+          replayMode
+        />
+        {botProtection.widget}
+      </>
     );
   }
 
   if (!eventStarted && view !== "admin") {
     return (
-      <LoadingGate
-        onOpenAdmin={() => setView("admin")}
-        onOpenStory={() => {
-          setIntroStep(0);
-          setStoryReplayOpen(true);
-        }}
-      />
+      <>
+        <LoadingGate
+          onOpenAdmin={() => setView("admin")}
+          onOpenStory={() => {
+            setIntroStep(0);
+            setStoryReplayOpen(true);
+          }}
+        />
+        {botProtection.widget}
+      </>
     );
   }
 
   if (unresolvedFinale) {
-    return <ThinkingScreen playerName={player.name} />;
+    return (
+      <>
+        <ThinkingScreen playerName={player.name} />
+        {botProtection.widget}
+      </>
+    );
   }
 
   // 3. Main game dashboard interface
@@ -810,6 +930,7 @@ export function GameShell() {
     >
       {/* Scanline Overlay */}
       <div className="scanline pointer-events-none fixed inset-0 z-50 opacity-[0.03]" />
+      {botProtection.widget}
       {successFlash && <CelebrationBurst seed={celebrateSeed} />}
 
       <header className="sticky top-0 z-10 border-b border-[#14b8a6]/20 bg-[#030704]/90 backdrop-blur">
@@ -1055,6 +1176,7 @@ export function GameShell() {
               onCustomSubmit={submitAnswer}
               onBack={handleBack}
               hintRevealed={hintRevealedLevels.includes(displayedLevel.id)}
+              getBotToken={botProtection.getToken}
                 onAdvanceToNextLevel={(nextLevel) => {
                   setViewedLevelId(nextLevel);
                 }}
@@ -1525,6 +1647,7 @@ function GamePanel({
   onBack,
   hintRevealed,
   onAdvanceToNextLevel,
+  getBotToken,
 }: {
   level: Level;
   participantId: string;
@@ -1537,6 +1660,7 @@ function GamePanel({
   onBack: () => void;
   hintRevealed: boolean;
   onAdvanceToNextLevel: (nextLevel: number) => void;
+  getBotToken: () => Promise<string | undefined>;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
 
@@ -1635,6 +1759,7 @@ function GamePanel({
             participantId={participantId}
             player={player}
             onAdvanceToNextLevel={onAdvanceToNextLevel}
+            getBotToken={getBotToken}
           />
         )}
 
@@ -1965,10 +2090,12 @@ function PromptArchitect({
   participantId,
   player,
   onAdvanceToNextLevel,
+  getBotToken,
 }: {
   participantId: string;
   player: PublicParticipant;
   onAdvanceToNextLevel: (nextLevel: number) => void;
+  getBotToken: () => Promise<string | undefined>;
 }) {
   const getUploadUrl = useMutation(gameApi.generateUploadUrl);
   const submitL5 = useMutation(gameApi.submitLevel5);
@@ -2053,10 +2180,12 @@ function PromptArchitect({
       ]);
 
       setTerminalLogs((prev) => [...prev, "Recording public link..."]);
+      const botToken = await getBotToken();
       const result = await submitL5({
         participantId,
         prompt: trimmedLink,
         screenshotId,
+        botToken,
       });
 
       setTerminalLogs((prev) => [...prev, "Public link approved."]);

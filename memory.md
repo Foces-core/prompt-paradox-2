@@ -79,6 +79,7 @@
 - If the shell bridge fails in the main thread, use a worker thread to keep moving.
 - Do not treat the docs as the source of truth for code; verify against the repo.
 - Keep the live deployment and the local repo in sync after every backend change.
+- For system-performance posts, use the current Windows snapshot plus built-in `WinSAT` scores as the baseline unless the user supplies a different benchmark.
 
 ## Stable Strings
 - Loading gate:
@@ -102,3 +103,7 @@
 - Production Convex deployment for the live site is `prod:proper-goshawk-251`; deploy backend changes there after admin-flow edits.
 - Reduce Convex contention by keeping answer attempts append-only in `answerAttempts`, making `setEventStarted` idempotent, and catching same-email registration races before they retry the shared participant row.
 - Verified the UI responsiveness and auth flow using Playwright responsive spec (42/42 tests passing across desktop/mobile viewports and slower network/motion lanes before deployment).
+- For LinkedIn workspace/setup posts, prefer hard numbers from local scans: installed browser/editor/CLI counts, explicit versions, and concrete `settings.json` / `prefs.js` tweaks over generic claims.
+- Startup delay decision: `locustfile.py` is a load-test orchestration script, not a Windows app launcher. Windows 11 built-in startup tools can delay individual startup apps or scheduled tasks, but they cannot natively reproduce this script's custom staggered per-step behavior without a wrapper or separate scheduled tasks.
+- Native startup conversion decision: replace `C:\Users\sebin\Tools\staggered-startup.ps1` with separate Task Scheduler logon tasks per wave, using minute-granularity delays. Disable the original `StaggeredStartup` task after registering the native replacements.
+2026-06-16: Competition integrity decision: keep Level 5 auto-approval unchanged unless user explicitly asks otherwise. Bot protection may use Cloudflare Turnstile via NEXT_PUBLIC_TURNSTILE_SITE_KEY + TURNSTILE_SECRET_KEY; winner selection must be server-validated.

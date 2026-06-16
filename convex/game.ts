@@ -5,6 +5,8 @@ import { isCorrectAnswer } from "./answers";
 const MAX_LEVEL = 8;
 const MAX_PENDING_SUBMISSIONS = 50;
 const DEMO_ADMIN_KEY = "overmind";
+const TURNSTILE_VERIFY_URL =
+  "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 function isMaintenanceMode() {
   return process.env.MAINTENANCE_MODE === "1";
@@ -16,6 +18,31 @@ function getAdminSecret() {
 
 function isValidAdminKey(adminKey: string) {
   return adminKey.trim() === getAdminSecret();
+}
+
+async function verifyBotToken(token?: string) {
+  const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
+  if (!secret) return;
+  if (!token?.trim()) {
+    throw new Error("Bot verification required.");
+  }
+
+  const formData = new FormData();
+  formData.append("secret", secret);
+  formData.append("response", token);
+
+  const response = await fetch(TURNSTILE_VERIFY_URL, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error("Bot verification unavailable.");
+  }
+
+  const result = (await response.json()) as { success?: boolean };
+  if (!result.success) {
+    throw new Error("Bot verification failed.");
+  }
 }
 
 function isPublicHttpUrl(value: string) {
@@ -167,9 +194,15 @@ export const participant = query({
 });
 
 export const register = mutation({
-  args: { name: v.string(), college: v.string(), email: v.string() },
+  args: {
+    name: v.string(),
+    college: v.string(),
+    email: v.string(),
+    botToken: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
     if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    await verifyBotToken(args.botToken);
     const email = args.email.trim().toLowerCase();
     const existing = await ctx.db
       .query("participants")
@@ -226,10 +259,25 @@ export const submitAnswer = mutation({
     participantId: v.id("participants"),
     level: v.number(),
     answer: v.string(),
+    botToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (isMaintenanceMode()) {
       return { ok: false, message: "Event backend stopped." };
+    }
+
+    await verifyBotToken(args.botToken);
+
+    const recentAttempts = await ctx.db
+      .query("answerAttempts")
+      .withIndex("by_participant", (q) => q.eq("participantId", args.participantId))
+      .order("desc")
+      .take(10);
+    if (
+      recentAttempts.length === 10 &&
+      recentAttempts[9].submittedAt > Date.now() - 60000
+    ) {
+      return { ok: false, message: "Too many attempts. Please wait a minute." };
     }
 
     const event = await getEvent(ctx);
@@ -313,22 +361,34 @@ export const setEventStarted = mutation({
 });
 
 export const setWinnerParticipant = mutation({
-  args: { adminKey: v.string(), participantId: v.string() },
+  args: { adminKey: v.string(), participantId: v.id("participants") },
   handler: async (ctx, args) => {
     if (!isValidAdminKey(args.adminKey)) {
       throw new Error("Admin key rejected.");
     }
 
+    const participant = await ctx.db.get(args.participantId);
+    if (!participant) {
+      throw new Error("Participant not found.");
+    }
+    if (
+      participant.currentLevel <= MAX_LEVEL ||
+      participant.finishTime === undefined ||
+      participant.completedLevels.length < MAX_LEVEL
+    ) {
+      throw new Error("Winner must finish all levels first.");
+    }
+
     const event = await getEvent(ctx);
     if (event) {
       await ctx.db.patch(event._id, {
-        winnerParticipantId: args.participantId as any,
+        winnerParticipantId: args.participantId,
         updatedAt: Date.now(),
       });
     } else {
       await ctx.db.insert("event", {
         started: true,
-        winnerParticipantId: args.participantId as any,
+        winnerParticipantId: args.participantId,
         updatedAt: Date.now(),
       });
     }
@@ -386,9 +446,11 @@ export const submitLevel5 = mutation({
     participantId: v.id("participants"),
     prompt: v.string(),
     screenshotId: v.optional(v.string()),
+    botToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (isMaintenanceMode()) throw new Error("Event backend stopped.");
+    await verifyBotToken(args.botToken);
     const participant = await ctx.db.get(args.participantId);
     if (!participant) throw new Error("Participant not found.");
     if (participant.currentLevel !== 5) {
