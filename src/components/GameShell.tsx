@@ -1347,8 +1347,10 @@ function Registration({
 }) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const submittingRef = useRef(false);
 
   async function submit(formData: FormData) {
+    if (submittingRef.current) return;
     setErrorMsg("");
     const name = formString(formData, "name");
     const college = formString(formData, "college");
@@ -1359,6 +1361,7 @@ function Registration({
       return;
     }
 
+    submittingRef.current = true;
     setLoading(true);
     try {
       await onRegister({ name, college, email });
@@ -1367,6 +1370,7 @@ function Registration({
         err instanceof Error ? err.message : "Authentication failed.",
       );
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   }
