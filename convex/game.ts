@@ -383,7 +383,6 @@ export const setWinnerParticipant = mutation({
       throw new Error("Participant not found.");
     }
     if (
-      participant.currentLevel <= MAX_LEVEL ||
       participant.finishTime === undefined ||
       participant.completedLevels.length < MAX_LEVEL
     ) {
