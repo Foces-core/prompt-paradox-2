@@ -216,6 +216,7 @@ declare global {
           callback: (token: string) => void;
           "error-callback"?: () => void;
           "expired-callback"?: () => void;
+          execution?: "render" | "execute";
         },
       ) => string;
       execute: (widgetId: string) => void;
@@ -276,9 +277,14 @@ function useTurnstileToken() {
         widgetIdRef.current = null;
       }
 
+      const challengePromise = new Promise<string>((resolve, reject) => {
+        resolverRef.current = { resolve, reject };
+      });
+
       widgetIdRef.current = turnstile.render(container, {
         sitekey: turnstileSiteKey,
         size: "invisible",
+        execution: "render",
         callback: (token) => {
           resolverRef.current?.resolve(token);
           resolverRef.current = null;
@@ -305,10 +311,7 @@ function useTurnstileToken() {
         },
       });
 
-      return await new Promise<string>((resolve, reject) => {
-        resolverRef.current = { resolve, reject };
-        turnstile.execute(widgetIdRef.current!);
-      });
+      return await challengePromise;
     })();
     tokenPromiseRef.current = tokenPromise;
     try {
