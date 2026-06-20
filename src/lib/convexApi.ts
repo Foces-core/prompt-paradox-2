@@ -64,7 +64,7 @@ export const gameApi = {
     PublicParticipant | null
   >("game:participant"),
   register: makeFunctionReference<
-    "mutation",
+    "action",
     { name: string; college: string; email: string; botToken?: string },
     PublicParticipant
   >("game:register"),
@@ -74,7 +74,7 @@ export const gameApi = {
     { ok: boolean; message?: string }
   >("game:useHint"),
   submitAnswer: makeFunctionReference<
-    "mutation",
+    "action",
     { participantId: string; level: number; answer: string; botToken?: string },
     { ok: boolean; message: string; nextLevel?: number }
   >("game:submitAnswer"),
@@ -94,7 +94,7 @@ export const gameApi = {
     string
   >("game:generateUploadUrl"),
   submitLevel5: makeFunctionReference<
-    "mutation",
+    "action",
     { participantId: string; prompt: string; screenshotId?: string; botToken?: string },
     { ok: boolean; submissionId: string; nextLevel: number }
   >("game:submitLevel5"),
