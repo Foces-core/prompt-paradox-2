@@ -39,7 +39,6 @@ export const gameApi = {
     {
       started: boolean;
       winnerParticipantId?: string;
-      winnerSelectedAt?: number;
       serverNow: number;
     }
   >("game:eventState"),

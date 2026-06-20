@@ -126,7 +126,6 @@ export const eventState = query({
     return {
       started: event?.started ?? true,
       winnerParticipantId: event?.winnerParticipantId,
-      winnerSelectedAt: event?.winnerParticipantId ? event.updatedAt : undefined,
       serverNow,
     };
   },

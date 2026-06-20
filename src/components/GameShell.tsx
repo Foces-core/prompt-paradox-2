@@ -569,7 +569,6 @@ export function GameShell() {
   const eventStarted = event?.started ?? true;
   const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
-  const winnerSelectedAt = event?.winnerSelectedAt;
   const levelId = player?.currentLevel ?? 1;
   const currentLevel = levelId;
 
@@ -599,10 +598,9 @@ export function GameShell() {
       : nowMs;
     const stopTime =
       player.finishTime ??
-      winnerSelectedAt ??
       serverAdjustedNow;
     return Math.max(0, Math.floor((stopTime - player.startTime) / 1000));
-  }, [nowMs, player, serverClockAnchor, winnerSelectedAt]);
+  }, [nowMs, player, serverClockAnchor]);
 
   useEffect(() => {
     if (currentLevel > 0) {
@@ -673,13 +671,13 @@ export function GameShell() {
   }, [sfxEnabled]);
 
   useEffect(() => {
-    if (!player || isFinished || isPaused || winnerParticipantId) return;
+    if (!player || isFinished || isPaused) return;
     setNowMs(Date.now());
     const interval = setInterval(() => {
       setNowMs(Date.now());
     }, 1000);
     return () => clearInterval(interval);
-  }, [player, isFinished, isPaused, winnerParticipantId]);
+  }, [player, isFinished, isPaused]);
 
   const ranks = useMemo<RankRow[]>(() => {
     if (leaderboardRows.length === 0) return [];
