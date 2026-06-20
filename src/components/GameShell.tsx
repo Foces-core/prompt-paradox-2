@@ -271,27 +271,42 @@ function useTurnstileToken() {
       };
 
       const turnstile = await waitForTurnstile();
-      widgetIdRef.current ??= turnstile.render(container, {
+      if (widgetIdRef.current) {
+        turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+
+      widgetIdRef.current = turnstile.render(container, {
         sitekey: turnstileSiteKey,
         size: "invisible",
         callback: (token) => {
           resolverRef.current?.resolve(token);
           resolverRef.current = null;
-          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
+          if (widgetIdRef.current) {
+            turnstile.remove(widgetIdRef.current);
+            widgetIdRef.current = null;
+          }
         },
         "error-callback": () => {
           resolverRef.current?.reject(new Error("Bot verification failed."));
           resolverRef.current = null;
-          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
+          if (widgetIdRef.current) {
+            turnstile.remove(widgetIdRef.current);
+            widgetIdRef.current = null;
+          }
         },
         "expired-callback": () => {
-          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
+          resolverRef.current?.reject(new Error("Bot verification expired."));
+          resolverRef.current = null;
+          if (widgetIdRef.current) {
+            turnstile.remove(widgetIdRef.current);
+            widgetIdRef.current = null;
+          }
         },
       });
 
       return await new Promise<string>((resolve, reject) => {
         resolverRef.current = { resolve, reject };
-        turnstile.reset(widgetIdRef.current!);
         turnstile.execute(widgetIdRef.current!);
       });
     })();
