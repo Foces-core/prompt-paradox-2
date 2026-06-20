@@ -10,6 +10,19 @@ export const metadata: Metadata = {
   title: "Overmind",
   description: "Overmind challenge app",
   icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      "max-snippet": -1,
+      "max-image-preview": "none",
+      "max-video-preview": -1,
+    },
+  },
 };
 
 // Next.js App Router expects viewport to be exported via `export const viewport`.

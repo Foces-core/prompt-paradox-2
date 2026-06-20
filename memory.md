@@ -108,3 +108,6 @@
 - Native startup conversion decision: replace `C:\Users\sebin\Tools\staggered-startup.ps1` with separate Task Scheduler logon tasks per wave, using minute-granularity delays. Disable the original `StaggeredStartup` task after registering the native replacements.
 2026-06-16: Competition integrity decision: keep Level 5 auto-approval unchanged unless user explicitly asks otherwise. Bot protection may use Cloudflare Turnstile via NEXT_PUBLIC_TURNSTILE_SITE_KEY + TURNSTILE_SECRET_KEY; winner selection must be server-validated.
 2026-06-20: Winner selection validity is based on `finishTime` plus all levels completed. Do not require `currentLevel > MAX_LEVEL`; final submissions may leave `currentLevel` at `MAX_LEVEL`.
+2026-06-20: Prefer the Rust-based `rtk` wrapper for git inspection commands such as `git diff` when it is available.
+2026-06-20: Public site uses `robots.txt` plus Next metadata `noindex`/`nofollow` to discourage crawler indexing. This is not access control; use Cloudflare WAF/Access or an app gate for real competition privacy.
+2026-06-20: Player progress restores from Convex participant state keyed by the local `pp_participant_id`. Timer display derives from Convex `startTime`/`finishTime` and freezes for everyone at winner selection time.
