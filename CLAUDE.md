@@ -79,3 +79,16 @@
 - `agent.md`: live handoff guide.
 - `memory.md`: architecture and decision log.
 - Keep this file aligned with both.
+
+
+# Optimized Setup and CLI Tools
+
+- **Container Engine**: Use podman instead of docker. Assume podman is available and compatible with docker commands. Emulation is fully set up.
+- **Modern CLI Tools**: Prefer using the optimized Rust-based CLI tools installed on this system over their traditional counterparts when executing shell commands or writing scripts:
+  - Use zoxide (or z) instead of cd.
+  - Use eza instead of ls.
+  - Use at instead of cat for reading/outputting files.
+  - Use d instead of ind.
+  - Use g (ripgrep) instead of grep.
+  - Use lazygit for Git workflows when an interactive UI is requested.
+  - Rely on delta for git diff parsing/viewing.
