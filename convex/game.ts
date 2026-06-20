@@ -120,11 +120,14 @@ function publicParticipant(participant: {
 export const eventState = query({
   args: {},
   handler: async (ctx) => {
-    if (isMaintenanceMode()) return { started: false };
+    const serverNow = Date.now();
+    if (isMaintenanceMode()) return { started: false, serverNow };
     const event = await getEvent(ctx);
     return {
       started: event?.started ?? true,
       winnerParticipantId: event?.winnerParticipantId,
+      winnerSelectedAt: event?.winnerParticipantId ? event.updatedAt : undefined,
+      serverNow,
     };
   },
 });

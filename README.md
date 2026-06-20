@@ -85,6 +85,7 @@ $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set A
 - Level 1 accepts only the binary encoding of `Central Processing Unit`.
 - Level 5 proceeds without admin approval in the current implementation.
 - The public site is static; live game state comes from Convex.
+- Use the Rust-based `rtk` wrapper for git inspection commands such as `git diff` when it is available.
 
 ## Consolidated Notes
 

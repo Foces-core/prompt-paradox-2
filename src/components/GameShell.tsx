@@ -499,8 +499,11 @@ export function GameShell() {
   const [successFlash, setSuccessFlash] = useState(false);
   const [celebrateSeed, setCelebrateSeed] = useState(0);
 
-  // Elapsed timer (seconds)
-  const [elapsed, setElapsed] = useState(0);
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [serverClockAnchor, setServerClockAnchor] = useState<{
+    serverNow: number;
+    clientNow: number;
+  } | null>(null);
 
   const answerRef = useRef<HTMLInputElement>(null);
   const botProtection = useTurnstileToken();
@@ -566,6 +569,7 @@ export function GameShell() {
   const eventStarted = event?.started ?? true;
   const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
+  const winnerSelectedAt = event?.winnerSelectedAt;
   const levelId = player?.currentLevel ?? 1;
   const currentLevel = levelId;
 
@@ -581,7 +585,25 @@ export function GameShell() {
   );
   const unresolvedFinale = Boolean(isFinished && !winnerParticipantId);
 
-  // Ticking timer — runs while the game is active (not finished) and player is loaded
+  useEffect(() => {
+    if (event?.serverNow) {
+      setServerClockAnchor({ serverNow: event.serverNow, clientNow: Date.now() });
+    }
+  }, [event?.serverNow]);
+
+  const elapsed = useMemo(() => {
+    if (!player) return 0;
+    const serverAdjustedNow = serverClockAnchor
+      ? serverClockAnchor.serverNow +
+        Math.max(0, nowMs - serverClockAnchor.clientNow)
+      : nowMs;
+    const stopTime =
+      player.finishTime ??
+      winnerSelectedAt ??
+      serverAdjustedNow;
+    return Math.max(0, Math.floor((stopTime - player.startTime) / 1000));
+  }, [nowMs, player, serverClockAnchor, winnerSelectedAt]);
+
   useEffect(() => {
     if (currentLevel > 0) {
       setViewedLevelId((prev) => Math.min(Math.max(prev, 1), levels.length));
@@ -651,12 +673,13 @@ export function GameShell() {
   }, [sfxEnabled]);
 
   useEffect(() => {
-    if (!player || isFinished || isPaused) return;
+    if (!player || isFinished || isPaused || winnerParticipantId) return;
+    setNowMs(Date.now());
     const interval = setInterval(() => {
-      setElapsed((prev) => prev + 1);
+      setNowMs(Date.now());
     }, 1000);
     return () => clearInterval(interval);
-  }, [player, isFinished, isPaused]);
+  }, [player, isFinished, isPaused, winnerParticipantId]);
 
   const ranks = useMemo<RankRow[]>(() => {
     if (leaderboardRows.length === 0) return [];
