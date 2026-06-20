@@ -126,6 +126,7 @@ export const eventState = query({
     return {
       started: event?.started ?? true,
       winnerParticipantId: event?.winnerParticipantId,
+      startedAt: event?.startedAt ?? event?.updatedAt,
       serverNow,
     };
   },
@@ -359,15 +360,18 @@ export const setEventStarted = mutation({
       if (existing.started === args.started) {
         return { ok: true, unchanged: true };
       }
+      const patch =
+        args.started && !existing.startedAt
+          ? { started: args.started, startedAt: Date.now(), updatedAt: Date.now() }
+          : { started: args.started, updatedAt: Date.now() };
       await ctx.db.patch(existing._id, {
-        started: args.started,
-        updatedAt: Date.now(),
+        ...patch,
       });
     } else {
-      await ctx.db.insert("event", {
-        started: args.started,
-        updatedAt: Date.now(),
-      });
+      const event = args.started
+        ? { started: args.started, startedAt: Date.now(), updatedAt: Date.now() }
+        : { started: args.started, updatedAt: Date.now() };
+      await ctx.db.insert("event", event);
     }
     return { ok: true };
   },

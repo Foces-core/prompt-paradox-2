@@ -193,8 +193,12 @@ function useAmbientBGM() {
 
 function formatElapsed(seconds: number) {
   const total = Math.max(0, Math.floor(seconds));
-  const mins = Math.floor(total / 60);
+  const hours = Math.floor(total / 3600);
+  const mins = Math.floor((total % 3600) / 60);
   const secs = total % 60;
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
@@ -569,6 +573,7 @@ export function GameShell() {
   const eventStarted = event?.started ?? true;
   const isPaused = !eventStarted;
   const winnerParticipantId = event?.winnerParticipantId;
+  const eventStartedAt = event?.startedAt;
   const levelId = player?.currentLevel ?? 1;
   const currentLevel = levelId;
 
@@ -596,11 +601,12 @@ export function GameShell() {
       ? serverClockAnchor.serverNow +
         Math.max(0, nowMs - serverClockAnchor.clientNow)
       : nowMs;
+    const timerStart = Math.max(player.startTime, eventStartedAt ?? player.startTime);
     const stopTime =
       player.finishTime ??
       serverAdjustedNow;
-    return Math.max(0, Math.floor((stopTime - player.startTime) / 1000));
-  }, [nowMs, player, serverClockAnchor]);
+    return Math.max(0, Math.floor((stopTime - timerStart) / 1000));
+  }, [eventStartedAt, nowMs, player, serverClockAnchor]);
 
   useEffect(() => {
     if (currentLevel > 0) {
