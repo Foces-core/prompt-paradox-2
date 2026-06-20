@@ -258,19 +258,20 @@ function useTurnstileToken() {
   const getToken = useCallback(async () => {
     if (!turnstileSiteKey) return undefined;
     if (tokenPromiseRef.current) return await tokenPromiseRef.current;
-    const container = containerRef.current;
-    if (!container) throw new Error("Bot verification is not ready.");
+    const tokenPromise = (async () => {
+      const container = containerRef.current;
+      if (!container) throw new Error("Bot verification is not ready.");
 
-    const waitForTurnstile = async () => {
-      for (let i = 0; i < 40; i += 1) {
-        if (window.turnstile) return window.turnstile;
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      throw new Error("Bot verification failed to load.");
-    };
+      const waitForTurnstile = async () => {
+        for (let i = 0; i < 40; i += 1) {
+          if (window.turnstile) return window.turnstile;
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        throw new Error("Bot verification failed to load.");
+      };
 
-    const turnstile = await waitForTurnstile();
-    widgetIdRef.current ??= turnstile.render(container, {
+      const turnstile = await waitForTurnstile();
+      widgetIdRef.current ??= turnstile.render(container, {
         sitekey: turnstileSiteKey,
         size: "invisible",
         callback: (token) => {
@@ -288,11 +289,12 @@ function useTurnstileToken() {
         },
       });
 
-    const tokenPromise = new Promise<string>((resolve, reject) => {
-      resolverRef.current = { resolve, reject };
-      turnstile.reset(widgetIdRef.current!);
-      turnstile.execute(widgetIdRef.current!);
-    });
+      return await new Promise<string>((resolve, reject) => {
+        resolverRef.current = { resolve, reject };
+        turnstile.reset(widgetIdRef.current!);
+        turnstile.execute(widgetIdRef.current!);
+      });
+    })();
     tokenPromiseRef.current = tokenPromise;
     try {
       return await tokenPromise;
