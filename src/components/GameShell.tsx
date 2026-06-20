@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import clsx from "clsx";
 import {
   Check,
@@ -514,8 +514,8 @@ function TypewriterText({
 }
 
 export function GameShell() {
-  const register = useMutation(gameApi.register);
-  const submitAttempt = useMutation(gameApi.submitAnswer);
+  const register = useAction(gameApi.register);
+  const submitAttempt = useAction(gameApi.submitAnswer);
   const saveHint = useMutation(gameApi.useHint);
   const setEventStarted = useMutation(gameApi.setEventStarted);
 
@@ -2181,7 +2181,7 @@ function PromptArchitect({
   getBotToken: () => Promise<string | undefined>;
 }) {
   const getUploadUrl = useMutation(gameApi.generateUploadUrl);
-  const submitL5 = useMutation(gameApi.submitLevel5);
+  const submitL5 = useAction(gameApi.submitLevel5);
 
   const [publicChatLink, setPublicChatLink] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);

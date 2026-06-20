@@ -1,4 +1,5 @@
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { action, internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { isCorrectAnswer } from "./answers";
 
@@ -71,6 +72,18 @@ type AdminLeaderboardRow = LeaderboardRow & {
   hintsUsed: number[];
   currentLevel: number;
   level5Status?: "none" | "pending" | "approved" | "rejected";
+};
+
+type SubmitAnswerResult = {
+  ok: boolean;
+  message: string;
+  nextLevel?: number;
+};
+
+type SubmitLevel5Result = {
+  ok: boolean;
+  submissionId: string;
+  nextLevel: number;
 };
 
 function compareLeaderboardRows(a: LeaderboardRow, b: LeaderboardRow) {
@@ -198,7 +211,7 @@ export const participant = query({
   },
 });
 
-export const register = mutation({
+export const register = action({
   args: {
     name: v.string(),
     college: v.string(),
@@ -208,6 +221,24 @@ export const register = mutation({
   handler: async (ctx, args) => {
     if (isMaintenanceMode()) throw new Error("Event backend stopped.");
     await verifyBotToken(args.botToken);
+    const registered: ReturnType<typeof publicParticipant> =
+      await ctx.runMutation(internal.game.registerParticipant, {
+        name: args.name,
+        college: args.college,
+        email: args.email,
+      });
+    return registered;
+  },
+});
+
+export const registerParticipant = internalMutation({
+  args: {
+    name: v.string(),
+    college: v.string(),
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
     const email = args.email.trim().toLowerCase();
     const existing = await ctx.db
       .query("participants")
@@ -259,7 +290,7 @@ export const useHint = mutation({
   },
 });
 
-export const submitAnswer = mutation({
+export const submitAnswer = action({
   args: {
     participantId: v.id("participants"),
     level: v.number(),
@@ -272,6 +303,28 @@ export const submitAnswer = mutation({
     }
 
     await verifyBotToken(args.botToken);
+    const result: SubmitAnswerResult = await ctx.runMutation(
+      internal.game.submitAnswerAfterBotCheck,
+      {
+        participantId: args.participantId,
+        level: args.level,
+        answer: args.answer,
+      },
+    );
+    return result;
+  },
+});
+
+export const submitAnswerAfterBotCheck = internalMutation({
+  args: {
+    participantId: v.id("participants"),
+    level: v.number(),
+    answer: v.string(),
+  },
+  handler: async (ctx, args): Promise<SubmitAnswerResult> => {
+    if (isMaintenanceMode()) {
+      return { ok: false, message: "Event backend stopped." };
+    }
 
     const recentAttempts = await ctx.db
       .query("answerAttempts")
@@ -457,16 +510,36 @@ export const generateUploadUrl = mutation({
   },
 });
 
-export const submitLevel5 = mutation({
+export const submitLevel5 = action({
   args: {
     participantId: v.id("participants"),
     prompt: v.string(),
-    screenshotId: v.optional(v.string()),
+    screenshotId: v.optional(v.id("_storage")),
     botToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (isMaintenanceMode()) throw new Error("Event backend stopped.");
     await verifyBotToken(args.botToken);
+    const result: SubmitLevel5Result = await ctx.runMutation(
+      internal.game.submitLevel5AfterBotCheck,
+      {
+        participantId: args.participantId,
+        prompt: args.prompt,
+        screenshotId: args.screenshotId,
+      },
+    );
+    return result;
+  },
+});
+
+export const submitLevel5AfterBotCheck = internalMutation({
+  args: {
+    participantId: v.id("participants"),
+    prompt: v.string(),
+    screenshotId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args): Promise<SubmitLevel5Result> => {
+    if (isMaintenanceMode()) throw new Error("Event backend stopped.");
     const participant = await ctx.db.get(args.participantId);
     if (!participant) throw new Error("Participant not found.");
     if (participant.currentLevel !== 5) {
@@ -482,7 +555,7 @@ export const submitLevel5 = mutation({
     const submissionId = await ctx.db.insert("level5Submissions", {
       participantId: args.participantId,
       prompt: args.prompt,
-      screenshotId: args.screenshotId as any,
+      screenshotId: args.screenshotId,
       submittedAt: Date.now(),
       status: "approved",
       reviewedAt: Date.now(),
