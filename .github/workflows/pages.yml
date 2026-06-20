@@ -1,5 +1,7 @@
 name: Deploy Pages
 
+NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+
 on:
   push:
     branches: ["main"]
