@@ -5,6 +5,7 @@ export default defineSchema({
   event: defineTable({
     started: v.boolean(),
     winnerParticipantId: v.optional(v.id("participants")),
+    startedAt: v.optional(v.number()),
     updatedAt: v.number(),
   }),
   participants: defineTable({

@@ -111,3 +111,4 @@
 2026-06-20: Prefer the Rust-based `rtk` wrapper for git inspection commands such as `git diff` when it is available.
 2026-06-20: Public site uses `robots.txt` plus Next metadata `noindex`/`nofollow` to discourage crawler indexing. This is not access control; use Cloudflare WAF/Access or an app gate for real competition privacy.
 2026-06-20: Player progress restores from Convex participant state keyed by the local `pp_participant_id`. Timer display derives from Convex `startTime`/`finishTime`; do not freeze or stop other players when a winner is selected.
+2026-06-20: Timer start is `max(participant.startTime, event.startedAt)` so pre-event registrations do not show multi-day elapsed values. Long elapsed values render as `HH:MM:SS`.
