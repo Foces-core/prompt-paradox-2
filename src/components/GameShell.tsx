@@ -232,6 +232,7 @@ function useTurnstileToken() {
     resolve: (token: string) => void;
     reject: (error: Error) => void;
   } | null>(null);
+  const tokenPromiseRef = useRef<Promise<string> | null>(null);
 
   useEffect(() => {
     if (!turnstileSiteKey) return;
@@ -256,6 +257,7 @@ function useTurnstileToken() {
 
   const getToken = useCallback(async () => {
     if (!turnstileSiteKey) return undefined;
+    if (tokenPromiseRef.current) return await tokenPromiseRef.current;
     const container = containerRef.current;
     if (!container) throw new Error("Bot verification is not ready.");
 
@@ -274,20 +276,29 @@ function useTurnstileToken() {
         callback: (token) => {
           resolverRef.current?.resolve(token);
           resolverRef.current = null;
+          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
         },
         "error-callback": () => {
           resolverRef.current?.reject(new Error("Bot verification failed."));
           resolverRef.current = null;
+          if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
         },
         "expired-callback": () => {
           if (widgetIdRef.current) turnstile.reset(widgetIdRef.current);
         },
       });
 
-    return await new Promise<string>((resolve, reject) => {
+    const tokenPromise = new Promise<string>((resolve, reject) => {
       resolverRef.current = { resolve, reject };
+      turnstile.reset(widgetIdRef.current!);
       turnstile.execute(widgetIdRef.current!);
     });
+    tokenPromiseRef.current = tokenPromise;
+    try {
+      return await tokenPromise;
+    } finally {
+      tokenPromiseRef.current = null;
+    }
   }, []);
 
   return {
