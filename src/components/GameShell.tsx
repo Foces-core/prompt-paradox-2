@@ -1091,7 +1091,7 @@ export function GameShell() {
             </button>
             <button
               onClick={handleLogout}
-              className="ml-1 border border-[#ef4444]/40 bg-[#ef4444]/10 px-2 py-1 font-mono text-xs text-[#fca5a5] hover:border-[#ef4444] hover:bg-[#ef4444]/25"
+              className="col-span-2 sm:col-auto border border-[#ef4444]/40 bg-[#ef4444]/10 px-1 py-1.5 font-mono text-[10px] sm:ml-1 sm:px-2 sm:py-1 sm:text-xs text-[#fca5a5] hover:border-[#ef4444] hover:bg-[#ef4444]/25"
             >
               DISCONNECT
             </button>
