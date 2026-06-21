@@ -47,3 +47,5 @@ yarn-error.log*
 
 #temp
 /.venv
+/test-results
+/playwright-report
