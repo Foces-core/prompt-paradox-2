@@ -542,6 +542,7 @@ export function GameShell() {
 
   const answerRef = useRef<HTMLInputElement>(null);
   const botProtection = useTurnstileToken();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Ambient BGM
   const bgm = useAmbientBGM();
@@ -732,7 +733,8 @@ export function GameShell() {
 
   const submitAnswer = useCallback(
     async (customAnswer?: string) => {
-      if (!participantId) return;
+      if (!participantId || isSubmitting) return;
+      setIsSubmitting(true);
       // immediate light haptic to acknowledge the tap on mobile
       triggerHaptic(false);
       const submittedAnswer = customAnswer ?? answerRef.current?.value ?? "";
@@ -778,17 +780,23 @@ export function GameShell() {
           setTimeout(() => setWrongFlash(false), 180);
         }
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "An error occurred.";
-        setMessage(message);
+        let errorMsg = err instanceof Error ? err.message : "An error occurred.";
+        errorMsg = errorMsg.replace(/^Uncaught Error:\s*/, "");
+        errorMsg = errorMsg.replace(/^\[ServerError\]\s*/, "");
+        if (errorMsg.includes("ConvexError")) {
+          errorMsg = "Network anomaly detected. Retry.";
+        }
+        setMessage(errorMsg);
         setWrongFlash(true);
         try {
           playError();
         } catch {}
         setTimeout(() => setWrongFlash(false), 180);
+      } finally {
+        setIsSubmitting(false);
       }
     },
-    [answerRef, botProtection, displayedLevel.id, participantId, submitAttempt],
+    [answerRef, botProtection, displayedLevel.id, participantId, submitAttempt, isSubmitting],
   );
 
   async function showHint() {
@@ -1244,6 +1252,7 @@ export function GameShell() {
                 onAdvanceToNextLevel={(nextLevel) => {
                   setViewedLevelId(nextLevel);
                 }}
+                isSubmitting={isSubmitting}
               />
             )}
             {view === "board" && <Leaderboard ranks={ranks} />}
@@ -1729,6 +1738,7 @@ function GamePanel({
   hintRevealed: boolean;
   onAdvanceToNextLevel: (nextLevel: number) => void;
   getBotToken: () => Promise<string | undefined>;
+  isSubmitting?: boolean;
 }) {
   const [customMsg, setCustomMsg] = useState<string | null>(null);
   const honeypot = useMutation(gameApi.triggerHoneypot);
@@ -1872,11 +1882,12 @@ function GamePanel({
               )}
               <input
                 ref={answerRef}
+                disabled={isSubmitting}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") void onSubmit();
                 }}
                 className={clsx(
-                  "w-full border bg-black/50 py-3 font-mono text-xs transition-all duration-300 outline-none focus:bg-black",
+                  "w-full border bg-black/50 py-3 font-mono text-xs transition-all duration-300 outline-none focus:bg-black disabled:opacity-50 disabled:cursor-not-allowed",
                   level.id === 1
                     ? "border-[#14b8a6]/20 pl-8 font-bold text-[#14b8a6] focus:border-[#14b8a6]"
                     : "border-white/10 px-4 text-[#d1ffd6] focus:border-[#14b8a6]",
@@ -1888,9 +1899,10 @@ function GamePanel({
             </div>
             <button
               onClick={() => void onSubmit()}
-              className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/20 px-6 font-mono text-xs font-bold text-[#14b8a6] shadow-[0_0_10px_rgba(20,184,166,0.1)] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_#14b8a6]"
+              disabled={isSubmitting}
+              className="cursor-pointer border border-[#14b8a6] bg-[#14b8a6]/20 px-6 font-mono text-xs font-bold text-[#14b8a6] shadow-[0_0_10px_rgba(20,184,166,0.1)] transition-all duration-300 hover:bg-[#14b8a6] hover:text-black hover:shadow-[0_0_15px_#14b8a6] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              SUBMIT
+              {isSubmitting ? "PROCESSING..." : "SUBMIT"}
             </button>
           </div>
           {(message !== "" || customMsg !== null) && (
