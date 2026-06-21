@@ -302,7 +302,12 @@ export const submitAnswer = action({
       return { ok: false, message: "Event backend stopped." };
     }
 
-    await verifyBotToken(args.botToken);
+    try {
+      await verifyBotToken(args.botToken);
+    } catch (err) {
+      return { ok: false, message: err instanceof Error ? err.message : "Bot verification failed." };
+    }
+
     const result: SubmitAnswerResult = await ctx.runMutation(
       internal.game.submitAnswerAfterBotCheck,
       {

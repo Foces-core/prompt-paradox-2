@@ -53,10 +53,6 @@ export function setEnabled(enabled: boolean) {
   } catch {
     // ignore
   }
-  if (enabled) {
-    ensureContext();
-    if (ctx?.state === "suspended") void ctx.resume();
-  }
   if (sfxGain && ctx) {
     sfxGain.gain.setTargetAtTime(enabled ? 0.8 : 0, ctx.currentTime, 0.01);
   }
@@ -64,6 +60,7 @@ export function setEnabled(enabled: boolean) {
 
 function safeCtx() {
   if (!ctx) ensureContext();
+  if (ctx?.state === "suspended") void ctx.resume();
   return ctx;
 }
 

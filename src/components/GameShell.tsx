@@ -2147,7 +2147,8 @@ function GlitchGallery({ participantId }: { participantId: string }) {
                         <img
                           src={item.url}
                           alt={`Matrix node ${index}`}
-                          loading="lazy"
+                          loading="eager"
+                          fetchPriority="high"
                           decoding="async"
                           className="h-full w-full object-contain"
                           onLoad={() =>
@@ -2910,7 +2911,8 @@ function AdminPanel({
                           src={sub.screenshotUrl}
                           alt="Screenshot proof"
                           className="h-auto w-full"
-                          loading="lazy"
+                          loading="eager"
+                          fetchPriority="high"
                         />
                       </a>
                     ) : (
@@ -3097,7 +3099,8 @@ function AdminPanel({
                       <img
                         src={selectedFinalistProof.screenshotUrl}
                         alt="Level 5 proof screenshot"
-                        loading="lazy"
+                        loading="eager"
+                        fetchPriority="high"
                         decoding="async"
                         className="h-auto w-full"
                       />
