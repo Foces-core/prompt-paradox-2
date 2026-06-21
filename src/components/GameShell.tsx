@@ -1725,6 +1725,7 @@ function GamePanel({
   hintRevealed,
   onAdvanceToNextLevel,
   getBotToken,
+  isSubmitting,
 }: {
   level: Level;
   participantId: string;
