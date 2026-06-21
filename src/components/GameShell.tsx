@@ -1019,7 +1019,7 @@ export function GameShell() {
               </h1>
             </div>
           </div>
-          <nav className="grid w-full grid-cols-5 gap-2 pb-1 sm:flex sm:w-auto sm:flex-nowrap sm:justify-end">
+          <nav className="flex flex-wrap items-center justify-center gap-2 pb-1 sm:justify-end">
             <NavButton
               active={view === "game"}
               onClick={() => setView("game")}
@@ -1045,21 +1045,21 @@ export function GameShell() {
                 setIntroStep(0);
                 setStoryReplayOpen(true);
               }}
-              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-2 font-mono text-[9px] tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
+              className="border border-[#14b8a6]/20 px-2 py-2 font-mono text-[9px] tracking-wider text-[#a7f3d0]/60 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:px-3 sm:text-xs"
               title="Read the story again"
             >
               STORY
             </button>
             <button
               onClick={handleBack}
-              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
+              className="border border-[#14b8a6]/20 px-2 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:px-3 sm:text-xs"
               title="Back one level"
             >
               &lt;
             </button>
             <button
               onClick={handleSubmitShortcut}
-              className="w-full shrink-0 border border-[#14b8a6]/20 px-1 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:w-auto sm:px-3 sm:text-xs"
+              className="border border-[#14b8a6]/20 px-2 py-1.5 font-mono text-[9px] text-[#a7f3d0]/50 transition-all duration-300 hover:border-[#14b8a6]/60 hover:text-[#14b8a6] sm:px-3 sm:text-xs"
               title="Submit current task or advance"
             >
               &gt;
@@ -1091,7 +1091,7 @@ export function GameShell() {
             </button>
             <button
               onClick={handleLogout}
-              className="col-span-2 sm:col-auto border border-[#ef4444]/40 bg-[#ef4444]/10 px-1 py-1.5 font-mono text-[10px] sm:ml-1 sm:px-2 sm:py-1 sm:text-xs text-[#fca5a5] hover:border-[#ef4444] hover:bg-[#ef4444]/25"
+              className="border border-[#ef4444]/40 bg-[#ef4444]/10 px-2 py-1.5 font-mono text-[10px] sm:ml-1 sm:px-2 sm:py-1 sm:text-xs text-[#fca5a5] hover:border-[#ef4444] hover:bg-[#ef4444]/25"
             >
               DISCONNECT
             </button>
@@ -1292,7 +1292,7 @@ function NavButton({
       onClick={onClick}
       aria-label={label}
       className={clsx(
-        "min-w-0 border px-2 py-2 font-mono text-[10px] tracking-wider transition-all duration-300 sm:px-3 sm:text-xs",
+        "border px-2 py-2 font-mono text-[10px] tracking-wider transition-all duration-300 sm:px-3 sm:text-xs",
         active
           ? "border-[#14b8a6] bg-[#14b8a6]/15 text-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.2)]"
           : "border-[#14b8a6]/20 text-[#a7f3d0]/60 hover:border-[#14b8a6]/60 hover:text-[#14b8a6]",
