@@ -153,8 +153,8 @@ test.describe("Story + Dashboard Overflow", () => {
         fullPage: true,
       });
 
-      let storyOverflow = await getPageOverflow(page);
-      let storyClipped = await findClippedElements(page, "button");
+      const storyOverflow = await getPageOverflow(page);
+      const storyClipped = await findClippedElements(page, "button");
 
       if (storyOverflow.scrollWidth > storyOverflow.clientWidth + 1) {
         console.log(
