@@ -19,4 +19,5 @@ jobs:
       - run: pnpm run build
         env:
           SKIP_ENV_VALIDATION: "true"
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
       - run: pnpm audit --audit-level=critical
