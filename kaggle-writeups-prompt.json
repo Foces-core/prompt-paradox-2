@@ -1,0 +1,962 @@
+[
+  {
+    "page": 2,
+    "title": "Enhancement",
+    "blurb": "Route submitted enhancement requests to available product managers",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/enhancement-hub-ai-routing-platform#3486648"
+  },
+  {
+    "page": 2,
+    "title": "Vibe-to-Spec",
+    "blurb": "An ADK agent that audits vibe-coded projects: instant security gaps, living specs & eval rubrics from any GitHub repo.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1783143359764#3487628"
+  },
+  {
+    "page": 2,
+    "title": "Startup",
+    "blurb": "An AI-Powered Multi-Agent System for Startup Idea Validation, Market Intelligence, and Business Decision Support",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/startup-validation-agent#3475723"
+  },
+  {
+    "page": 2,
+    "title": "LifePilot",
+    "blurb": "A multi-agent personal success system that transforms goals into actionable plans using collaborative AI agents and long-term memory.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781937227209#3475837"
+  },
+  {
+    "page": 2,
+    "title": "Repo",
+    "blurb": "ADK 2.0 agent: pre-screens code for secrets, PII, and injections, validates against specs, and mandates human approval for risks.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/repo-guardian-a-spec-driven-code-review-agent-tha#3476081"
+  },
+  {
+    "page": 2,
+    "title": "EduMentor —",
+    "blurb": "From a teacher's plain-language request to classroom-ready lesson plans, quizzes & explanation — in under a minute, powered by a multi-agent",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/edumentor-a-multi-agent-teaching-assistant#3476089"
+  },
+  {
+    "page": 2,
+    "title": "BuildVerse",
+    "blurb": "A multi-agent AI platform that transforms software ideas into complete product blueprints, architectures, and deployment plans.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781926187813#3475570"
+  },
+  {
+    "page": 2,
+    "title": "FinCouncil",
+    "blurb": "Institutional-grade multi-agent financial advisory & education council powered by Google Gemini 2.5 and the Agent Development Kit.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/fincouncil-ai-institutional-multi-agent-financial#3476093"
+  },
+  {
+    "page": 2,
+    "title": "Veridian —",
+    "blurb": "Four AI models debate every business question before you see the answer — with live web evidence, a full audit trail, and a confidence score",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/veridian-adversarial-business-intelligence-agent#3476184"
+  },
+  {
+    "page": 2,
+    "title": "New",
+    "blurb": "VANTAGE // market intelligence agent",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781928470684#3475613"
+  },
+  {
+    "page": 2,
+    "title": "HR",
+    "blurb": "HR onboarding agent",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/r-onboarding-agent-automating-employee-onboarding#3476227"
+  },
+  {
+    "page": 2,
+    "title": "greensteps-indiaGautam",
+    "blurb": "Calculate, Track & Reduce Your Carbon Footprint — Built for Indian Citizens",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/greensteps-india#3476038"
+  },
+  {
+    "page": 2,
+    "title": "AgentHive:",
+    "blurb": "Transform startup ideas into market research, product plans, and technical architectures using Google ADK, MCP, and Gemini.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781959046280#3476266"
+  },
+  {
+    "page": 2,
+    "title": "WalkAlong-",
+    "blurb": "A multi-agent, voice-enabled smart navigation system explicitly designed for visually impaired individuals.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/walkalong-empowering-vision-with-voice#3476300"
+  },
+  {
+    "page": 2,
+    "title": "Mistake",
+    "blurb": "Mistake Tutor is an AI system that analyzes a student’s mistake, explains it clearly, and generates targeted practice questions to help them",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/mistake-tutor#3476331"
+  },
+  {
+    "page": 2,
+    "title": "Enterprise",
+    "blurb": "Multi-agent model risk orchestration using Google ADK, MCP-style tools, and deterministic governance guardrails.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/enterprise-ai-governance-control-tower#3475684"
+  },
+  {
+    "page": 2,
+    "title": "COPPA /",
+    "blurb": "Agent developed by a thirty-year veteran of principalship and teaching computer science teacher in public education in Kansas and Missouri.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/coppa-pii-screener-for-student-submissions#3476359"
+  },
+  {
+    "page": 2,
+    "title": "ExpenseGuard",
+    "blurb": "ExpenseGuard AI: Multi-Agent Expense Review (Google ADK + MCP)",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781971286648#3476512"
+  },
+  {
+    "page": 2,
+    "title": "MediSafe",
+    "blurb": "A multi-agent system that helps patients manage medications, track adherence, and check drug safety — powered by Gemini and Google ADK",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/medisafe-agent#3476645"
+  },
+  {
+    "page": 2,
+    "title": "Multi-Agent",
+    "blurb": "An open blueprint using native MCP, vector DBs, local LLMs, and secure guardrails for high-acuity clinical agent workflows.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/multi-agent-healthcare-intake-and-triage-system#3476582"
+  },
+  {
+    "page": 3,
+    "title": "SRE",
+    "blurb": "Automating alert severity triage, runbook correlation, and Root Cause Analysis drafts in under 30 seconds using ADK 2.0 and MCP.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/sre-incident-triage-agent-autonomous-multi-agent#3476608"
+  },
+  {
+    "page": 3,
+    "title": "Smart",
+    "blurb": "From Resume to Roadmap: An AI-Powered Multi-Agent System for Personalized Career Growth",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/smart-career-mentor-agent#3477756"
+  },
+  {
+    "page": 3,
+    "title": "Smart",
+    "blurb": "A tool-using Gemini agent that autonomously checks course prerequisites and graduation requirements to guide university students.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/smart-academic-advisor-tool-using-ai-agent#3477470"
+  },
+  {
+    "page": 3,
+    "title": "Autonomous",
+    "blurb": "Automating Quantitative Financial Analysis with a Multi-Agent Architecture",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/autonomous-portfolio-and-etf-strategist#3475950"
+  },
+  {
+    "page": 3,
+    "title": "WanderWise: a grounded multi-agent travel conciergeChengchen",
+    "blurb": "An ADK orchestrator + custom MCP server that plans real, weather-aware, cited day-by-day itineraries from free public APIs.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/wanderwise-a-grounded-multi-agent-travel-concierg#3477808"
+  },
+  {
+    "page": 3,
+    "title": "Kaggriculture:",
+    "blurb": "Where the LLM researches and explains — and the math never lies",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/kaggriculture-a-multi-agent-farm-feasibility-advi#3476754"
+  },
+  {
+    "page": 3,
+    "title": "Course",
+    "blurb": "A small local agent for tracking course notes, official links, and capstone readiness.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/course-materials-ops-agent#3477307"
+  },
+  {
+    "page": 3,
+    "title": "Lab",
+    "blurb": "Multi-agent ADK system for shared research lab admin",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782088031644#3477718"
+  },
+  {
+    "page": 3,
+    "title": "Agent",
+    "blurb": "Services related to retail industry",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/agent-services-for-retail-industry#3477683"
+  },
+  {
+    "page": 3,
+    "title": "TenderMind",
+    "blurb": "AI-powered multi-agent system for intelligent qualification and scoring of corporate tenders for mature enterprises.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/tendermind-ai-rfp-agent#3477329"
+  },
+  {
+    "page": 3,
+    "title": "Cited",
+    "blurb": "An AI agent that searches the web and answers with real, clickable citations.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/cited-research-assistant-a-web-search-agent-that#3477654"
+  },
+  {
+    "page": 3,
+    "title": "AURA:",
+    "blurb": "Privacy-first ADK multi-agent check-ins with MCP isolation and deterministic caregiver escalation",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/aura-ambient-wellness-companion-for-elderly-care#3477692"
+  },
+  {
+    "page": 3,
+    "title": "Lifesaver-agentJaskaran",
+    "blurb": "An AI-powered emergency assistant delivering safe, personalized, and step-by-step guidance during critical situations.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781969861533#3476494"
+  },
+  {
+    "page": 3,
+    "title": "Customer",
+    "blurb": "A graph-workflow support agent that knows when to escalate to a human",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/customer-support-graph-agent#3477763"
+  },
+  {
+    "page": 3,
+    "title": "TokenGuard:",
+    "blurb": "An intelligent enterprise proxy layer reducing LLM costs via MCP semantic caching and context compression agents.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782064097473#3477556"
+  },
+  {
+    "page": 3,
+    "title": "Student",
+    "blurb": "A secure hierarchical multi-agent assistant designed to extract academic deadlines from emails and automate calendar focus blocks.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/student-life-concierge-agent#3477291"
+  },
+  {
+    "page": 3,
+    "title": "InfraTwin",
+    "blurb": "Secure ADK agent for FTTH/5G infrastructure coordination",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782042520916#3477261"
+  },
+  {
+    "page": 3,
+    "title": "Secure",
+    "blurb": "An AI-Powered Skill-Based Framework for Scam Detection, Fraud Analysis, and Secure Financial Decision Support",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/secure-banking-fraud-investigation-agent#3477176"
+  },
+  {
+    "page": 3,
+    "title": "NutriFlow",
+    "blurb": "A premium multi-agent diet concierge designing allergen-safe weekly meal plans with a custom MCP recipe server",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782045710599#3477303"
+  },
+  {
+    "page": 3,
+    "title": "Ambient",
+    "blurb": "Automated expense auditor with categorization, policy review, and fraud checks.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781964677159#3476390"
+  },
+  {
+    "page": 4,
+    "title": "AgriSaathi",
+    "blurb": "A 5-agent ADK system with MCP servers, agent skills & security guardrails giving farmers expert crop, market & weather advice in one chat.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/shehars-agrisaathi-ai-multiagent-farming-companion#3476718"
+  },
+  {
+    "page": 4,
+    "title": "ResearchFlow —",
+    "blurb": "Four specialized AI agents that plan, search, synthesize, and deliver research reports automatically",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/researchflow-multi-agent-ai-research-assistant#3477324"
+  },
+  {
+    "page": 4,
+    "title": "AgriMate",
+    "blurb": "An AI-powered multi-agent farming assistant that diagnoses crop diseases and provides weather-aware agricultural guidance.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/agrimate-ai-multi-agent-farming-assistant-for-sma#3477262"
+  },
+  {
+    "page": 4,
+    "title": "Rasa —",
+    "blurb": "A multi-agent AI system that analyzes marketing copy for cultural resonance and risk across global markets before you hit publish.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782039119530#3477201"
+  },
+  {
+    "page": 4,
+    "title": "FinGuard",
+    "blurb": "Production-grade multi-agent solution designed to automate corporate financial auditing and mitigate risks.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782022188306#3476942"
+  },
+  {
+    "page": 4,
+    "title": "Roni's",
+    "blurb": "*Built with ?? by Roni as part of Google's 5-Day AI Agents Intensive Vibe Coding Course (June 2026)*",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ronis-agent-a-bilingual-ai-personal-assistant#3476884"
+  },
+  {
+    "page": 4,
+    "title": "TOLUCK",
+    "blurb": "An Enterprise-Grade SEO & Fanpage Publishing Pipeline Built on Gemini, Google ADK, and Secret Manager.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781929241484#3475631"
+  },
+  {
+    "page": 4,
+    "title": "Luxco:",
+    "blurb": "An autonomous agricultural reasoning agent leveraging multi-modal context and predictive pipelines for adaptive crop intelligence.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/luxco-agriculture-omnipotence#3476428"
+  },
+  {
+    "page": 4,
+    "title": "Smart",
+    "blurb": "A minimal, highly secure CLI personal expense tracking agent implementing an autonomous ADK tool loop and local security assertions.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/smart-personal-expense-assistant#3476432"
+  },
+  {
+    "page": 4,
+    "title": "Local",
+    "blurb": "Autonomous Stock RSI Tracking via Google ADK",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/local-financial-agent#3476946"
+  },
+  {
+    "page": 4,
+    "title": "Enterprise",
+    "blurb": "A multi-agent architecture utilizing machine learning and text analytics to automate enterprise fraud detection and compliance audits.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/enterprise-multi-agent-financial-intelligence-and#3476957"
+  },
+  {
+    "page": 4,
+    "title": "TenderWin(B2B)Oussama",
+    "blurb": "Multi-Agent System for Automated B2B RFP Responses.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/tenderwinb2b#3476991"
+  },
+  {
+    "page": 4,
+    "title": "Seawind",
+    "blurb": "hile many Vibecoding submissions focus on simple web games, I decided to tackle a complex, real-world Enterprise Application problem.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/seawind-enterprise-portal-100-vibecoded-dashboa#3475859"
+  },
+  {
+    "page": 4,
+    "title": "FoodBridge",
+    "blurb": "Approval-gated food rescue dispatch with ADK-facing tools, MCP, safety guardrails, and evals.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/foodbridge-agent-multi-agent-food-rescue-dispatch#3478158"
+  },
+  {
+    "page": 4,
+    "title": "Governed",
+    "blurb": "Governed AI data analyst with semantic metrics, read-only SQL, data-quality checks, and auditable evidence-backed answers.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/governed-ai-data-analyst#3478156"
+  },
+  {
+    "page": 4,
+    "title": "Assistant intelligent d’analyse de données",
+    "blurb": "Subtitle Intelligent Improvement and Automated Auditing of Financial Flows via a Multi-Agent System Abstract This project presents an innov",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/assistant-intelligent-danalyse-de-donnes-kaggle#3477320"
+  },
+  {
+    "page": 4,
+    "title": "CareerOS",
+    "blurb": "An autonomous multi-agent platform using Gemini 2.5 Flash to analyze resumes, optimize for ATS, and build actionable career roadmaps.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782020675904#3476918"
+  },
+  {
+    "page": 4,
+    "title": "🧠",
+    "blurb": "The AI Product Marketing Visualizer is a web-based application that enables creators to maintain brand design consistency",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ai-product-marketing-visualizer-interface-ove#3477328"
+  },
+  {
+    "page": 4,
+    "title": "DevPath",
+    "blurb": "An automated multi-agent system that designs personalized learning roadmaps and reviews them for technical accuracy.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782116550664#3478012"
+  },
+  {
+    "page": 4,
+    "title": "StudyMind",
+    "blurb": "An offline-first AI study agent that plans, focuses, and learns with students — powered by Gemini API, zero cost, zero backend.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/studymind-ai-a-personal-study-concierge-agent-fo#3478031"
+  },
+  {
+    "page": 5,
+    "title": "CoAide:",
+    "blurb": "A secure agentic IDE that builds and styles web applications inside an isolated sandbox with hot-reloaded browser previews.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/coaide-call-of-agentic-ide-integrated-developme#3478045"
+  },
+  {
+    "page": 5,
+    "title": "AI",
+    "blurb": "A multi-agent tutor that plans, explains, and quizzes students — with persistent memory, agent skills, and built-in safety guardrails.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ai-study-coach-multi-agent-ai-tutor-google-adk#3478096"
+  },
+  {
+    "page": 5,
+    "title": "ExamSyncConcierge —",
+    "blurb": "An adaptive multi-agent system that tests like a professor, coaches like a tutor, and protects academic integrity",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/examsyncconcierge-ai-powered-exam-preparation-ag#3478075"
+  },
+  {
+    "page": 5,
+    "title": "AI",
+    "blurb": "A vibe-coded multi-agent system that explains topics, quizzes students, and remembers their progress — built for Agents for Good",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ai-study-tutor-agent-personalized-learning-with#3478104"
+  },
+  {
+    "page": 5,
+    "title": "CareerPilot",
+    "blurb": "An AI-powered career preparation platform that analyzes resumes, matches job descriptions, conducts mock interviews, identifies skill gaps,",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/careerpilot-ai-multi-agent-placement-preparation#3476219"
+  },
+  {
+    "page": 5,
+    "title": "SkillBridge",
+    "blurb": "A multi-agent ADK 2.0 system that verifies informal economy worker skills via USSD — no smartphone required",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782122995395#3478098"
+  },
+  {
+    "page": 5,
+    "title": "Elderly",
+    "blurb": "secure multi-agent coordinate system for tracking medications, scheduling doctor visits, and logging well-being for elderly patients",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781911542270#3475393"
+  },
+  {
+    "page": 5,
+    "title": "New",
+    "blurb": "Multi-agent alignment loop with a strict LLM-as-a-Judge governance layer built using google-genai.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782149603490#3478432"
+  },
+  {
+    "page": 5,
+    "title": "CropCare-Smart",
+    "blurb": "CropCare - Smart Farmer Assistant",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782109169929#3477910"
+  },
+  {
+    "page": 5,
+    "title": "Paper",
+    "blurb": "An AI agent that reviews research papers from an ArXiv ID or PDF and generates a structured ACL-style peer review using Gemini.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782131000894#3478177"
+  },
+  {
+    "page": 5,
+    "title": "Autonomous",
+    "blurb": "Frontend and Backend Development with Google Antigravity IDE and Google Gemini Models",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/autonomous-vehicles-performance-validation-agent#3478235"
+  },
+  {
+    "page": 5,
+    "title": "Expense",
+    "blurb": "A multi-agent system that audits expense receipts, redacts PII, and enforces policy — automatically",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/expense-audit-agent#3478238"
+  },
+  {
+    "page": 5,
+    "title": "AI",
+    "blurb": "An interactive storytelling app with a built-in AI literacy coach agent to dynamic co-write stories with children.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782113887300#3477982"
+  },
+  {
+    "page": 5,
+    "title": "MedMinder —",
+    "blurb": "Turning a plain-language list of medicines into a clear, non-prescriptive safety report",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781911437880#3475391"
+  },
+  {
+    "page": 5,
+    "title": "Lit-Review-CouncilRavicha",
+    "blurb": "multi-agent peer review that turns information overload into grounded, bias-resistant guides.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/lit-review-council#3477799"
+  },
+  {
+    "page": 5,
+    "title": "Job",
+    "blurb": "An AI-Powered Autonomous Job Application Assistant for Smart Job Matching and Resume Personalization",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/job-agent#3476988"
+  },
+  {
+    "page": 5,
+    "title": "HealthTriage",
+    "blurb": "HealthTriage Assessment : AI-powered pipeline for Real-Time Symptom Assessment",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/healthtriage-ai#3477932"
+  },
+  {
+    "page": 5,
+    "title": "TeacherMind (Nova)Jim",
+    "blurb": "TeacherMind (Nova) is a voice-first AI concierge agent that helps a 6th-grade Arizona math teacher cut her administrative load — generating",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/teachermind-nova#3478747"
+  },
+  {
+    "page": 5,
+    "title": "🧬",
+    "blurb": "DecisionDNA AI is an enterprise-grade temporal forensics platform designed to solve \"Decision Drift\" in healthcare networks.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781966143355#3476423"
+  },
+  {
+    "page": 5,
+    "title": "Career",
+    "blurb": "AI-Powered Career Guidance and Skill Development Assistant",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/career-coach-ai-agent#3478837"
+  },
+  {
+    "page": 6,
+    "title": "Urban",
+    "blurb": "An AI agent that researches urban transportation trends in real time, built with Google's Antigravity SDK and Gemini",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/urban-mobility-research-agent#3478844"
+  },
+  {
+    "page": 6,
+    "title": "Smart",
+    "blurb": "A multi-agent, memory-driven personal mentor that recommends courses, projects, interview prep, and weekly learning plans for students",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781920780406#3475477"
+  },
+  {
+    "page": 6,
+    "title": "Sales",
+    "blurb": "Sales Pipeline Agent — AI-Powered B2B Prospecting",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/sales-pipeline-agent-ai-powered-b2b-prospecting#3478864"
+  },
+  {
+    "page": 6,
+    "title": "GKS",
+    "blurb": "Navigating international educational compliance pathways presents a significant barrier for students aiming for global scholarships.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782140872278#3478306"
+  },
+  {
+    "page": 6,
+    "title": "Exam",
+    "blurb": "Exam Buddy AI is a web-based educational platform designed to help students from rural areas who have limited access to better facilities.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/exam-buddy-ai#3478920"
+  },
+  {
+    "page": 6,
+    "title": "BillSense :",
+    "blurb": "Multi-agent AI system for invoice intelligence, fraud detection, risk assessment, and automated dispute generation.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/billsense-ai-fraud-detection-system#3478868"
+  },
+  {
+    "page": 6,
+    "title": "Presentation",
+    "blurb": "Local AI-powered speech feedback for presentation rehearsal",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781933119162#3475729"
+  },
+  {
+    "page": 6,
+    "title": "Learn",
+    "blurb": "A personal AI agent coach that reads your LeetCode history, builds a tailored daily study plan, and runs mock interviews",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/learn-data-structures-and-algorithms-with-google-a#3478970"
+  },
+  {
+    "page": 6,
+    "title": "Finance :",
+    "blurb": "Increasing asset's recorded book value",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781930282650#3475665"
+  },
+  {
+    "page": 6,
+    "title": "Project",
+    "blurb": "An interactive, tool-empowered AI agent built with Gemini 2.5 Flash to dynamically track project deadlines and manage timelines.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782203335285#3478974"
+  },
+  {
+    "page": 6,
+    "title": "Nexus",
+    "blurb": "An ADK 2.0 multi-agent workflow for automated IT ticket triage with MCP-powered agent skills and pre-LLM security screening",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/nexus-technologies-it-helpdesk-triage-agent#3478586"
+  },
+  {
+    "page": 6,
+    "title": "SecondThought -",
+    "blurb": "Breaking the scammer's spell at the moment of payment: an AI agent that talks victims out of authorized-payment scams.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/secondthought#3478583"
+  },
+  {
+    "page": 6,
+    "title": "AI",
+    "blurb": "AI Krishi Mitra ?? – Multi-Agent Farming Assistant",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ai-krishi-mitra#3478641"
+  },
+  {
+    "page": 6,
+    "title": "ActuAI:",
+    "blurb": "A multi-agent workflow for actuarial data checks, reserve movement analysis, and valuation commentary.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/actuai-multi-agent-valuation-review-assistant-for#3478505"
+  },
+  {
+    "page": 6,
+    "title": "Secure",
+    "blurb": "Enterprise Multi-Agent DAG on Google ADK 2.0 with Zero-Temp PII Redaction & Local MCP Whisper.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/secure-audio-vision-assistant#3478578"
+  },
+  {
+    "page": 6,
+    "title": "CUA:",
+    "blurb": "An AI agent that screenshots your screen, tags every element with OpenCV, asks Gemini what to do, and controls your desktop like a human.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782172692638#3478695"
+  },
+  {
+    "page": 6,
+    "title": "Agentic",
+    "blurb": "A Concierge Agent that finds Travel Itinrearies within your Budget",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/agentic-trip-planner#3478716"
+  },
+  {
+    "page": 6,
+    "title": "PhishGuard",
+    "blurb": "A multi-agent security copilot built with Google ADK to detect sophisticated phishing attacks",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/phishguard-ai-multi-agent-phishing-detection#3479310"
+  },
+  {
+    "page": 6,
+    "title": "Ai",
+    "blurb": "*`Gemini-powered agent that solves 82% of support tickets autonomously using tool calling.`",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782227744774#3479240"
+  },
+  {
+    "page": 6,
+    "title": "AccessBridge:",
+    "blurb": "A Zero-Trust, Multi-Agent Decision Support Engine for Underserved Communities Track: Agents for Good",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/accessbridge-bridging-the-gap-to-opportunity#3480188"
+  },
+  {
+    "page": 7,
+    "title": "DataBridge",
+    "blurb": "An autonomous, schema-constrained multi-agent framework ensuring zero-variance enterprise financial data migration.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/databridge-ai-a-schema-constrained-self-healing#3480202"
+  },
+  {
+    "page": 7,
+    "title": "Find new job openings in",
+    "blurb": "My project helps find a new job in Switzerland by checking your uploaded CV and the platform kununu for employer ratings.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/find-new-job-openings-in-switzerland-for-software#3479450"
+  },
+  {
+    "page": 7,
+    "title": "NexusOps_AI",
+    "blurb": "",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/nexusops-ai#3479924"
+  },
+  {
+    "page": 7,
+    "title": "NetSentinel",
+    "blurb": "An autonomous SRE platform using multi-agent orchestration to instantly detect, investigate, and remediate cloud infrastructure alerts.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782281907658#3479800"
+  },
+  {
+    "page": 7,
+    "title": "Port",
+    "blurb": "A multi-agent system using Google ADK, FastMCP, and Gemini to monitor port congestion in real time.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/port-watch-agent-ai-powered-maritime-traffic-mon#3480311"
+  },
+  {
+    "page": 7,
+    "title": "Inbox",
+    "blurb": "An email assistant that classifies incoming messages by urgency, drafts context-aware replies, and waits for your explicit approval before a",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/inbox-concierge-a-privacy-conscious-triage-agent#3479711"
+  },
+  {
+    "page": 7,
+    "title": "MindFlow -",
+    "blurb": "MindFlow- Your Companion",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782290493385#3479891"
+  },
+  {
+    "page": 7,
+    "title": "RefugeeBridgeAbhik",
+    "blurb": "RefugeeBridge is an intelligent, secure, and multilingual multi-agent assistant designed to support displaced persons and refugees.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782291737274#3479906"
+  },
+  {
+    "page": 7,
+    "title": "Finance-ConciergeHarrish",
+    "blurb": "Your Secure, Intelligent Personal Finance Assistant",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/finance-concierge#3479929"
+  },
+  {
+    "page": 7,
+    "title": "NeuroMarketing",
+    "blurb": "A psychological conversion optimizer powered by Google ADK and MCP that rewrites landing page copy to maximize conversions.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782297536312#3479989"
+  },
+  {
+    "page": 7,
+    "title": "CareerPilot",
+    "blurb": "Six specialized AI agents, dual MCP servers, smart agent selection, and an interactive interview coach — helping students go from confusion",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/careerpilot-ai-multi-agent-career-development-pl#3479986"
+  },
+  {
+    "page": 7,
+    "title": "AIML",
+    "blurb": "A Multi-Agent AI System for Academic Department Management",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/aiml-department-intelligence-hub#3477429"
+  },
+  {
+    "page": 7,
+    "title": "StyleMatch —",
+    "blurb": "StyleMatch is an intelligent personal styling concierge agent that acts as a smart wardrobe coordinator. It integrates specialized sub-agent",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/stylematch-personal-styling-concierge#3479926"
+  },
+  {
+    "page": 7,
+    "title": "Automated",
+    "blurb": "Engineered to maximize enterprise-level digital service efficiency, this innovative computer science project introduces an advanced, emotion",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782022437128#3476947"
+  },
+  {
+    "page": 7,
+    "title": "AgriSathi",
+    "blurb": "A multi-agent agricultural intelligence platform that transforms farming decisions into data-driven actions.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/agrisathi-ai#3480095"
+  },
+  {
+    "page": 7,
+    "title": "StudyMate",
+    "blurb": "A secure triage agent managing family routines with Human-In-The-Loop (HITL) approval.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/studymate-pro-an-ai-concierge-agent#3479870"
+  },
+  {
+    "page": 7,
+    "title": "EcoConscious —",
+    "blurb": "EcoConscious is an intelligent multi-agent sustainability assistant designed to help users track their carbon footprints,recycle and shoping",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782307570350#3480102"
+  },
+  {
+    "page": 7,
+    "title": "Business",
+    "blurb": "A Multi-Agent AI System for Automated Business Analysis, Interactive Dashboards, and Strategic Recommendations",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/business-insight-agent-team#3477925"
+  },
+  {
+    "page": 7,
+    "title": "Aletheox:",
+    "blurb": "A multi-agent decision engine that pressure-tests your ideas through structured AI debate.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/aletheox-new-way-to-chat-with-llms#3480310"
+  },
+  {
+    "page": 7,
+    "title": "Lead",
+    "blurb": "Intelligent Lead Validation for Faster and Safer Sales Operations",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782321872103#3480320"
+  },
+  {
+    "page": 8,
+    "title": "ArchSpec",
+    "blurb": "Autonomous Architectural Material Specification & Multi-Tier Procurement Marketplace",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/archspec-ai#3480348"
+  },
+  {
+    "page": 8,
+    "title": "Refund",
+    "blurb": "A multi-agent ADK system that auto-approves easy refunds, blocks fraud and duplicates, and escalates high-value cases to a human.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/refund-sentinel-autonomous-refund-triage-approv#3480343"
+  },
+  {
+    "page": 8,
+    "title": "Soothing",
+    "blurb": "The Soothing Frequencies is a premium, AI-powered wellness platform designed to bridge the gap between digital exposure and holistic relief.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/soothing-frequencies#3482796"
+  },
+  {
+    "page": 8,
+    "title": "Expense",
+    "blurb": "A multi-agent system that audits enterprise expenses against policy and can't be tricked by prompt-injection hidden in the data.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/expense-audit-agent-an-autonomous-multi-agent-au#3482816"
+  },
+  {
+    "page": 8,
+    "title": "# 🤖",
+    "blurb": "An adaptive, self-healing multi-stage AutoML agent built for enterprise data pipeline optimization.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782018975852#3476895"
+  },
+  {
+    "page": 8,
+    "title": "EduGuide",
+    "blurb": "Your personal learning roadmap, built in seconds",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/eduguide-ai#3479125"
+  },
+  {
+    "page": 8,
+    "title": "DeskMate:",
+    "blurb": "DeskMate is a multi-agent concierge built with ADK + MCP that scopes each sub-agent's data access and logs every action",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/deskmate-multi-agent-personal-assistant-with-buil#3479168"
+  },
+  {
+    "page": 8,
+    "title": "CogniSwarm:",
+    "blurb": "An orchestrated AI swarm that instantly transforms any static document into an adaptive tutor, dynamic quiz generator, and mastery tracker.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/cogniswarm-autonomous-multi-agent-knowledge-engin#3479173"
+  },
+  {
+    "page": 8,
+    "title": "Elderly",
+    "blurb": "An intelligent, multi-agent conversational assistant designed to help seniors and caregivers manage daily elder care routines.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/elderly-care-concierge#3479302"
+  },
+  {
+    "page": 8,
+    "title": "AI",
+    "blurb": "Multi-Agent AI Recruiter powered by Google ADK and MCP for intelligent resume analysis, scoring, feedback, and career recommendations.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782041107914#3477229"
+  },
+  {
+    "page": 8,
+    "title": "CoreFit",
+    "blurb": "A secure multi-agent fitness onboarding workspace driven by Model Context Protocol (MCP) safety guards, integrated with a Supabase dashboard",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/corefit-secure-studio-multi-agent-mcp-orchestrati#3479263"
+  },
+  {
+    "page": 8,
+    "title": "RetailWise",
+    "blurb": "An autonomous 6-agent system using statistical math & live context (weather, news) to manage retail inventory and supplier procurement.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/retailwise-os-the-autonomous-virtual-store-manage#3479179"
+  },
+  {
+    "page": 8,
+    "title": "Smart",
+    "blurb": "A secure multi-agent AI assistant built with Google ADK 2.0 for home inventory management, maintenance scheduling, and security.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782237814898#3479380"
+  },
+  {
+    "page": 8,
+    "title": "Expense",
+    "blurb": "A graph-based AI agent built on Google ADK 2.0 and Gemini that automates low-value expense approvals, redacts PII, blocks prompt injection a",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/expense-compliance#3479928"
+  },
+  {
+    "page": 8,
+    "title": "SkillBridge",
+    "blurb": "SkillBridge AI is a secure, personalized career guidance and learning assistant designed for students and early professionals.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/skillbridge-ai-personalized-career-and-learning-me#3479958"
+  },
+  {
+    "page": 8,
+    "title": "Daily",
+    "blurb": "An AI-powered concierge agent that helps users plan, prioritize, and manage daily study and work tasks efficiently.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/daily-study-and-work-scheduler-concierge-agent#3479937"
+  },
+  {
+    "page": 8,
+    "title": "EventEase —",
+    "blurb": "An intelligent, secure event coordination concierge agent powered by ADK 2.0. It coordinates event details, manages guest RSVPs, plans custo",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/eventease-ai-event-coordinator-concierge#3480016"
+  },
+  {
+    "page": 8,
+    "title": "Personal",
+    "blurb": "A secure, multi-agent personal finance concierge built using Google's Agent Development Kit (ADK) 2.0.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/personal-finance-agent#3480020"
+  },
+  {
+    "page": 8,
+    "title": "EcoAgri",
+    "blurb": "EcoAgri Agent — Local Crop & Pest Management Advisor",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782308339862#3480112"
+  },
+  {
+    "page": 8,
+    "title": "Elderly",
+    "blurb": "An AI-powered assistant designed to support and monitor the daily needs of elderly individuals",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/elderly-care-assistant#3479718"
+  },
+  {
+    "page": 9,
+    "title": "ClauseGuard: a safety-first contract review agentShih",
+    "blurb": "An ADK 2.x agent that flags unfavorable clauses, redacts personal data, and treats the contract itself as untrusted input — defending agains",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/clauseguard-a-safety-first-contract-review-agent#3482311"
+  },
+  {
+    "page": 9,
+    "title": "Legal",
+    "blurb": "An intelligent, secure, and multi-agent AI assistant built using the Google Agent Development Kit (ADK 2.0) and Model Context Protocol (MCP)",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/legal-ipc-assistant#3481678"
+  },
+  {
+    "page": 9,
+    "title": "AquaGuard",
+    "blurb": "Monitors community water reports, flags pollution hotspots, and maps clean-up efforts.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/aquaguard-agent#3482337"
+  },
+  {
+    "page": 9,
+    "title": "CarbonAnalyzer:",
+    "blurb": "Analyze your carbon footprint across daily habits, get AI tips, and track your eco score to reduce environmental impact.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/CarbonAnalyzer#3481284"
+  },
+  {
+    "page": 9,
+    "title": "IEP",
+    "blurb": "A multi-agent system that parses clinical evaluations and drafts legally backed IEP requests using state education codes.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782206282690#3479026"
+  },
+  {
+    "page": 9,
+    "title": "ChefConcierge:",
+    "blurb": "A multi-agent household manager that plans personalized weekly meals based on weather, family schedules, and your virtual pantry.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/chefconcierge-multi-agent-family-meal-and-schedule#3482397"
+  },
+  {
+    "page": 9,
+    "title": "SentinelAI",
+    "blurb": "Safety intelligence platform using computer vision, multi-agent reasoning,and SOP auditing to detect hazards and prevent workplace incidents",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/sentinelai-safety-intelligence-platform#3476879"
+  },
+  {
+    "page": 9,
+    "title": "",
+    "blurb": "An automated, secure multi-agent workflow that scrapes public competitor pricing, maps products to internal SKUs, and recommends profit-maxi",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/competitor-pricing-intelligence-agent#3482415"
+  },
+  {
+    "page": 9,
+    "title": "IntelliHub:",
+    "blurb": "IntelliHub: Intelligence at Scale. Automation with Insight. Enterprise-Ready Today.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/intellihub-enterprise-multi-agent-ai-system#3482361"
+  },
+  {
+    "page": 9,
+    "title": "Agent",
+    "blurb": "An ADK powered safety meta-agent that audits MCP servers and agent skills using static analysis, AST sandboxing, and live model simulatiuons",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782292979578#3479927"
+  },
+  {
+    "page": 9,
+    "title": "GKS",
+    "blurb": "Navigating international educational compliance pathways presents a significant barrier for students aiming for global scholarships.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782140872278#3478306"
+  },
+  {
+    "page": 9,
+    "title": "Exam",
+    "blurb": "Exam Buddy AI is a web-based educational platform designed to help students from rural areas who have limited access to better facilities.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/exam-buddy-ai#3478920"
+  },
+  {
+    "page": 9,
+    "title": "BillSense :",
+    "blurb": "Multi-agent AI system for invoice intelligence, fraud detection, risk assessment, and automated dispute generation.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/billsense-ai-fraud-detection-system#3478868"
+  },
+  {
+    "page": 9,
+    "title": "Presentation",
+    "blurb": "Local AI-powered speech feedback for presentation rehearsal",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781933119162#3475729"
+  },
+  {
+    "page": 9,
+    "title": "Learn",
+    "blurb": "A personal AI agent coach that reads your LeetCode history, builds a tailored daily study plan, and runs mock interviews",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/learn-data-structures-and-algorithms-with-google-a#3478970"
+  },
+  {
+    "page": 9,
+    "title": "Finance :",
+    "blurb": "Increasing asset's recorded book value",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1781930282650#3475665"
+  },
+  {
+    "page": 9,
+    "title": "Project",
+    "blurb": "An interactive, tool-empowered AI agent built with Gemini 2.5 Flash to dynamically track project deadlines and manage timelines.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/new-writeup-1782203335285#3478974"
+  },
+  {
+    "page": 9,
+    "title": "Nexus",
+    "blurb": "An ADK 2.0 multi-agent workflow for automated IT ticket triage with MCP-powered agent skills and pre-LLM security screening",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/nexus-technologies-it-helpdesk-triage-agent#3478586"
+  },
+  {
+    "page": 9,
+    "title": "SecondThought -",
+    "blurb": "Breaking the scammer's spell at the moment of payment: an AI agent that talks victims out of authorized-payment scams.",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/secondthought#3478583"
+  },
+  {
+    "page": 9,
+    "title": "AI",
+    "blurb": "AI Krishi Mitra ?? – Multi-Agent Farming Assistant",
+    "href": "https://www.kaggle.com/competitions/vibecoding-agents-capstone-project/writeups/ai-krishi-mitra#3478641"
+  }
+]
