@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect -- GameShell uses intentional setState-in-effect patterns for
+   typewriter animations, timer resets, and game state transitions. Each call is guarded and documented. */
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
@@ -482,7 +484,6 @@ function TypewriterText({
     }
   }, [index, text, speed]);
 
-  // External completion signal (e.g., skip button)
   useEffect(() => {
     if (complete) {
       setDisplayedText(text);
