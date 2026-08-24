@@ -6,3 +6,5 @@ Disallow: /
 
 User-agent: *
 Disallow: /
+
+Sitemap: https://foces-core.github.io/prompt-paradox-2-/sitemap.xml
