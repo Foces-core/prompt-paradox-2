@@ -1,0 +1,64 @@
+# Depot CI — optimized for performance, privacy, security
+name: Deploy Pages
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: depot-ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.1.2
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Verify Convex Config
+        run: |
+          if [ -z "${{ secrets.CONVEX_DEPLOY_KEY }}" ]; then
+            echo "::error::CONVEX_DEPLOY_KEY is not configured in GitHub Secrets. Deploy cannot proceed."
+            exit 1
+          fi
+      - name: Deploy Convex Backend
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: pnpm exec convex deploy
+      - name: Build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /prompt-paradox-2
+          NEXT_PUBLIC_CONVEX_URL: https://proper-goshawk-251.convex.cloud
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+        run: pnpm run build
+      - name: Add nojekyll
+        run: touch out/.nojekyll
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./out
+  deploy:
+    needs: build
+    runs-on: depot-ubuntu-24.04
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
