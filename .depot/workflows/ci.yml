@@ -1,0 +1,30 @@
+# Depot CI — optimized for performance, privacy, security
+name: CI
+on:
+  push:
+    branches: [main, master, dev]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions: {}
+jobs:
+  build:
+    runs-on: depot-ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run build
+        env:
+          SKIP_ENV_VALIDATION: "true"
+          NEXT_PUBLIC_CONVEX_URL: ${{ vars.NEXT_PUBLIC_CONVEX_URL }}
+      - run: pnpm audit --audit-level=critical
