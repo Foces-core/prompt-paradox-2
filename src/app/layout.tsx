@@ -6,9 +6,12 @@ import { ConvexClientProvider } from "~/components/ConvexClientProvider";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+const SITE_URL = "https://foces-core.github.io/prompt-paradox-2-/";
+
 export const metadata: Metadata = {
   title: "Overmind",
-  description: "Overmind challenge app",
+  description:
+    "Prompt Paradox 2 — the Signal Trials puzzle event by FOCES. Solve cryptographic riddles, decode hidden messages, and climb the leaderboard.",
   icons: [{ rel: "icon", url: `${basePath}/favicon.svg` }],
   robots: {
     index: false,
@@ -22,6 +25,29 @@ export const metadata: Metadata = {
       "max-image-preview": "none",
       "max-video-preview": -1,
     },
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    title: "Overmind — Prompt Paradox 2",
+    description:
+      "Prompt Paradox 2 — the Signal Trials puzzle event by FOCES. Solve cryptographic riddles, decode hidden messages, and climb the leaderboard.",
+    siteName: "Prompt Paradox 2",
+    images: [
+      {
+        url: `${SITE_URL}og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Prompt Paradox 2 — Signal Trials",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Overmind — Prompt Paradox 2",
+    description:
+      "Prompt Paradox 2 — the Signal Trials puzzle event by FOCES. Solve cryptographic riddles, decode hidden messages, and climb the leaderboard.",
+    images: [`${SITE_URL}og-image.png`],
   },
 };
 
