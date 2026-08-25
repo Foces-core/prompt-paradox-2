@@ -1,50 +1,45 @@
 # Prompt Paradox 2
 
-Production static site for the Signal Trials puzzle event.
+Production static site for the Signal Trials puzzle event. The public site is a static Next.js export hosted on GitHub Pages, while live game state (registration, answer validation, hints, leaderboard, admin controls) runs on a Convex backend.
 
-## What It Uses
+## What it uses
 
-- Next.js static export.
-- Convex for live backend state and admin controls.
-- GitHub Pages for free public hosting.
+- Next.js static export (`output: "export"` in `next.config.js`)
+- Convex for live backend state and admin controls
+- GitHub Pages for free public hosting
+- TypeScript, Tailwind CSS v4, pnpm
 
-## Local Setup
+## Local setup
 
-Prerequisites:
-
-- Node.js
-- pnpm
-
-Install:
+Prerequisites: Node.js and pnpm. A Convex account is needed for backend functions.
 
 ```bash
- pnpm install
+pnpm install
+cp .env.example .env    # Placeholder NEXT_PUBLIC_CONVEX_URL lives here
+pnpm run convex:dev     # Starts the Convex dev backend and wires your deployment URL
+pnpm run dev            # Next.js dev server (turbopack)
 ```
 
-Run locally:
+## Checks and build
 
 ```bash
- pnpm run dev
-```
-
-## Build And Verify
-
-```bash
- pnpm run check
- pnpm run build
+pnpm run check           # ESLint plus tsc --noEmit
+pnpm run build           # Static export build
+pnpm run test:all        # Answers, state, and UI script tests
+pnpm run test:responsive # Playwright responsive suite
 ```
 
 ## Deploy
 
 Backend:
 
-```bash
+```powershell
 $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex deploy --typecheck disable
 ```
 
 Pause or resume the live event:
 
-```bash
+```powershell
 $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex env set MAINTENANCE_MODE 1
 $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251';  pnpm exec convex env set MAINTENANCE_MODE 0
 ```
@@ -53,24 +48,23 @@ GitHub Pages:
 
 - The repo is public and the workflow lives in `.github/workflows/pages.yml`.
 - Push to `main` to publish.
-- Public URL: `https://foces-core.github.io/prompt-paradox-2-/`
+- Public URL: https://foces-core.github.io/prompt-paradox-2-/
 
-## Deployment Note
+## Deployment notes
 
 - The public site is a static export hosted on GitHub Pages.
-- The live event state, answer validation, hints, leaderboard, and admin actions still run through the Convex backend.
+- Live event state, answer validation, hints, leaderboard, and admin actions still run through the Convex backend.
 - Set `MAINTENANCE_MODE=1` in Convex when you want to pause the event without taking the site down.
 
-## Admin Setup
+## Admin setup
 
-- Admin auth is controlled by `ADMIN_KEY` in Convex production env.
-- Set it in Convex production:
+Admin auth is controlled by `ADMIN_KEY` in the Convex production environment. Set it with:
 
-```bash
+```powershell
 $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set ADMIN_KEY "<your-admin-key>"
 ```
 
-- The app’s admin panel uses this key to pause/resume the event and select the winning team.
+The admin panel uses this key to pause or resume the event and select the winning team.
 
 ## Architecture
 
@@ -80,57 +74,50 @@ $env:CONVEX_DEPLOYMENT='prod:proper-goshawk-251'; sfw pnpm exec convex env set A
 - `convex/game.ts` handles registration, validation, hints, leaderboard sorting, pause/resume, and winner selection.
 - `MAINTENANCE_MODE=1` keeps the backend alive but blocks live event usage.
 
-## Important Rules
+## Game rules and player flow
 
 - Level 1 accepts only the binary encoding of `Central Processing Unit`.
 - Level 5 proceeds without admin approval in the current implementation.
 - The public site is static; live game state comes from Convex.
-- Use the Rust-based `rtk` wrapper for git inspection commands such as `git diff` when it is available.
+- Left arrow goes back, right arrow submits and advances where possible, Enter behaves like right arrow on already submitted pages, Esc bypasses the monologue, and audio starts off.
 
-## Consolidated Notes
+## Level 3 assets (glitch gallery)
 
-### Agents & Convex
-
-- This repo uses Convex as its backend. When working on Convex code, always read `convex/_generated/ai/guidelines.md` before making changes — it contains project-specific rules for Convex functions and AI agent usage.
-- Convex agent skills for common tasks can be installed with `npx convex ai-files install`.
-
-### Package manager & environment
-
-- Use `pnpm` by default for JavaScript/TypeScript package management: prefer `pnpm install`, `pnpm add`, `pnpm run <script>`, and `pnpm dlx`.
-- When available, wrap networked package/tool commands with the `sfw` wrapper (example: `sfw pnpm install`) to respect local firewall policies.
-
-### Level 3 Assets (Glitch Gallery)
-
-- Place nine images (PNG recommended) into `public/puzzles/level3/`. One image should be the real scannable QR encoding the passphrase (default behaviour expects `real.png` or mark the entry in `manifest.json` with `"real": true`).
-- A sample `manifest.json` is included at `public/puzzles/level3/manifest.json`. Each manifest entry may be a string filename or an object with `{ file, real?, answer? }`.
+- Place nine images (PNG recommended) into `public/puzzles/level3/`. One image should be a real scannable QR encoding the passphrase. Default behaviour expects `real.png`, or mark the entry in `manifest.json` with `"real": true`.
+- A sample manifest ships at `public/puzzles/level3/manifest.json`. Each entry may be a filename string or an object with `{ file, real?, answer? }`.
 - Gallery behaviour:
-  - Images are shuffled deterministically per participant ID (so layout changes per participant but is stable for that participant).
-  - Only one card may be flipped/open at a time.
-  - Participants scan the flipped image using their phone camera; there is no in-app scan button.
-  - If no manifest or assets exist, the UI falls back to generated placeholder visuals so the grid remains functional.
+  - Images shuffle deterministically per participant ID, so layout differs per participant but stays stable for each one.
+  - Only one card may be flipped open at a time.
+  - Participants scan the flipped image with their phone camera; there is no in-app scan button.
+  - With no manifest or assets present, the UI falls back to generated placeholder visuals so the grid remains functional.
 
-PowerShell quick copy example (from Downloads\img into the workspace):
+PowerShell quick copy example:
 
 ```powershell
 # from within your user Downloads folder
 Copy-Item -Path "$env:USERPROFILE\Downloads\img\*" -Destination "$PWD\public\puzzles\level3\" -Recurse
 ```
 
-### Documentation consolidation
+## Tooling conventions
 
-- Per-folder READMEs (for example `public/puzzles/level3/README.md`) have been consolidated into this top-level README to centralize project notes.
+- Use pnpm by default for JavaScript and TypeScript package management: `pnpm install`, `pnpm add`, `pnpm run <command>`, `pnpm dlx`.
+- Wrap networked package commands with the `sfw` wrapper when available, for example `sfw pnpm install`.
+- Use the Rust based `rtk` wrapper for git inspection commands such as `git diff` when available.
+- When changing Convex code, read `convex/_generated/ai/guidelines.md` first; it contains project specific rules for Convex functions. Convex agent skills for common tasks install with `npx convex ai-files install`.
 
-### Architecture notes
+## Documentation map
 
-- Recent undocumented architectural changes have been recorded to `/memories/repo/architecture.md`. See that file for a precise change log (gloss: GlitchGallery refactor, seeded shuffle, manifest handling, placeholder fallback, removal of in-app scan button, and README consolidation).
+- Per folder READMEs were consolidated into this top level README to centralize project notes.
+- `agent.md` is the live handoff guide; `memory.md` is the architecture and decision log.
 
-## 🔒 Security
+## Security
 
 This repository uses [gitleaks](https://github.com/gitleaks/gitleaks) for automatic secret scanning on every commit.
 
-### Pre-commit Hook
+### Pre-commit hook
 
 A pre-commit hook is configured to scan for secrets before each commit. This helps prevent accidentally committing sensitive information like:
+
 - API keys
 - Passwords
 - Tokens
@@ -141,14 +128,11 @@ A pre-commit hook is configured to scan for secrets before each commit. This hel
 To enable the pre-commit hook locally:
 
 ```bash
-# Install pre-commit
 pip install pre-commit
-
-# Install hooks
 pre-commit install
 ```
 
-### Bypass (Emergency Only)
+### Bypass (emergency only)
 
 In case of emergency, you can bypass the hook:
 
@@ -156,5 +140,4 @@ In case of emergency, you can bypass the hook:
 git commit --no-verify -m "emergency commit"
 ```
 
-> ⚠️ Only use `--no-verify` in emergency situations. Regular commits should always be scanned.
-
+> Only use `--no-verify` in emergency situations. Regular commits should always be scanned.
