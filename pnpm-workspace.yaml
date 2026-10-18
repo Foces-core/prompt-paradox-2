@@ -2,3 +2,6 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+overrides:
+  "brace-expansion@^1.0.0": 1.1.21
+  "js-yaml@^4.0.0": 4.3.2

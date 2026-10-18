@@ -99,6 +99,7 @@
 - If a change touches Convex, verify the deployed backend.
 - If a change touches puzzle assets, verify exact bytes / rendering.
 - If a change touches admin flow, verify bad auth stays non-fatal.
+- `test:ui` uses the local Buse harness only when `PP2_BUSE_COMMAND` is set; CI has no Buse installation and reports that integration smoke as skipped.
 - Level 5 proof is reviewed inside winner selection, not as a separate admin queue; expose chat link, screenshot, and participant metadata only in the finalist detail view.
 - Production Convex deployment for the live site is `prod:proper-goshawk-251`; deploy backend changes there after admin-flow edits.
 - Reduce Convex contention by keeping answer attempts append-only in `answerAttempts`, making `setEventStarted` idempotent, and catching same-email registration races before they retry the shared participant row.
