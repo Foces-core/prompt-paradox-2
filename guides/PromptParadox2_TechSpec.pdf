@@ -1,0 +1,4859 @@
+%PDF-1.3
+%‚„œ”
+1 0 obj
+<<
+/PageMode /UseNone
+/Pages 2 0 R
+/Type /Catalog
+>>
+endobj
+2 0 obj
+<<
+/Count 14
+/Kids [ 3 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R 31 0 R 33 0 R 35 0 R ]
+/Type /Pages
+>>
+endobj
+3 0 obj
+<<
+/Contents 4 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+4 0 obj
+<<
+/Length 3198
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 674.315 cm
+Q
+q
+1 0 0 1 62.69291 662.315 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+132.4484 0 Td
+(FOCES GROUP \227 INTERNAL BUILD DOCUMENT) Tj
+T*
+-132.4484 0 Td
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 641.3071 cm
+Q
+q
+1 0 0 1 62.69291 637.3071 cm
+0 1 0.533333 RG
+1.5 w
+n
+0 2 m
+281.9339 2 l
+S
+Q
+q
+1 0 0 1 62.69291 625.9685 cm
+Q
+q
+1 0 0 1 62.69291 581.9685 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 38 Tf
+44 TL
+21.68888 0 Td
+(PROMPT PARADOX 2\0560) Tj
+T*
+-21.68888 0 Td
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 531.9685 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 38 Tf
+44 TL
+68.16288 0 Td
+(TECHNICAL SPEC) Tj
+T*
+-68.16288 0 Td
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 514.6299 cm
+Q
+q
+1 0 0 1 62.69291 510.6299 cm
+0 1 0.533333 RG
+1.5 w
+n
+0 2 m
+281.9339 2 l
+S
+Q
+q
+1 0 0 1 62.69291 487.9528 cm
+Q
+q
+1 0 0 1 62.69291 475.9528 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 -2 Tm
+/F2 14 Tf
+12 TL
+141.5859 0 Td
+(O V E R M I N D E D I T I O N) Tj
+T*
+-141.5859 0 Td
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 443.6063 cm
+Q
+q
+1 0 0 1 62.69291 411.6063 cm
+q
+BT
+1 0 0 1 0 21 Tm
+112.3719 0 Td
+16 TL
+/F3 11 Tf
+0.533333 0.533333 0.666667 rg
+(Complete website build instructions\054 UI guidelines\054) Tj
+T*
+-3.360518 0 Td
+(architecture decisions\054 and scalability requirements\056) Tj
+T*
+-109.0114 0 Td
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 369.9213 cm
+Q
+q
+1 0 0 1 62.69291 365.9213 cm
+0.482353 0.184314 1 RG
+0.4 w
+n
+0 2 m
+187.9559 2 l
+S
+Q
+q
+1 0 0 1 62.69291 348.9134 cm
+Q
+q
+1 0 0 1 70.86614 232.9134 cm
+q
+0.07451 0.07451 0.164706 rg
+n
+0 116 453.5433 -116 re
+f*
+0 0 0 rg
+BT
+/F1 10 Tf
+12 TL
+ET
+q
+1 0 0 1 10 95.5 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(MAX PARTICIPANTS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 151.7323 94 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(80 simultaneous) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 10 66.5 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(JUDGING) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 151.7323 65 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(7 auto\055evaluated \053 1 manual \050Level 5\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 10 37.5 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PLATFORM) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 151.7323 36 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Web \050desktop\055first\054 mobile\055supported\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 10 8.5 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(AUTH) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 151.7323 7 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Individual login with name \053 college) Tj
+T*
+ET
+Q
+Q
+q
+1 J
+1 j
+0.164706 0.164706 0.290196 RG
+0.3 w
+n
+0 116 m
+453.5433 116 l
+S
+n
+0 0 m
+453.5433 0 l
+S
+n
+0 0 m
+0 116 l
+S
+n
+453.5433 0 m
+453.5433 116 l
+S
+n
+0 87 m
+453.5433 87 l
+S
+n
+0 58 m
+453.5433 58 l
+S
+n
+0 29 m
+453.5433 29 l
+S
+n
+141.7323 0 m
+141.7323 116 l
+S
+Q
+Q
+Q
+
+endstream
+endobj
+5 0 obj
+<<
+/F1 6 0 R
+/F2 7 0 R
+/F3 8 0 R
+/F4 9 0 R
+/F5 10 0 R
+>>
+endobj
+6 0 obj
+<<
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Name /F1
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+7 0 obj
+<<
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Name /F2
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+8 0 obj
+<<
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding
+/Name /F3
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+9 0 obj
+<<
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding
+/Name /F4
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+10 0 obj
+<<
+/BaseFont /ZapfDingbats
+/Name /F5
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+11 0 obj
+<<
+/Contents 12 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+12 0 obj
+<<
+/Length 4162
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(ARCHITECTURE) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+BT
+1 0 0 1 0 6 Tm
+28 TL
+/F2 22 Tf
+0.941176 0.941176 1 rg
+(Tech Stack \046 System Design) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(RECOMMENDED STACK) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 549.8425 cm
+q
+BT
+1 0 0 1 0 102 Tm
+16 TL
+/F2 10 Tf
+0.941176 0.941176 1 rg
+(Frontend\072) Tj
+/F1 10 Tf
+( React \053 Vite \053 Tailwind CSS) Tj
+T*
+/F2 10 Tf
+(Backend\072) Tj
+/F1 10 Tf
+( Firebase \050Firestore \053 Auth \053 Storage \053 Hosting\051) Tj
+T*
+/F2 10 Tf
+(Admin Panel\072) Tj
+/F1 10 Tf
+( Separate React route\054 protected by Firebase Auth role) Tj
+T*
+0.023555 Tw
+/F2 10 Tf
+(Image Hosting\072) Tj
+/F1 10 Tf
+( Static files in Firebase Hosting \057public \050not Cloudinary \227 CDN recompression will destroy) Tj
+T*
+0 Tw
+(steganography data in Level 2\051) Tj
+T*
+/F2 10 Tf
+(Screenshot uploads \050Level 5\051\072) Tj
+/F1 10 Tf
+( Firebase Storage) Tj
+T*
+/F2 10 Tf
+(Leaderboard\072) Tj
+/F1 10 Tf
+( Firestore\054 polled every 60 seconds \050not live listeners \227 see scalability section\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 536.1732 cm
+Q
+q
+1 0 0 1 62.69291 524.1732 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(WHY FIREBASE FOR 80 CONCURRENT USERS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 457.1732 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+5.580976 Tw
+(Firebase Firestore handles thousands of concurrent connections without configuration\056 For 80) Tj
+T*
+0 Tw
+0.114651 Tw
+(simultaneous participants\054 it is well within the free tier limits\056 Firestore\047s document model maps perfectly to) Tj
+T*
+0 Tw
+0.230751 Tw
+(the participant state structure \050one document per participant\054 updated on each level completion\051\056 Firebase) Tj
+T*
+0 Tw
+(Hosting serves static assets from a global CDN \227 no server load for page renders\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 443.5039 cm
+Q
+q
+1 0 0 1 62.69291 431.5039 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PARTICIPANT DATA STRUCTURE \050Firestore\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 246.5039 cm
+q
+BT
+1 0 0 1 10 174 Tm
+13 TL
+/F4 8 Tf
+0 1 0.533333 rg
+(Collection\072 participants) Tj
+T*
+(Document ID\072 uid \050Firebase Auth UID\051) Tj
+T*
+T*
+(Fields\072) Tj
+T*
+(name\072 string) Tj
+T*
+(college\072 string) Tj
+T*
+(currentLevel\072 number \0501\2268\051) Tj
+T*
+(completedLevels\072 array of numbers) Tj
+T*
+(levelTimestamps\072 map \173 \0471\047\072 timestamp\054 \0472\047\072 timestamp \056\056\056 \175) Tj
+T*
+(attemptCounts\072 map \173 \0471\047\072 number\054 \0472\047\072 number \056\056\056 \175) Tj
+T*
+(hintsUsed\072 array of numbers) Tj
+T*
+(startTime\072 timestamp) Tj
+T*
+(finishTime\072 timestamp \050null until complete\051) Tj
+T*
+(level5Status\072 string \050\047pending\047 \174 \047approved\047 \174 \047rejected\047\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 232 cm
+Q
+q
+1 0 0 1 62.69291 220 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(ADMIN DATA STRUCTURE \050Firestore\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 74 cm
+q
+BT
+1 0 0 1 10 135 Tm
+13 TL
+/F4 8 Tf
+0 1 0.533333 rg
+(Collection\072 level5Submissions) Tj
+T*
+(Document ID\072 auto\055generated) Tj
+T*
+T*
+(Fields\072) Tj
+T*
+(uid\072 string) Tj
+T*
+(name\072 string) Tj
+T*
+(college\072 string) Tj
+T*
+(prompt\072 string) Tj
+T*
+(screenshotUrl\072 string \050Firebase Storage URL\051) Tj
+T*
+(submittedAt\072 timestamp) Tj
+T*
+(status\072 string \050\047pending\047 \174 \047approved\047 \174 \047rejected\047\051) Tj
+T*
+ET
+Q
+Q
+
+endstream
+endobj
+13 0 obj
+<<
+/Contents 14 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+14 0 obj
+<<
+/Length 555
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 747.5276 cm
+q
+BT
+1 0 0 1 10 18 Tm
+13 TL
+/F4 8 Tf
+0 1 0.533333 rg
+T*
+(reviewedAt\072 timestamp) Tj
+T*
+ET
+Q
+Q
+
+endstream
+endobj
+15 0 obj
+<<
+/Contents 16 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+16 0 obj
+<<
+/Length 8046
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(UI DESIGN) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+BT
+1 0 0 1 0 6 Tm
+28 TL
+/F2 22 Tf
+0.941176 0.941176 1 rg
+(OVERMIND Visual Identity \046 UX) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(OVERALL AESTHETIC) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 597.8425 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+1.44186 Tw
+(The website should feel like a living terminal \227 an interface that OVERMIND itself built\056 Dark\054 glitchy\054) Tj
+T*
+0 Tw
+2.359269 Tw
+(intelligent\054 and slightly unsettling\056 Every screen should make the participant feel like they are inside) Tj
+T*
+0 Tw
+0.811412 Tw
+(something\054 not just visiting a website\056 Think\072 cyberpunk hacking interface crossed with a high\055end game) Tj
+T*
+0 Tw
+(UI\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 584.1732 cm
+Q
+q
+1 0 0 1 62.69291 572.1732 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(COLOUR PALETTE) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 56.69291 317.1732 cm
+q
+0.07451 0.07451 0.164706 rg
+n
+0 252 481.8898 -28 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 224 481.8898 -28 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 196 481.8898 -28 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 168 481.8898 -28 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 140 481.8898 -28 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 112 481.8898 -28 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 84 481.8898 -28 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 56 481.8898 -28 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 28 481.8898 -28 re
+f*
+0 0 0 rg
+BT
+/F1 10 Tf
+12 TL
+ET
+q
+1 0 0 1 8 232 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Background) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 231 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\0430A0A0F) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 230 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Near\055black\056 Used on every page\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 204 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Card\057Panel BG) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 203 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\04313132A) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 202 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Slightly lighter\056 All content cards\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 176 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Primary Accent) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 175 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\0437B2FFF) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 174 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Electric violet\056 Borders\054 level numbers\054 highlights\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 148 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Secondary Accent) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 147 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\04300E5FF) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 146 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Cyan\056 OVERMIND\047s dialogue\054 code text\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 120 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Gold) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 119 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\043FFD700) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 118 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Difficulty stars\054 important labels\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 92 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Success \057 Answer) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 91 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\04300FF88) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 90 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Correct submission flash\054 unlocked indicators\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 64 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Warning \057 Error) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 63 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\043FF3C5C) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 62 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Wrong answer\054 rate limit warnings\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 36 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Body Text) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 35 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\043F0F0FF) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 34 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(All readable content\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 8 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(Muted Text) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 115.7165 7 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 10 5 Tm
+/F4 9 Tf
+14 TL
+(\0438888AA) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 206.4252 6 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Hints\054 metadata\054 secondary info\056) Tj
+T*
+ET
+Q
+Q
+q
+1 J
+1 j
+0.164706 0.164706 0.290196 RG
+0.3 w
+n
+0 252 m
+481.8898 252 l
+S
+n
+0 0 m
+481.8898 0 l
+S
+n
+0 0 m
+0 252 l
+S
+n
+481.8898 0 m
+481.8898 252 l
+S
+n
+0 224 m
+481.8898 224 l
+S
+n
+0 196 m
+481.8898 196 l
+S
+n
+0 168 m
+481.8898 168 l
+S
+n
+0 140 m
+481.8898 140 l
+S
+n
+0 112 m
+481.8898 112 l
+S
+n
+0 84 m
+481.8898 84 l
+S
+n
+0 56 m
+481.8898 56 l
+S
+n
+0 28 m
+481.8898 28 l
+S
+n
+107.7165 0 m
+107.7165 252 l
+S
+n
+198.4252 0 m
+198.4252 252 l
+S
+Q
+Q
+Q
+q
+1 0 0 1 62.69291 303 cm
+Q
+q
+1 0 0 1 62.69291 291 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(TYPOGRAPHY) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 273 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+<7f205072696d61727920666f6e743a20> Tj
+/F2 10 Tf
+(Space Mono) Tj
+/F1 10 Tf
+( or ) Tj
+/F2 10 Tf
+(JetBrains Mono) Tj
+/F1 10 Tf
+( \050Google Fonts\054 free\051 \227 monospace\054 hacker aesthetic) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 253 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+<7f2048656164696e67733a2073616d6520666f6e742c20626f6c642c206c65747465722d73706163696e673a20302e31656d> Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 233 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+<7f204f5645524d494e44206469616c6f6775653a206974616c69632c206379616e202823303045354646292c20736c696768746c7920736d616c6c6572> Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 213 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+<7f20416c6c20666f6e7473206c6f616465642076696120476f6f676c6520466f6e74732043444e2097206e6f206c6f63616c2066696c6573206e6565646564> Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 199.4961 cm
+Q
+q
+1 0 0 1 62.69291 187.4961 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(CSS EFFECTS \050implement these \227 they define the feel\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 169.4961 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Glitch text animation) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 132.4961 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 22 Tm
+/F1 10 Tf
+16 TL
+2.199269 Tw
+(CSS keyframe animation that briefly offsets a pseudo\055element in red\057cyan on heading text\056 Apply to) Tj
+T*
+0 Tw
+(OVERMIND\047s name and level titles\056 Triggers on page load and on level unlock\056 \17615 lines of CSS\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 121.6614 cm
+Q
+q
+1 0 0 1 62.69291 106.6614 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Scanline overlay) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 69.66142 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 22 Tm
+/F1 10 Tf
+16 TL
+0.668314 Tw
+(A fixed \072\072after pseudo\055element on the body with repeating\055linear\055gradient of semi\055transparent black lines\056) Tj
+T*
+0 Tw
+(Gives a CRT monitor feel\056 Opacity\072 0\05603 \227 subtle\054 not distracting\056) Tj
+T*
+ET
+Q
+Q
+
+endstream
+endobj
+17 0 obj
+<<
+/Contents 18 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+18 0 obj
+<<
+/Length 2487
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 770.6929 cm
+Q
+q
+1 0 0 1 62.69291 755.6929 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Cursor blink on terminals) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 718.6929 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 22 Tm
+/F1 10 Tf
+16 TL
+0.587882 Tw
+(Level 1 and any code\055display areas use a blinking block cursor \050\174 or ) Tj
+/F5 10 Tf
+16 TL
+(n) Tj
+/F1 10 Tf
+16 TL
+(\051 via CSS animation\056 Makes it feel) Tj
+T*
+0 Tw
+(like a live terminal\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8583 cm
+Q
+q
+1 0 0 1 62.69291 692.8583 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Card flip animation \050Level 3\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 655.8583 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 22 Tm
+/F1 10 Tf
+16 TL
+0.79561 Tw
+(CSS perspective \053 rotateY transform on hover\057tap\056 The front face shows a dark glitch pattern\056 The back) Tj
+T*
+0 Tw
+(face reveals the QR code\056 transition\072 0\0564s ease\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 645.0236 cm
+Q
+q
+1 0 0 1 62.69291 630.0236 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Level unlock flash) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 577.0236 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+0.694269 Tw
+(On correct answer submission\054 a full\055screen overlay flashes green \050\04300FF88 at 30\045 opacity\051 for 300ms\054) Tj
+T*
+0 Tw
+1.205814 Tw
+(then fades\056 Followed by OVERMIND\047s transition message appearing with a typewriter animation before) Tj
+T*
+0 Tw
+(the next level loads\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 566.189 cm
+Q
+q
+1 0 0 1 62.69291 551.189 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 5 Tm
+/F2 10 Tf
+15 TL
+(Typewriter text) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 514.189 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 22 Tm
+/F1 10 Tf
+16 TL
+-0.01689 Tw
+(OVERMIND\047s dialogue at each level types itself out character by character at \17640ms per character using a) Tj
+T*
+0 Tw
+(JavaScript setInterval loop\056 Gives the impression that OVERMIND is speaking to you in real time\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 503.3543 cm
+Q
+
+endstream
+endobj
+19 0 obj
+<<
+/Contents 20 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+20 0 obj
+<<
+/Length 4943
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(SCREENS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 22 Tf
+28 TL
+(Page\055by\055Page Breakdown) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(REGISTRATION PAGE) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 565.8425 cm
+q
+BT
+1 0 0 1 0 86 Tm
+16 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+(Fields\072 Full Name\054 College\057Institution\054 Email \050used as login\051\056) Tj
+T*
+1.90284 Tw
+(On submit\072 Firebase Auth creates account with email \053 auto\055generated password sent to their email\056) Tj
+T*
+0 Tw
+(Firestore document created with currentLevel\072 1\056) Tj
+T*
+3.389069 Tw
+(Design\072 Full\055screen dark background\056 Centred form card with violet border\056 OVERMIND\047s opening) Tj
+T*
+0 Tw
+(monologue plays as typewriter text above the form\056 No logo \227 just the event name in glitch font at the top\056) Tj
+T*
+(Validation\072 Unique email check\054 all fields required\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 546.5039 cm
+Q
+q
+1 0 0 1 62.69291 534.5039 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LOBBY \057 WAITING SCREEN) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 467.5039 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+0.975697 Tw
+(Shown after registration until the organizer flips the \047event started\047 flag in Firestore\056 Displays\072 participant) Tj
+T*
+0 Tw
+0.422093 Tw
+(name\054 a countdown timer if a start time is set\054 and a live count of how many participants have registered\056) Tj
+T*
+0 Tw
+0.02998 Tw
+(OVERMIND message\072 \047Initialising trials\056 Stand by\054 \133name\135\056\047 Background shows slowly scrolling binary code) Tj
+T*
+0 Tw
+(\050CSS animation\054 no canvas needed\051\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 448.1654 cm
+Q
+q
+1 0 0 1 62.69291 436.1654 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL SCREEN \050core game screen\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 337.1654 cm
+q
+BT
+1 0 0 1 0 86 Tm
+4.605814 Tw
+16 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+(Layout\072 Top bar shows level number\054 participant name\054 elapsed time\054 hints remaining\056 Centre\072) Tj
+T*
+0 Tw
+0.877674 Tw
+(OVERMIND\047s dialogue \050typewriter\051\054 then challenge content below it\056 Bottom\072 answer input field \053 submit) Tj
+T*
+0 Tw
+(button\056) Tj
+T*
+(Level\055specific content areas \050see Level Details section below\051\056) Tj
+T*
+0.963059 Tw
+(Wrong answer\072 input field flashes red\054 error message from OVERMIND appears\056 Correct answer\072 green) Tj
+T*
+0 Tw
+(flash\054 OVERMIND transition message\054 next level loads after 3s\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 317.8268 cm
+Q
+q
+1 0 0 1 62.69291 305.8268 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEADERBOARD PAGE) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 222.8268 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 70 Tm
+/F1 10 Tf
+16 TL
+1.535984 Tw
+(Accessible during the event from a nav link \050does not interrupt current level\051\056 Shows\072 rank\054 participant) Tj
+T*
+0 Tw
+1.049983 Tw
+(name\054 college\054 current level reached\054 time elapsed\056 Sorted by\072 levels completed DESC\054 then time ASC\056) Tj
+T*
+0 Tw
+-0.019349 Tw
+(Updates every 60 seconds via Firestore polling \050not live listeners \227 prevents excessive reads under load\051\056) Tj
+T*
+0 Tw
+1.008555 Tw
+(Top 3 entries highlighted with gold\057silver\057bronze accent colours\056 Badge shown next to names who used) Tj
+T*
+0 Tw
+(hints \050\047H\047 indicator\051\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 203.4882 cm
+Q
+q
+1 0 0 1 62.69291 191.4882 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(WIN SCREEN) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 124.4882 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+4.978314 Tw
+(Triggered when the first participant submits the correct Level 8 answer\056 Full\055screen takeover\072) Tj
+T*
+0 Tw
+2.564983 Tw
+(OVERMIND\047s final monologue types out\056 Winner\047s name displayed in large glitch text\056 For all other) Tj
+T*
+0 Tw
+-0.001265 Tw
+(participants still playing\072 a non\055intrusive banner appears at the top of their screen saying \047\133Name\135 has been) Tj
+T*
+0 Tw
+(chosen\056 The trials continue\056\047 They can still complete all levels \227 final leaderboard shows full rankings\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 105.1496 cm
+Q
+
+endstream
+endobj
+21 0 obj
+<<
+/Contents 22 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+22 0 obj
+<<
+/Length 1304
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 761.5276 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(ADMIN PANEL \050organizer\055only route\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 678.5276 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 70 Tm
+/F1 10 Tf
+16 TL
+0.53881 Tw
+(Route\072 \057admin \227 protected by Firebase Auth custom claim \050role\072 admin\051\056 Features\072 Live list of all Level 5) Tj
+T*
+0 Tw
+0.224524 Tw
+(submissions with screenshot preview\054 participant name\054 and their pasted prompt\056 Approve\057Reject buttons\056) Tj
+T*
+0 Tw
+0.601647 Tw
+(On approve\072 Firestore updates participant\047s currentLevel to 6 automatically\056 On reject\072 participant notified) Tj
+T*
+0 Tw
+1.724983 Tw
+(on their screen with resubmission option\056 Also shows\072 live participant count per level\054 event start\057stop) Tj
+T*
+0 Tw
+(toggle\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 659.189 cm
+Q
+
+endstream
+endobj
+23 0 obj
+<<
+/Contents 24 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+24 0 obj
+<<
+/Length 4738
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(LEVEL UI DETAILS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 22 Tf
+28 TL
+(Per\055Level Frontend Implementation) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 1 \227 The Handshake) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 613.8425 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+1.54998 Tw
+(Full\055screen fake terminal\056 Black background with green\057cyan monospace text\056 Blinking cursor after the) Tj
+T*
+0 Tw
+0.847209 Tw
+(prompt\056 Input field styled as a terminal input line \050no border box\054 just an underline or cursor\051\056 Submit on) Tj
+T*
+0 Tw
+(Enter key\054 not just button click\056 Display the binary question text in a typewriter sequence\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 594.5039 cm
+Q
+q
+1 0 0 1 62.69291 582.5039 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 2 \227 Pixel Confession) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 531.5039 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+3.225366 Tw
+(Image displayed centred\054 roughly 400px wide\056 Slight CSS flicker animation on the image \050opacity) Tj
+T*
+0 Tw
+1.797984 Tw
+(oscillation between 0\05695 and 1\0560\051 to suggest it is a \047transmission\056\047 Download button below the image\056) Tj
+T*
+0 Tw
+(Standard text input for the passphrase answer\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 512.1654 cm
+Q
+q
+1 0 0 1 62.69291 500.1654 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 3 \227 The Glitch Gallery) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 401.1654 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 86 Tm
+/F1 10 Tf
+16 TL
+1.542485 Tw
+(3x3 CSS grid of cards\054 each 120x120px\056 Cards have a dark face with a noise\057static CSS background) Tj
+T*
+0 Tw
+-0.017661 Tw
+(pattern\056 On hover \050desktop\051 or tap \050mobile\051\054 card flips via CSS rotateY transform revealing the QR code on) Tj
+T*
+0 Tw
+0.73528 Tw
+(the back face\056 CRITICAL\072 QR images must be lazy\055loaded server\055side on hover \227 do NOT embed all 9) Tj
+T*
+0 Tw
+1.58528 Tw
+(image URLs in the initial page HTML or they can be extracted from DevTools\056 Use a Firebase Cloud) Tj
+T*
+0 Tw
+1.543735 Tw
+(Function that returns the image URL only when a specific card index is requested\054 rate\055limited to one) Tj
+T*
+0 Tw
+(request per card per session\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 381.8268 cm
+Q
+q
+1 0 0 1 62.69291 369.8268 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 4 \227 The Dead Drop) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 318.8268 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+0.901163 Tw
+(Clean text layout\056 The clue text displayed in styled paragraph format with the key phrase \047RFC 1\047 subtly) Tj
+T*
+0 Tw
+-0.056265 Tw
+(highlighted in cyan on second read \050not immediately\054 use a 3\055second delay before the highlight appears \227) Tj
+T*
+0 Tw
+(reward careful reading\051\056 Standard text input\054 case\055insensitive evaluation\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 299.4882 cm
+Q
+q
+1 0 0 1 62.69291 287.4882 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 5 \227 The Prompt Architect) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 188.4882 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 86 Tm
+/F1 10 Tf
+16 TL
+0.946651 Tw
+(Two\055column layout on desktop\054 stacked on mobile\056 Left\072 target output in a styled \047transmission box\047 with) Tj
+T*
+0 Tw
+1.182651 Tw
+(cyan border\056 Banned words listed below in red\056 Right\072 file upload area for screenshot \050drag\055and\055drop \053) Tj
+T*
+0 Tw
+-0.048346 Tw
+(click to upload\054 accept image\057\052 only\054 max 5MB\051 and a textarea for their prompt text\056 On submit\072 files upload) Tj
+T*
+0 Tw
+1.46816 Tw
+(to Firebase Storage\054 submission document created in Firestore\054 participant sees \047Awaiting OVERMIND) Tj
+T*
+0 Tw
+2.48152 Tw
+(approval\056\056\056\047 with a pulsing indicator\056 Firestore listener on their submission document \227 when admin) Tj
+T*
+0 Tw
+(approves\054 screen auto\055advances without refresh\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 169.1496 cm
+Q
+
+endstream
+endobj
+25 0 obj
+<<
+/Contents 26 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+26 0 obj
+<<
+/Length 2625
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 761.5276 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 6 \227 Logic Bomb) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 678.5276 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 70 Tm
+/F1 10 Tf
+16 TL
+1.80284 Tw
+(Defusal aesthetic\072 dark panel with a red countdown visual \050purely decorative\054 does not actually count) Tj
+T*
+0 Tw
+0.575697 Tw
+(down\051\056 Five toggle switches labelled A\226E\054 styled as large\054 satisfying ON\057OFF switches with CSS\056 Default) Tj
+T*
+0 Tw
+3.062126 Tw
+(state\072 all FALSE\056 A \047DEFUSE\047 button at the bottom\056 On wrong combination\072 a red \047DETONATION) Tj
+T*
+0 Tw
+0.082126 Tw
+(PREVENTED \227 SYSTEM LOCKED\047 message with the attempt count shown\056 Rate limit\072 3 wrong attempts) Tj
+T*
+0 Tw
+(per 2 minutes stored in Firestore\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 659.189 cm
+Q
+q
+1 0 0 1 62.69291 647.189 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 7 \227 The Mirror) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 596.189 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+2.067485 Tw
+(Visually identical to previous level screens\056 The word OVERMIND is written in white text on a white) Tj
+T*
+0 Tw
+1.776651 Tw
+(background div\054 placed within the body content\056 Flavour line\072 \047Everything you need is already here\056 It) Tj
+T*
+0 Tw
+(always was\056\047 No other visual hints\056 Standard text input\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 576.8504 cm
+Q
+q
+1 0 0 1 62.69291 564.8504 cm
+q
+1 0.843137 0 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 8 \227 Paradox Protocol) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 497.8504 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+0.909984 Tw
+(The ciphertext displayed in a styled \047intercepted transmission\047 box \227 monospace\054 cyan text\054 with a faint) Tj
+T*
+0 Tw
+0.58248 Tw
+(border glow animation\056 Instruction text above\072 \047OVERMIND\047s final transmission has been intercepted and) Tj
+T*
+0 Tw
+6.76816 Tw
+(encoded\056 Decode it to find the passphrase\056\047 Standard text input\056 Accept SIGNAL\137FOUND) Tj
+T*
+0 Tw
+(case\055insensitively\054 with or without underscore replaced by space\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 478.5118 cm
+Q
+
+endstream
+endobj
+27 0 obj
+<<
+/Contents 28 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+28 0 obj
+<<
+/Length 5252
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+BT
+1 0 0 1 0 4 Tm
+12 TL
+/F2 8 Tf
+0 0.898039 1 rg
+(SCALABILITY \046 ANTI\055CHEAT) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 22 Tf
+28 TL
+(Handling 80 Simultaneous Participants) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(WHY 80 USERS WILL NOT CAUSE PROBLEMS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 597.8425 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+-0.111349 Tw
+(Firebase Firestore\047s free tier supports 50\054000 reads and 20\054000 writes per day\056 80 participants each writing) Tj
+T*
+0 Tw
+0.24332 Tw
+(\17610 level completions \075 800 writes total\056 Leaderboard polled every 60s by 80 users over a 2\055hour event \075) Tj
+T*
+0 Tw
+1.861751 Tw
+(\1769\054600 reads\056 Both are well within free tier\056 The only potential issue is live Firestore listeners on the) Tj
+T*
+0 Tw
+(leaderboard \227 replace with polling \050setInterval every 60s\051 to cap reads\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 584.1732 cm
+Q
+q
+1 0 0 1 62.69291 572.1732 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEADERBOARD \227 USE POLLING\054 NOT LIVE LISTENERS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 521.1732 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+2.609984 Tw
+(Do NOT use Firestore onSnapshot for the leaderboard\056 Use a simple fetch call every 60 seconds\056) Tj
+T*
+0 Tw
+2.239213 Tw
+(onSnapshot holds an open WebSocket connection per client \227 80 simultaneous connections is fine) Tj
+T*
+0 Tw
+(technically\054 but polling is more predictable and avoids any connection limit concerns on the free plan\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 501.8346 cm
+Q
+q
+1 0 0 1 62.69291 489.8346 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 5 SCREENSHOT UPLOADS \227 SIZE LIMIT) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 438.8346 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+1.604983 Tw
+(Enforce a 5MB max on screenshot uploads client\055side before the file reaches Firebase Storage\056 Most) Tj
+T*
+0 Tw
+0.423984 Tw
+(screenshots are under 500KB\056 Add a client\055side check with a clear error message\056 Firebase Storage free) Tj
+T*
+0 Tw
+(tier is 5GB total \227 80 submissions at 5MB max \075 400MB absolute worst case\054 well within limits\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 419.4961 cm
+Q
+q
+1 0 0 1 62.69291 407.4961 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(RATE LIMITING ANSWER SUBMISSIONS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 340.4961 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+0.53229 Tw
+(Store attemptCounts per level per participant in their Firestore document\056 Before processing any answer\054) Tj
+T*
+0 Tw
+-0.017235 Tw
+(read this value\056 If \076\075 3 attempts in the last 2 minutes \050compare against lastAttemptTime field\051\054 reject with a) Tj
+T*
+0 Tw
+0.607485 Tw
+(cooldown message\056 This logic runs client\055side with Firestore validation rules as backup \227 do not rely on) Tj
+T*
+0 Tw
+(client\055side alone\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 321.1575 cm
+Q
+q
+1 0 0 1 62.69291 309.1575 cm
+q
+1 0.235294 0.360784 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(FIRESTORE SECURITY RULES \227 CRITICAL) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 242.1575 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+4.742126 Tw
+(Participants should only be able to read\057write their own document\056 Rule\072 allow read\054 write\072 if) Tj
+T*
+0 Tw
+0.524524 Tw
+(request\056auth\056uid \075\075 resource\056data\056uid\073 The leaderboard collection is read\055only for all authenticated users\056) Tj
+T*
+0 Tw
+0.996647 Tw
+(The level5Submissions collection is write\055only for participants\054 read\057write for admins only\056 Without these) Tj
+T*
+0 Tw
+(rules\054 participants can read each other\047s answers from Firestore directly\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 222.8189 cm
+Q
+q
+1 0 0 1 62.69291 210.8189 cm
+q
+1 0.235294 0.360784 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(LEVEL 3 QR LAZY LOADING \227 ANTI\055CHEAT) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 143.8189 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+0.940542 Tw
+(This is the most important anti\055cheat measure in the entire build\056 Do not embed QR image URLs in the) Tj
+T*
+0 Tw
+1.209069 Tw
+(page HTML\056 Create a Firebase Cloud Function endpoint\072 \057getCardImage\077index\075N This function checks) Tj
+T*
+0 Tw
+0.994104 Tw
+(that the participant is authenticated\054 then returns the image URL for card N\056 Rate limit\072 one request per) Tj
+T*
+0 Tw
+(card index per session\056 This prevents DevTools extraction of all 9 URLs at once\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 124.4803 cm
+Q
+
+endstream
+endobj
+29 0 obj
+<<
+/Contents 30 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+30 0 obj
+<<
+/Length 1750
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 761.5276 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(ANSWER CASE NORMALISATION) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 694.5276 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 54 Tm
+/F1 10 Tf
+16 TL
+1.878314 Tw
+(Normalise all answer inputs server\055side before comparison\072 trim whitespace\054 convert to lowercase \050or) Tj
+T*
+0 Tw
+0.06229 Tw
+(uppercase consistently\051\054 strip extra spaces\056 Binary answers\072 accept with or without spaces between bytes\056) Tj
+T*
+0 Tw
+1.344597 Tw
+(This prevents participants from getting stuck on trivial formatting issues and reduces support overhead) Tj
+T*
+0 Tw
+(during the event\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 675.189 cm
+Q
+q
+1 0 0 1 62.69291 663.189 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(EVENT START\057STOP CONTROL) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 612.189 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+0.418555 Tw
+(Add an \047eventActive\047 boolean document in Firestore\056 All level submission endpoints check this flag before) Tj
+T*
+0 Tw
+0.203318 Tw
+(processing\056 If false\054 all submissions are rejected\056 This lets organizers start the event simultaneously for all) Tj
+T*
+0 Tw
+(80 participants with one Firestore write\054 and stop it cleanly at the end\056) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 592.8504 cm
+Q
+
+endstream
+endobj
+31 0 obj
+<<
+/Contents 32 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+32 0 obj
+<<
+/Length 7041
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 750.8504 cm
+Q
+q
+1 0 0 1 62.69291 738.8504 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(BUILD PLAN) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 707.8504 cm
+q
+BT
+1 0 0 1 0 6 Tm
+28 TL
+/F2 22 Tf
+0.941176 0.941176 1 rg
+(Implementation Sequence \046 Timeline) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 693.8504 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 676.8425 cm
+Q
+q
+1 0 0 1 62.69291 664.8425 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 1 \227 FOUNDATION \050Day 1\2262\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 646.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Set up Firebase project\072 enable Auth\054 Firestore\054 Storage\054 Hosting) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 626.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Create React \053 Vite project\054 configure Tailwind with OVERMIND colour tokens) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 606.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Implement Firebase Auth\072 registration flow \050name\054 college\054 email\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 586.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Create Firestore participant document on registration) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 566.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Build the base Level screen component \050reusable shell for all 8 levels\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 546.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Build the top navigation bar \050level indicator\054 timer\054 hints remaining\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 526.8425 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Set up Firestore security rules) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 510.5039 cm
+Q
+q
+1 0 0 1 62.69291 498.5039 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 2 \227 LEVELS 1\2264 \050Day 3\2264\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 480.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 1\072 Terminal UI component\054 binary answer validation) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 460.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 2\072 Image display with download\054 passphrase input) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 440.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 3\072 Card flip grid\054 Firebase Cloud Function for lazy QR loading\054 rate limiting) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 420.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 4\072 Clue text layout with delayed highlight\054 case\055insensitive answer check) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 400.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Implement hint system\072 hint content per level\054 Firestore deduction\054 UI display) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 380.5039 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Implement rate limiting \0503 attempts per 2 minutes\051 across all levels) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 364.1654 cm
+Q
+q
+1 0 0 1 62.69291 352.1654 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 3 \227 LEVELS 5\2268 \053 ADMIN \050Day 5\2266\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 334.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 5\072 File upload UI\054 Firebase Storage integration\054 Firestore submission doc\054 pending screen) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 314.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Admin panel\072 submission review UI\054 approve\057reject buttons\054 auto\055unlock on approve) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 294.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 6\072 Toggle switch UI\054 Boolean logic evaluation\054 defusal aesthetic) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 274.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 7\072 Hidden text implementation\054 standard answer input) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 254.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Level 8\072 Ciphertext display box\054 ROT\05513 answer validation) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 234.1654 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Win screen\072 full\055screen takeover\054 winner announcement banner for other participants) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 217.8268 cm
+Q
+q
+1 0 0 1 62.69291 205.8268 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 4 \227 LEADERBOARD \053 POLISH \050Day 7\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 187.8268 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Leaderboard page\072 Firestore polling \05060s\051\054 ranking logic\054 badges) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 167.8268 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Lobby\057waiting screen with event start toggle) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 147.8268 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( CSS effects\072 glitch animation\054 scanline overlay\054 typewriter text\054 card flip) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 127.8268 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( OVERMIND dialogue content\072 write all 8 level messages \053 transition messages) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 107.8268 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Event start\057stop control in admin panel) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 87.82677 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Mobile responsiveness check on all screens) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 71.48819 cm
+Q
+
+endstream
+endobj
+33 0 obj
+<<
+/Contents 34 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+34 0 obj
+<<
+/Length 4007
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 761.5276 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 5 \227 TESTING \050Day 8\2269\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 743.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Full run\055through\072 register as test user\054 complete all 8 levels end\055to\055end) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 723.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Test with 3\2265 simultaneous test accounts to verify Firestore concurrency) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 703.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Test Level 3 QR lazy loading \227 verify DevTools cannot extract all URLs) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 683.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Test Level 5 admin flow\072 submit screenshot\054 approve\054 verify Level 6 unlocks) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 663.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Test rate limiting\072 submit wrong answers rapidly\054 verify lockout triggers) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 643.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Verify steg image survives Firebase Hosting \050do not upload via Storage\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 623.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Test on mobile\072 all levels\054 especially Level 3 tap\055to\055flip) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 603.5276 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Verify CERN page answer \050visit RFC 1\054 confirm \047Network\047 is still the first word\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 587.189 cm
+Q
+q
+1 0 0 1 62.69291 575.189 cm
+q
+0 1 0.533333 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE 6 \227 PRE\055EVENT \050Day 10\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 557.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Deploy to Firebase Hosting) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 537.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Prepare steg image \050encode VOIDWALKER\051\054 test decode on both recommended tools) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 517.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Prepare Level 3 QR code linking to Google Drive image) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 497.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Set up admin account with custom claim) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 477.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Brief organizer team on Level 5 review process and admin panel usage) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 457.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Set eventActive\072 false in Firestore \050event does not start until organizers flip it\051) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 437.189 cm
+q
+BT
+1 0 0 1 16 5 Tm
+15 TL
+/F1 10 Tf
+0.941176 0.941176 1 rg
+/F5 10 Tf
+15 TL
+(n) Tj
+/F1 10 Tf
+15 TL
+( Send registration link to participants) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 420.8504 cm
+Q
+
+endstream
+endobj
+35 0 obj
+<<
+/Contents 36 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/ExtGState <<
+/gRLs0 <<
+/ca 0.04
+>>
+/gRLs1 <<
+/ca 1
+>>
+>>
+/Font 5 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+>>
+endobj
+36 0 obj
+<<
+/Length 5073
+>>
+stream
+1 0 0 1 0 0 cm
+BT
+/F1 12 Tf
+14.4 TL
+ET
+q
+0.039216 0.039216 0.058824 rg
+n
+0 0 595.2756 841.8898 re
+f*
+0 1 0.533333 rg
+/gRLs0 gs
+n
+0 781.8898 60 60 re
+f*
+n
+535.2756 0 60 60 re
+f*
+/gRLs1 gs
+0 1 0.533333 RG
+0.3 w
+n
+56.69291 39.68504 m
+538.5827 39.68504 l
+S
+BT
+/F1 8 Tf
+9.6 TL
+ET
+0.533333 0.533333 0.666667 rg
+BT
+1 0 0 1 146.9338 25.51181 Tm
+(PROMPT PARADOX 2\0560  \267  TECHNICAL BUILD SPEC  \267  FOCES GROUP INTERNAL) Tj
+T*
+ET
+Q
+q
+1 0 0 1 62.69291 761.5276 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(EFFORT SUMMARY) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 730.5276 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F2 22 Tf
+28 TL
+(Timeline at a Glance) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 716.5276 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 699.5197 cm
+Q
+q
+1 0 0 1 56.69291 467.5197 cm
+q
+0 0.2 0.133333 rg
+n
+0 232 481.8898 -26 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 206 481.8898 -30 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 176 481.8898 -30 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 146 481.8898 -30 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 116 481.8898 -30 re
+f*
+0.07451 0.07451 0.164706 rg
+n
+0 86 481.8898 -30 re
+f*
+0.058824 0.058824 0.133333 rg
+n
+0 56 481.8898 -30 re
+f*
+0 0.2 0.133333 rg
+n
+0 26 481.8898 -26 re
+f*
+0 0 0 rg
+BT
+/F1 10 Tf
+12 TL
+ET
+q
+1 0 0 1 8 213 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(PHASE) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 213 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(TASK) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 213 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(DAYS) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 183 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(1) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 183 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Firebase setup\054 Auth\054 base components) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 183 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(2) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 153 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(2) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 153 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Levels 1\2264 \053 hint system \053 rate limiting) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 153 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(2) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 123 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(3) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 123 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Levels 5\2268 \053 admin panel) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 123 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(2) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 93 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(4) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 93 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Leaderboard \053 CSS effects \053 polish) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 93 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(1) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 63 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(5) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 63 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(End\055to\055end testing \053 concurrency testing) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 63 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(2) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 33 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(6) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 33 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(Pre\055event prep\054 deploy\054 briefing) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 404.8504 33 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 6 Tm
+/F1 10 Tf
+16 TL
+(1) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 8 7 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(TOTAL) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 64.69291 13 cm
+Q
+q
+1 0 0 1 404.8504 7 cm
+q
+0.482353 0.184314 1 rg
+BT
+1 0 0 1 0 3 Tm
+/F2 9 Tf
+12 TL
+(\17610 days) Tj
+T*
+ET
+Q
+Q
+q
+1 J
+1 j
+0.164706 0.164706 0.290196 RG
+0.3 w
+n
+0 232 m
+481.8898 232 l
+S
+n
+0 0 m
+481.8898 0 l
+S
+n
+0 0 m
+0 232 l
+S
+n
+481.8898 0 m
+481.8898 232 l
+S
+n
+0 206 m
+481.8898 206 l
+S
+n
+0 176 m
+481.8898 176 l
+S
+n
+0 146 m
+481.8898 146 l
+S
+n
+0 116 m
+481.8898 116 l
+S
+n
+0 86 m
+481.8898 86 l
+S
+n
+0 56 m
+481.8898 56 l
+S
+n
+0 26 m
+481.8898 26 l
+S
+n
+56.69291 0 m
+56.69291 232 l
+S
+n
+396.8504 0 m
+396.8504 232 l
+S
+Q
+Q
+Q
+q
+1 0 0 1 62.69291 439.1732 cm
+Q
+q
+1 0 0 1 62.69291 435.1732 cm
+0 1 0.533333 RG
+0.8 w
+n
+0 2 m
+469.8898 2 l
+S
+Q
+q
+1 0 0 1 62.69291 418.1654 cm
+Q
+q
+1 0 0 1 62.69291 406.1654 cm
+q
+0 0.898039 1 rg
+BT
+1 0 0 1 0 4 Tm
+/F2 8 Tf
+12 TL
+(DOCUMENT END) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 347.1654 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 34 Tm
+/F2 22 Tf
+28 TL
+(Prompt Paradox 2\0560 \227 Technical Build) Tj
+T*
+(Specification) Tj
+T*
+ET
+Q
+Q
+q
+1 0 0 1 62.69291 325.8268 cm
+Q
+q
+1 0 0 1 62.69291 277.8268 cm
+q
+0.941176 0.941176 1 rg
+BT
+1 0 0 1 0 38 Tm
+/F1 10 Tf
+16 TL
+1.91998 Tw
+(This document is intended for the FOCES development team\056 All implementation decisions\054 colour) Tj
+T*
+0 Tw
+0.337126 Tw
+(values\054 Firestore structures\054 and security rules described here are final unless discussed with the FOCES) Tj
+T*
+0 Tw
+(organizers\056) Tj
+T*
+ET
+Q
+Q
+
+endstream
+endobj
+37 0 obj
+<<
+/Author (\050anonymous\051)
+/CreationDate (D\07220260531144401\05300\04700\047)
+/Creator (\050unspecified\051)
+/Keywords ()
+/ModDate (D\07220260531144401\05300\04700\047)
+/Producer (ReportLab PDF Library \055 \050opensource\051)
+/Subject (\050unspecified\051)
+/Title (\050anonymous\051)
+/Trapped /False
+>>
+endobj
+xref
+0 38
+0000000000 65535 f 
+0000000015 00000 n 
+0000000083 00000 n 
+0000000234 00000 n 
+0000000491 00000 n 
+0000003741 00000 n 
+0000003813 00000 n 
+0000003920 00000 n 
+0000004032 00000 n 
+0000004147 00000 n 
+0000004252 00000 n 
+0000004336 00000 n 
+0000004595 00000 n 
+0000008810 00000 n 
+0000009069 00000 n 
+0000009676 00000 n 
+0000009935 00000 n 
+0000018034 00000 n 
+0000018293 00000 n 
+0000020833 00000 n 
+0000021092 00000 n 
+0000026088 00000 n 
+0000026347 00000 n 
+0000027704 00000 n 
+0000027963 00000 n 
+0000032754 00000 n 
+0000033013 00000 n 
+0000035691 00000 n 
+0000035950 00000 n 
+0000041255 00000 n 
+0000041514 00000 n 
+0000043317 00000 n 
+0000043576 00000 n 
+0000050670 00000 n 
+0000050929 00000 n 
+0000054989 00000 n 
+0000055248 00000 n 
+0000060374 00000 n 
+trailer
+<<
+/Size 38
+/Root 1 0 R
+/Info 37 0 R
+/ID [ <2cda3aa6af4df329e463768de6cfbd66> <2cda3aa6af4df329e463768de6cfbd66> ]
+>>
+startxref
+60699
+%%EOF
