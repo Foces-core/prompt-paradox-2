@@ -1,0 +1,7 @@
+# Vendored .venv cryptographic and API examples from upstream test suites; not app credentials.
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/gevent/tests/server.key:private-key:1
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/gevent/tests/test_server.key:private-key:1
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/websocket/tests/test_websocket.py:generic-api-key:120
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/websocket/tests/test_websocket.py:generic-api-key:484
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/win32/lib/win32cryptcon.py:generic-api-key:1128
+a458e03c479a990e30befe4408ebea1fd15cea1b:.venv/Lib/site-packages/win32/lib/win32cryptcon.py:generic-api-key:1129
